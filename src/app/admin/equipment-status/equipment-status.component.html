@@ -7,12 +7,14 @@
     </div>
     <div class="flex gap-3">
       <button
+        (click)="openMaintenanceModal()"
         class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
       >
         Schedule Maintenance
       </button>
       <button
-        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+        (click)="openAddEquipmentModal()"
+        class="px-4 py-2 bg-[#1075bc] text-white rounded-md hover:bg-[#1075bc]"
       >
         Add Equipment
       </button>
@@ -51,7 +53,7 @@
       <div class="flex items-center">
         <div class="p-3 bg-blue-100 rounded-lg">
           <svg
-            class="w-6 h-6 text-blue-600"
+            class="w-6 h-6 text-[#1075bc]"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -77,17 +79,18 @@
       <div class="flex items-center">
         <div class="p-3 bg-yellow-100 rounded-lg">
           <svg
-            class="w-6 h-6 text-yellow-600"
+            xmlns="http://www.w3.org/2000/svg"
             fill="none"
-            stroke="currentColor"
             viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-6 h-6 text-yellow-600"
           >
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
-              stroke-width="2"
-              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 00.8 1.2l1.825 1.087c1.531.914 1.531 3.183 0 4.098l-1.825 1.087a1.724 1.724 0 00-.8 1.2c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-.8-1.2l-1.825-1.087c-1.531-.914-1.531-3.183 0-4.098l1.825-1.087a1.724 1.724 0 00.8-1.2z"
-            ></path>
+              d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 011.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c.25.35.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.941.56.941 1.109v1.094c0 .55-.398 1.02-.94 1.11l-.894.149c-.424.07-.764.383-.93.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 01-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.397.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 01-.12-1.45l.527-.737c.25-.35.273-.806.108-1.204-.165-.397-.505-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.425-.07.765-.383.93-.78.165-.398.142-.854-.108-1.204l-.527-.738a1.125 1.125 0 01.12-1.45l.773-.773a1.125 1.125 0 011.45-.12l.737.527c.35.25.806.273 1.204.108.397-.165.71-.505.78-.93l.15-.894zM15 12a3 3 0 11-6 0 3 3 0 016 0z"
+            />
           </svg>
         </div>
         <div class="ml-4">
@@ -132,7 +135,7 @@
       <p class="text-xl font-semibold text-gray-900">Equipment Inventory</p>
       <div class="flex gap-3">
         <select
-          class="border border-gray-300 rounded-md px-3 py-2 w-40 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          class="border border-gray-300 rounded-md px-3 py-2 w-40 focus:outline-none focus:ring-2 focus:ring-[#1075bc]"
         >
           <option value="">All Types</option>
           <option value="tensile">Tensile Tester</option>
@@ -164,7 +167,7 @@
             class="inline-flex px-2 py-1 text-xs font-medium rounded-full"
             [ngClass]="{
               'bg-green-100 text-green-800': equipment.status === 'available',
-              'bg-blue-100 text-blue-800': equipment.status === 'in-use',
+              'bg-blue-100 text-[#1075bc]': equipment.status === 'in-use',
               'bg-yellow-100 text-yellow-800':
                 equipment.status === 'maintenance',
               'bg-red-100 text-red-800': equipment.status === 'offline'
@@ -201,7 +204,7 @@
         <div class="mt-4 pt-4 border-t border-gray-100">
           <div class="flex justify-between items-center">
             <button
-              class="text-blue-600 hover:text-blue-700 text-sm font-medium"
+              class="text-[#1075bc] hover:text-[#1075bc] text-sm font-medium"
             >
               View Details
             </button>
@@ -226,6 +229,268 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Schedule Maintenance Modal -->
+  <div
+    *ngIf="showMaintenanceModal"
+    class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50"
+  >
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-xl p-6">
+      <div class="flex justify-between items-center mb-4">
+        <p class="text-xl font-semibold text-gray-900 mb-0">
+          Schedule Maintenance
+        </p>
+        <button
+          (click)="closeMaintenanceModal()"
+          class="text-gray-600 hover:text-gray-800"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
+          </svg>
+        </button>
+      </div>
+      <div class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700"
+              >Equipment</label
+            >
+            <select
+              [(ngModel)]="selectedEquipmentId"
+              class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1075bc]"
+              required
+            >
+              <option value="">Select Equipment</option>
+              <option *ngFor="let eq of equipmentList" [value]="eq.id">
+                {{ eq.name }} ({{ eq.id }})
+              </option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700"
+              >Maintenance Date</label
+            >
+            <input
+              type="date"
+              [(ngModel)]="maintenanceDate"
+              class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1075bc]"
+              required
+            />
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Notes</label>
+          <textarea
+            [(ngModel)]="maintenanceNotes"
+            class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1075bc]"
+            rows="4"
+          ></textarea>
+        </div>
+      </div>
+      <div class="mt-6 flex justify-end gap-3">
+        <button
+          (click)="closeMaintenanceModal()"
+          class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
+        >
+          Cancel
+        </button>
+        <button
+          (click)="scheduleMaintenance()"
+          class="px-4 py-2 bg-[#1075bc] text-white rounded-md hover:bg-[#1075bc]"
+          [disabled]="!selectedEquipmentId || !maintenanceDate"
+        >
+          Schedule
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Equipment Modal -->
+  <div
+    *ngIf="showAddEquipmentModal"
+    class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50"
+  >
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-xl p-6">
+      <div class="flex justify-between items-center mb-4">
+        <p class="text-xl font-semibold text-gray-900 mb-0">Add Equipment</p>
+        <button
+          (click)="closeAddEquipmentModal()"
+          class="text-gray-600 hover:text-gray-800"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
+          </svg>
+        </button>
+      </div>
+      <div class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Name</label>
+            <input
+              type="text"
+              [(ngModel)]="newEquipment.name"
+              class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1075bc]"
+              required
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Type</label>
+            <select
+              [(ngModel)]="newEquipment.type"
+              class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1075bc]"
+              required
+            >
+              <option value="">Select Type</option>
+              <option value="Tensile Tester">Tensile Tester</option>
+              <option value="Compression Tester">Compression Tester</option>
+              <option value="Hardness Tester">Hardness Tester</option>
+              <option value="Impact Tester">Impact Tester</option>
+              <option value="Fatigue Tester">Fatigue Tester</option>
+              <option value="Flexural Tester">Flexural Tester</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700"
+              >Location</label
+            >
+            <input
+              type="text"
+              [(ngModel)]="newEquipment.location"
+              class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1075bc]"
+              required
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700"
+              >Status</label
+            >
+            <select
+              [(ngModel)]="newEquipment.status"
+              class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1075bc]"
+              required
+            >
+              <option value="available">Available</option>
+              <option value="in-use">In Use</option>
+              <option value="maintenance">Maintenance</option>
+              <option value="offline">Offline</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700"
+              >Last Calibration</label
+            >
+            <input
+              type="date"
+              [(ngModel)]="newEquipment.lastCalibration"
+              class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1075bc]"
+              required
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700"
+              >Next Maintenance</label
+            >
+            <input
+              type="date"
+              [(ngModel)]="newEquipment.nextMaintenance"
+              class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1075bc]"
+              required
+            />
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700"
+            >Specifications</label
+          >
+          <div class="space-y-2">
+            <div
+              *ngFor="let spec of specEntries; let i = index"
+              class="flex gap-2"
+            >
+              <input
+                type="text"
+                [(ngModel)]="spec.key"
+                placeholder="Key (e.g., Max Load)"
+                class="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1075bc]"
+              />
+              <input
+                type="text"
+                [(ngModel)]="spec.value"
+                placeholder="Value (e.g., 250 kN)"
+                class="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1075bc]"
+              />
+              <button
+                (click)="removeSpec(i)"
+                class="text-red-600 hover:text-red-800"
+              >
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+            <button
+              (click)="addSpec()"
+              class="text-[#1075bc] hover:text-[#1075bc] text-sm font-medium"
+            >
+              + Add Specification
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="mt-6 flex justify-end gap-3">
+        <button
+          (click)="closeAddEquipmentModal()"
+          class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
+        >
+          Cancel
+        </button>
+        <button
+          (click)="addEquipment()"
+          class="px-4 py-2 bg-[#1075bc] text-white rounded-md hover:bg-[#1075bc]"
+          [disabled]="
+            !newEquipment.name ||
+            !newEquipment.type ||
+            !newEquipment.location ||
+            !newEquipment.status ||
+            !newEquipment.lastCalibration ||
+            !newEquipment.nextMaintenance
+          "
+        >
+          Add
+        </button>
       </div>
     </div>
   </div>

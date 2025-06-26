@@ -106,6 +106,104 @@ export class EquipmentStatusComponent {
     },
   ];
 
+  // Modal states
+  showMaintenanceModal: boolean = false;
+  showAddEquipmentModal: boolean = false;
+  selectedEquipmentId: string = '';
+  maintenanceDate: string = '';
+  maintenanceNotes: string = '';
+  newEquipment: Partial<Equipment> = {
+    id: '',
+    name: '',
+    type: '',
+    status: 'available',
+    location: '',
+    lastCalibration: new Date(),
+    nextMaintenance: new Date(),
+    specifications: {},
+  };
+  specEntries: { key: string; value: string }[] = [];
+
+  openMaintenanceModal() {
+    this.showMaintenanceModal = true;
+  }
+
+  closeMaintenanceModal() {
+    this.showMaintenanceModal = false;
+    this.selectedEquipmentId = '';
+    this.maintenanceDate = '';
+    this.maintenanceNotes = '';
+  }
+
+  scheduleMaintenance() {
+    // Implement maintenance scheduling logic here
+    console.log('Scheduling maintenance for:', {
+      equipmentId: this.selectedEquipmentId,
+      date: this.maintenanceDate,
+      notes: this.maintenanceNotes,
+    });
+    // Optionally update equipment status or nextMaintenance date
+    const equipment = this.equipmentList.find(
+      (eq) => eq.id === this.selectedEquipmentId
+    );
+    if (equipment && this.maintenanceDate) {
+      equipment.nextMaintenance = new Date(this.maintenanceDate);
+      equipment.status = 'maintenance';
+    }
+    this.closeMaintenanceModal();
+  }
+
+  openAddEquipmentModal() {
+    this.showAddEquipmentModal = true;
+    this.specEntries = [];
+  }
+
+  closeAddEquipmentModal() {
+    this.showAddEquipmentModal = false;
+    this.newEquipment = {
+      id: '',
+      name: '',
+      type: '',
+      status: 'available',
+      location: '',
+      lastCalibration: new Date(),
+      nextMaintenance: new Date(),
+      specifications: {},
+    };
+    this.specEntries = [];
+  }
+
+  addSpec() {
+    this.specEntries.push({ key: '', value: '' });
+  }
+
+  removeSpec(index: number) {
+    this.specEntries.splice(index, 1);
+  }
+
+  addEquipment() {
+    // Convert specEntries to specifications object
+    this.newEquipment.specifications = this.specEntries.reduce((acc, spec) => {
+      if (spec.key && spec.value) {
+        acc[spec.key] = spec.value;
+      }
+      return acc;
+    }, {} as { [key: string]: string });
+
+    // Generate a unique ID for the new equipment
+    const newId = `EQ-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+    const equipment: Equipment = {
+      ...this.newEquipment,
+      id: newId,
+      lastCalibration: new Date(this.newEquipment.lastCalibration!),
+      nextMaintenance: new Date(this.newEquipment.nextMaintenance!),
+      specifications: this.newEquipment.specifications || {},
+    } as Equipment;
+
+    this.equipmentList.push(equipment);
+    this.closeAddEquipmentModal();
+  }
+
   getEquipmentCount(status: string): number {
     return this.equipmentList.filter((eq) => eq.status === status).length;
   }
