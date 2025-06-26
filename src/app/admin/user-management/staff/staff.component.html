@@ -1,0 +1,970 @@
+<div class="container-fluid mb-4">
+  <div class="d-md-flex justify-content-between align-items-center">
+    <h1 class="text-primary table-heading-detail">Staff Management</h1>
+    <div>
+      <button
+        (click)="bannermodal()"
+        class="btn btn-custom-primary px-4 py-2 mb-md-0 mb-2"
+      >
+        Create Staff
+      </button>
+    </div>
+  </div>
+
+  <div class="card border-0 my-4 px-4 py-4">
+    <div class="d-md-flex justify-content-between align-items-center my-3">
+      <div class="d-flex align-items-center mb-md-0 mb-2">
+        <span class="me-1 show-entery-text">Show</span>
+        <select
+          class="form-control form-select show-entries-select"
+          (change)="onTableSizeChange($event)"
+        >
+          <option *ngFor="let size of tableSizes" [ngValue]="size">
+            {{ size }}
+          </option>
+        </select>
+        <span class="ms-1 show-entery-text">entries</span>
+      </div>
+
+      <div class="d-flex align-items-center">
+        <form [formGroup]="searchbarform" class="d-flex align-items-center">
+          <span class="me-1">Search:</span>
+          <div
+            [ngClass]="{'table-card table': searchbarform.controls['searchbar'].errors?.['required'] && (searchbarform.controls['searchbar'].touched || searchbarform.controls['searchbar'].dirty)}"
+          >
+            <input
+              type="text"
+              class="form-control search-user position-relative"
+              autocomplete="off"
+              formControlName="searchbar"
+              [ngClass]="{
+                'is-invalid':
+                  searchbarform.controls['searchbar'].errors &&
+                  (searchbarform.controls['searchbar'].touched ||
+                    searchbarform.controls['searchbar'].dirty)
+              }"
+            />
+            <div
+              class="text-danger error-message d-block"
+              *ngIf="
+                searchbarform.controls['searchbar'].errors &&
+                (searchbarform.controls['searchbar'].touched ||
+                  searchbarform.controls['searchbar'].dirty)
+              "
+            >
+              <p
+                class="fw-light text-danger search-required"
+                *ngIf="searchbarform.controls['searchbar'].errors['required']"
+              >
+                This is required
+              </p>
+            </div>
+          </div>
+          <button class="btn btn-primary search-btn ms-2" (click)="searchfun()">
+            <span
+              ><i class="fa-solid fa-magnifying-glass form-control-feedback"></i
+            ></span>
+          </button>
+          <button
+            class="btn btn-primary search-btn ms-2"
+            (click)="resetsearchbar()"
+            type="submit"
+            *ngIf="showreset == true"
+          >
+            <span
+              ><i class="fa-solid fa-rotate-right form-control-feedback"></i
+            ></span>
+          </button>
+        </form>
+      </div>
+    </div>
+    <div class="table-responsive-sm">
+      <table class="table table-bordered table-hover table-striped mb-0">
+        <thead class="table-header">
+          <tr *ngFor="let detail of table_heading">
+            <th>
+              <p class="table-heading">{{ detail.heading0 }}</p>
+            </th>
+            <th>
+              <p class="table-heading">{{ detail.heading1 }}</p>
+            </th>
+            <th>
+              <p class="table-heading">{{ detail.heading2 }}</p>
+            </th>
+            <th>
+              <p class="table-heading">{{ detail.heading3 }}</p>
+            </th>
+            <th>
+              <p class="table-heading">{{ detail.heading4 }}</p>
+            </th>
+            <th>
+              <p class="table-heading">{{ detail.heading5 }}</p>
+            </th>
+            <th>
+              <p class="table-heading">{{ detail.heading6 }}</p>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="
+              let staff of staffTable
+                | paginate
+                  : {
+                      itemsPerPage:
+                        tableSize != 'all' ? tableSize : totalRecords,
+                      currentPage: page,
+                      totalItems: totalRecords
+                    };
+              index as i
+            "
+          >
+            <td>{{ i + 1 }}</td>
+            <td>
+              <p>{{ staff.name }}</p>
+            </td>
+            <td>
+              <p>{{ staff.email }}</p>
+            </td>
+            <td>
+              <p>{{ staff.mobile }}</p>
+            </td>
+            <td>
+              <p>{{ staff.role }}</p>
+            </td>
+            <td>
+              <p
+                [ngClass]="{
+                  'active-status': staff.is_active == 1,
+                  'deactive-status': staff.is_active == 0
+                }"
+              >
+                {{ staff.is_active == 1 ? "Active" : "Deactive" }}
+              </p>
+            </td>
+            <td>
+              <p>
+                <button mat-icon-button [matMenuTriggerFor]="menu">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu">
+                  <button mat-menu-item (click)="OpenEditModal(staff)">
+                    Edit
+                  </button>
+                  <button mat-menu-item (click)="OpenviewModal(staff)">
+                    View Details
+                  </button>
+                  <button
+                    mat-menu-item
+                    *ngIf="staff.is_active == 1"
+                    (click)="Status(staff.id, 0)"
+                  >
+                    Deactivate
+                  </button>
+                  <button
+                    mat-menu-item
+                    *ngIf="staff.is_active == 0"
+                    (click)="Status(staff.id, 1)"
+                  >
+                    Activate
+                  </button>
+                </mat-menu>
+              </p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div
+        class="d-md-flex justify-content-between bottom-0 end-0 py-2 align-items-center"
+      >
+        <span class="showalltext"
+          >Showing
+          {{ tableSize * (page - 1) > 0 ? tableSize * (page - 1) + 1 : 1 }} to
+          {{
+            tableSize * page <= totalRecords ? tableSize * page : totalRecords
+          }}
+          of {{ totalRecords != undefined ? totalRecords : "" }} entries</span
+        >
+        <pagination-controls
+          previousLabel="Prev"
+          nextLabel="Next"
+          [responsive]="true"
+          (pageChange)="onTableDataChange($event)"
+          target="_top"
+        ></pagination-controls>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create Staff Modal -->
+<div
+  *ngIf="staffcreateopen"
+  class="your-animation-class modal-container"
+  aria-labelledby="modal-Staff"
+  role="dialog"
+  aria-modal="true"
+>
+  <div class="modal-content modal-content-50" [@fadeIn]>
+    <div (click)="ClickexamModalconent($event)">
+      <form [formGroup]="staffcreate">
+        <div class="card">
+          <div
+            class="card-header bg-white d-flex justify-content-between align-items-center"
+          >
+            <h5 class="modal-title pt-1">Create Staff</h5>
+            <button
+              class="btn btn-primary main-btn bg-transparent border-0 pb-0 pt-1 text-black"
+              type="button"
+              (click)="closeModal()"
+            >
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+          <div class="modal-content-width card-body mb-0 pb-0">
+            <div class="row">
+              <div class="col-lg-12 col-md-12 mb-3">
+                <div class="files-add text-center">
+                  <div class="d-block border-2 py-3">
+                    <label
+                      for="staff-image"
+                      class="cursor-pointer text-color text-decoration-underline ms-3"
+                    >
+                      <input
+                        type="file"
+                        formControlName="image"
+                        id="staff-image"
+                        class="form-control d-none"
+                        accept="image/jpeg, image/jpg, image/png"
+                        (change)="onSingleFileSelected($event)"
+                        [required]="true"
+                        [ngClass]="{
+                          'is-invalid':
+                            staffcreate.controls['image'].errors &&
+                            (staffcreate.controls['image'].touched ||
+                              staffcreate.controls['image'].dirty)
+                        }"
+                      />
+                      Drag and drop a image here or click
+                    </label>
+                  </div>
+                  <div
+                    class="text-danger"
+                    *ngIf="
+                      staffcreate.controls['image'].errors &&
+                      (staffcreate.controls['image'].touched ||
+                        staffcreate.controls['image'].dirty)
+                    "
+                  >
+                    <p
+                      class="fw-light fs-5 text-end text-danger"
+                      *ngIf="staffcreate.controls['image'].errors['required']"
+                    >
+                      Staff image is required
+                    </p>
+                  </div>
+                  <div
+                    class="image-container position-relative mt-3 d-flex flex-wrap col-lg-5"
+                    *ngIf="selectedImages.length > 0"
+                  >
+                    <div
+                      *ngFor="let image of selectedImages; let i = index"
+                      class="image-box col-lg-12"
+                    >
+                      <img
+                        [src]="image.imageSrc"
+                        class="banner-img"
+                        [alt]="'Selected Image ' + (i + 1)"
+                      />
+                      <p class="image-name text-center text-wrap">
+                        {{ selectedFileNames[i] }}
+                      </p>
+                      <div class="cross-icon">
+                        <span
+                          (click)="removeImage(i)"
+                          class="image-remove cursor"
+                          ><i class="fa-solid fa-xmark"></i
+                        ></span>
+                      </div>
+                    </div>
+                  </div>
+                  <p class="error-message text-danger" *ngIf="fileSizeError">
+                    {{ fileSizeError }}
+                  </p>
+                </div>
+              </div>
+              <div class="col-lg-12 col-md-12 mb-3">
+                <label
+                  class="d-block text-capitalize form-label admin-form-lable"
+                  for="name"
+                  >Name</label
+                >
+                <input
+                  type="text"
+                  class="d-block form-control form-input-custom"
+                  formControlName="name"
+                  [ngClass]="{
+                    'is-invalid':
+                      staffcreate.controls['name'].errors &&
+                      (staffcreate.controls['name'].touched ||
+                        staffcreate.controls['name'].dirty)
+                  }"
+                />
+                <div
+                  class="text-danger error-message"
+                  *ngIf="
+                    staffcreate.controls['name'].errors &&
+                    (staffcreate.controls['name'].touched ||
+                      staffcreate.controls['name'].dirty)
+                  "
+                >
+                  <p
+                    class="fw-light text-danger"
+                    *ngIf="staffcreate.controls['name'].errors['required']"
+                  >
+                    Name is required
+                  </p>
+                </div>
+              </div>
+              <div class="col-lg-12 col-md-12 mb-3">
+                <label
+                  class="d-block text-capitalize form-label admin-form-lable"
+                  for="email"
+                  >Email</label
+                >
+                <input
+                  type="email"
+                  class="d-block form-control form-input-custom"
+                  formControlName="email"
+                  [ngClass]="{
+                    'is-invalid':
+                      staffcreate.controls['email'].errors &&
+                      (staffcreate.controls['email'].touched ||
+                        staffcreate.controls['email'].dirty)
+                  }"
+                />
+                <div
+                  class="text-danger error-message"
+                  *ngIf="
+                    staffcreate.controls['email'].errors &&
+                    (staffcreate.controls['email'].touched ||
+                      staffcreate.controls['email'].dirty)
+                  "
+                >
+                  <p
+                    class="fw-light text-danger"
+                    *ngIf="staffcreate.controls['email'].errors['required']"
+                  >
+                    Email is required
+                  </p>
+                  <p
+                    class="fw-light text-danger"
+                    *ngIf="staffcreate.controls['email'].errors['email']"
+                  >
+                    Invalid email format
+                  </p>
+                </div>
+              </div>
+              <div class="col-lg-12 col-md-12 mb-3">
+                <label
+                  class="d-block text-capitalize form-label admin-form-lable"
+                  for="mobile"
+                  >Mobile No</label
+                >
+                <input
+                  type="text"
+                  class="d-block form-control form-input-custom"
+                  formControlName="mobile"
+                  maxlength="10"
+                  [ngClass]="{
+                    'is-invalid':
+                      staffcreate.controls['mobile'].errors &&
+                      (staffcreate.controls['mobile'].touched ||
+                        staffcreate.controls['mobile'].dirty)
+                  }"
+                />
+                <div
+                  class="text-danger error-message"
+                  *ngIf="
+                    staffcreate.controls['mobile'].errors &&
+                    (staffcreate.controls['mobile'].touched ||
+                      staffcreate.controls['mobile'].dirty)
+                  "
+                >
+                  <p
+                    class="fw-light text-danger"
+                    *ngIf="staffcreate.controls['mobile'].errors['required']"
+                  >
+                    Mobile number is required
+                  </p>
+                  <p
+                    class="fw-light text-danger"
+                    *ngIf="staffcreate.controls['mobile'].errors['pattern']"
+                  >
+                    Invalid mobile number format
+                  </p>
+                </div>
+              </div>
+              <div class="col-lg-12 col-md-12 mb-3">
+                <label
+                  class="d-block text-capitalize form-label admin-form-lable"
+                  for="gender"
+                  >Gender</label
+                >
+                <select
+                  class="d-block form-select form-control form-input-custom"
+                  formControlName="gender"
+                  [ngClass]="{
+                    'is-invalid':
+                      staffcreate.controls['gender'].errors &&
+                      (staffcreate.controls['gender'].touched ||
+                        staffcreate.controls['gender'].dirty)
+                  }"
+                >
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+                <div
+                  class="text-danger error-message"
+                  *ngIf="
+                    staffcreate.controls['gender'].errors &&
+                    (staffcreate.controls['gender'].touched ||
+                      staffcreate.controls['gender'].dirty)
+                  "
+                >
+                  <p
+                    class="fw-light text-danger"
+                    *ngIf="staffcreate.controls['gender'].errors['required']"
+                  >
+                    Gender is required
+                  </p>
+                </div>
+              </div>
+              <div class="col-lg-12 col-md-12 mb-3">
+                <label
+                  class="d-block text-capitalize form-label admin-form-lable"
+                  for="role"
+                  >Role</label
+                >
+                <select
+                  class="d-block form-select form-control form-input-custom"
+                  formControlName="role"
+                  [ngClass]="{
+                    'is-invalid':
+                      staffcreate.controls['role'].errors &&
+                      (staffcreate.controls['role'].touched ||
+                        staffcreate.controls['role'].dirty)
+                  }"
+                >
+                  <option value="Admin">Admin</option>
+                  <option value="Manager">Manager</option>
+                  <option value="Employee">Employee</option>
+                </select>
+                <div
+                  class="text-danger error-message"
+                  *ngIf="
+                    staffcreate.controls['role'].errors &&
+                    (staffcreate.controls['role'].touched ||
+                      staffcreate.controls['role'].dirty)
+                  "
+                >
+                  <p
+                    class="fw-light text-danger"
+                    *ngIf="staffcreate.controls['role'].errors['required']"
+                  >
+                    Role is required
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer text-end me-4 mb-3">
+            <button
+              class="btn btn-secondary main-btnfs px-4 py-2 me-4 text-gray-100"
+              type="button"
+              (click)="closeModal()"
+            >
+              Cancel
+            </button>
+            <button
+              class="btn btn-custom-primary px-4 py-2"
+              type="submit"
+              (click)="Createstaff()"
+            >
+              Create
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Update Staff Modal -->
+<div
+  *ngIf="staffupdateopen"
+  class="your-animation-class modal-container"
+  aria-labelledby="modal-Staff"
+  role="dialog"
+  aria-modal="true"
+>
+  <div class="modal-content modal-content-50" [@fadeIn]>
+    <div (click)="ClickexamModalconent($event)">
+      <form [formGroup]="staffupdate">
+        <div class="card">
+          <div
+            class="card-header bg-white d-flex justify-content-between align-items-center"
+          >
+            <h5 class="modal-title pt-1">Update Staff</h5>
+            <button
+              class="btn btn-primary main-btn bg-transparent border-0 pb-0 pt-1 text-black"
+              type="button"
+              (click)="closeModal()"
+            >
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+          <div class="modal-content-width card-body mb-0 pb-0">
+            <div class="row">
+              <div class="col-lg-12 col-md-12 mb-3">
+                <div class="files-add text-center">
+                  <div class="d-inline-block">
+                    <label
+                      for="staff-image"
+                      class="cursor text-color text-decoration-underline ms-3"
+                    >
+                      <input
+                        type="file"
+                        formControlName="image"
+                        id="staff-image"
+                        class="form-control d-none"
+                        accept="image/jpeg, image/jpg, image/png"
+                        (change)="onSingleFileSelected($event)"
+                        [required]="true"
+                        [ngClass]="{
+                          'is-invalid':
+                            staffupdate.controls['image'].errors &&
+                            (staffupdate.controls['image'].touched ||
+                              staffupdate.controls['image'].dirty)
+                        }"
+                      />
+                      Drag and drop a file here or click
+                    </label>
+                  </div>
+                  <div
+                    class="text-danger"
+                    *ngIf="
+                      staffupdate.controls['image'].errors &&
+                      (staffupdate.controls['image'].touched ||
+                        staffupdate.controls['image'].dirty)
+                    "
+                  >
+                    <p
+                      class="fw-light fs-5 text-end text-danger"
+                      *ngIf="staffupdate.controls['image'].errors['required']"
+                    >
+                      Staff image is required
+                    </p>
+                  </div>
+                  <div
+                    class="image-container position-relative mt-3 d-flex flex-wrap col-lg-5"
+                    *ngIf="selectedImages.length > 0"
+                  >
+                    <div
+                      *ngFor="let image of selectedImages; let i = index"
+                      class="image-box col-lg-12"
+                    >
+                      <img
+                        [src]="image.imageSrc"
+                        class="banner-img"
+                        [alt]="'Selected Image ' + (i + 1)"
+                      />
+                      <p class="image-name text-center text-wrap">
+                        {{ selectedFileNames[i] }}
+                      </p>
+                      <div class="cross-icon">
+                        <span
+                          (click)="removeImage(i)"
+                          class="image-remove cursor"
+                          ><i class="fa-solid fa-xmark"></i
+                        ></span>
+                      </div>
+                    </div>
+                  </div>
+                  <p class="error-message text-danger" *ngIf="fileSizeError">
+                    {{ fileSizeError }}
+                  </p>
+                </div>
+              </div>
+              <div class="col-lg-12 col-md-12 mb-3">
+                <label
+                  class="d-block text-capitalize form-label admin-form-lable"
+                  for="name"
+                  >Name</label
+                >
+                <input
+                  type="text"
+                  class="d-block form-control form-input-custom"
+                  formControlName="name"
+                  [ngClass]="{
+                    'is-invalid':
+                      staffupdate.controls['name'].errors &&
+                      (staffupdate.controls['name'].touched ||
+                        staffupdate.controls['name'].dirty)
+                  }"
+                />
+                <div
+                  class="text-danger error-message"
+                  *ngIf="
+                    staffupdate.controls['name'].errors &&
+                    (staffupdate.controls['name'].touched ||
+                      staffupdate.controls['name'].dirty)
+                  "
+                >
+                  <p
+                    class="fw-light text-danger"
+                    *ngIf="staffupdate.controls['name'].errors['required']"
+                  >
+                    Name is required
+                  </p>
+                </div>
+              </div>
+              <div class="col-lg-12 col-md-12 mb-3">
+                <label
+                  class="d-block text-capitalize form-label admin-form-lable"
+                  for="email"
+                  >Email</label
+                >
+                <input
+                  type="email"
+                  class="d-block form-control form-input-custom"
+                  formControlName="email"
+                  [ngClass]="{
+                    'is-invalid':
+                      staffupdate.controls['email'].errors &&
+                      (staffupdate.controls['email'].touched ||
+                        staffupdate.controls['email'].dirty)
+                  }"
+                />
+                <div
+                  class="text-danger error-message"
+                  *ngIf="
+                    staffupdate.controls['email'].errors &&
+                    (staffupdate.controls['email'].touched ||
+                      staffupdate.controls['email'].dirty)
+                  "
+                >
+                  <p
+                    class="fw-light text-danger"
+                    *ngIf="staffupdate.controls['email'].errors['required']"
+                  >
+                    Email is required
+                  </p>
+                  <p
+                    class="fw-light text-danger"
+                    *ngIf="staffupdate.controls['email'].errors['email']"
+                  >
+                    Invalid email format
+                  </p>
+                </div>
+              </div>
+              <div class="col-lg-12 col-md-12 mb-3">
+                <label
+                  class="d-block text-capitalize form-label admin-form-lable"
+                  for="mobile"
+                  >Mobile No</label
+                >
+                <input
+                  type="text"
+                  class="d-block form-control form-input-custom"
+                  formControlName="mobile"
+                  [ngClass]="{
+                    'is-invalid':
+                      staffupdate.controls['mobile'].errors &&
+                      (staffupdate.controls['mobile'].touched ||
+                        staffupdate.controls['mobile'].dirty)
+                  }"
+                />
+                <div
+                  class="text-danger error-message"
+                  *ngIf="
+                    staffupdate.controls['mobile'].errors &&
+                    (staffupdate.controls['mobile'].touched ||
+                      staffupdate.controls['mobile'].dirty)
+                  "
+                >
+                  <p
+                    class="fw-light text-danger"
+                    *ngIf="staffupdate.controls['mobile'].errors['required']"
+                  >
+                    Mobile number is required
+                  </p>
+                  <p
+                    class="fw-light text-danger"
+                    *ngIf="staffupdate.controls['mobile'].errors['pattern']"
+                  >
+                    Invalid mobile number format
+                  </p>
+                </div>
+              </div>
+              <div class="col-lg-12 col-md-12 mb-3">
+                <label
+                  class="d-block text-capitalize form-label admin-form-lable"
+                  for="gender"
+                  >Gender</label
+                >
+                <select
+                  class="d-block form-select form-control form-input-custom"
+                  formControlName="gender"
+                  [ngClass]="{
+                    'is-invalid':
+                      staffupdate.controls['gender'].errors &&
+                      (staffupdate.controls['gender'].touched ||
+                        staffupdate.controls['gender'].dirty)
+                  }"
+                >
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+                <div
+                  class="text-danger error-message"
+                  *ngIf="
+                    staffupdate.controls['gender'].errors &&
+                    (staffupdate.controls['gender'].touched ||
+                      staffupdate.controls['gender'].dirty)
+                  "
+                >
+                  <p
+                    class="fw-light text-danger"
+                    *ngIf="staffupdate.controls['gender'].errors['required']"
+                  >
+                    Gender is required
+                  </p>
+                </div>
+              </div>
+              <div class="col-lg-12 col-md-12 mb-3">
+                <label
+                  class="d-block text-capitalize form-label admin-form-lable"
+                  for="role"
+                  >Role</label
+                >
+                <select
+                  class="d-block form-select form-control form-input-custom"
+                  formControlName="role"
+                  [ngClass]="{
+                    'is-invalid':
+                      staffupdate.controls['role'].errors &&
+                      (staffupdate.controls['role'].touched ||
+                        staffupdate.controls['role'].dirty)
+                  }"
+                >
+                  <option value="Admin">Admin</option>
+                  <option value="Manager">Manager</option>
+                  <option value="Employee">Employee</option>
+                </select>
+                <div
+                  class="text-danger error-message"
+                  *ngIf="
+                    staffupdate.controls['role'].errors &&
+                    (staffupdate.controls['role'].touched ||
+                      staffupdate.controls['role'].dirty)
+                  "
+                >
+                  <p
+                    class="fw-light text-danger"
+                    *ngIf="staffupdate.controls['role'].errors['required']"
+                  >
+                    Role is required
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer text-end me-4 mb-3">
+            <button
+              class="btn btn-secondary main-btnfs px-4 py-2 me-4 text-gray-100"
+              type="button"
+              (click)="closeModal()"
+            >
+              Cancel
+            </button>
+            <button
+              class="btn btn-custom-primary px-4 py-2"
+              type="submit"
+              (click)="Updatestaff()"
+            >
+              Update
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- View Staff Modal -->
+<div
+  *ngIf="staffviewopen"
+  class="your-animation-class modal-container"
+  aria-labelledby="modal-Staff"
+  role="dialog"
+  aria-modal="true"
+>
+  <div class="modal-content modal-content-50" [@fadeIn]>
+    <div (click)="ClickexamModalconent($event)">
+      <form [formGroup]="staffview">
+        <div class="card">
+          <div
+            class="card-header bg-white d-flex justify-content-between align-items-center"
+          >
+            <h5 class="modal-title pt-1">View Staff</h5>
+            <button
+              class="btn btn-primary main-btn bg-transparent border-0 pb-0 pt-1 text-black"
+              type="button"
+              (click)="closeModal()"
+            >
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+          <div class="modal-content-width card-body mb-0 pb-0">
+            <div class="row">
+              <div class="col-lg-12 col-md-12 mb-3">
+                <div class="files-add text-center">
+                  <div class="d-inline-block">
+                    <label
+                      for="staff-image"
+                      class="cursor text-color text-decoration-underline ms-3"
+                    >
+                      <input
+                        type="file"
+                        formControlName="image"
+                        id="staff-image"
+                        class="form-control d-none"
+                        accept="image/jpeg, image/jpg, image/png"
+                        [readOnly]="true"
+                      />
+                    </label>
+                  </div>
+                  <div
+                    class="image-container position-relative mt-3 d-flex flex-wrap col-lg-5"
+                    *ngIf="selectedImages.length > 0"
+                  >
+                    <div
+                      *ngFor="let image of selectedImages; let i = index"
+                      class="image-box col-lg-12"
+                    >
+                      <img
+                        [src]="image.imageSrc"
+                        class="banner-img"
+                        [alt]="'Selected Image ' + (i + 1)"
+                      />
+                      <p class="image-name text-center text-wrap">
+                        {{ selectedFileNames[i] }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-12 col-md-12 mb-3">
+                <label
+                  class="d-block text-capitalize form-label admin-form-lable"
+                  for="name"
+                  >Name</label
+                >
+                <input
+                  type="text"
+                  class="d-block form-control form-input-custom"
+                  formControlName="name"
+                  [readOnly]="true"
+                />
+              </div>
+              <div class="col-lg-12 col-md-12 mb-3">
+                <label
+                  class="d-block text-capitalize form-label admin-form-lable"
+                  for="email"
+                  >Email</label
+                >
+                <input
+                  type="email"
+                  class="d-block form-control form-input-custom"
+                  formControlName="email"
+                  [readOnly]="true"
+                />
+              </div>
+              <div class="col-lg-12 col-md-12 mb-3">
+                <label
+                  class="d-block text-capitalize form-label admin-form-lable"
+                  for="mobile"
+                  >Mobile No</label
+                >
+                <input
+                  type="text"
+                  class="d-block form-control form-input-custom"
+                  formControlName="mobile"
+                  [readOnly]="true"
+                />
+              </div>
+              <div class="col-lg-12 col-md-12 mb-3">
+                <label
+                  class="d-block text-capitalize form-label admin-form-lable"
+                  for="gender"
+                  >Gender</label
+                >
+                <input
+                  type="text"
+                  class="d-block form-control form-input-custom"
+                  formControlName="gender"
+                  [readOnly]="true"
+                />
+              </div>
+              <div class="col-lg-12 col-md-12 mb-3">
+                <label
+                  class="d-block text-capitalize form-label admin-form-lable"
+                  for="role"
+                  >Role</label
+                >
+                <input
+                  type="text"
+                  class="d-block form-control form-input-custom"
+                  formControlName="role"
+                  [readOnly]="true"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer text-end mb-4 me-4">
+            <button
+              class="btn btn-secondary main-btnfs px-4 py-2 text-gray-100"
+              type="button"
+              (click)="closeModal()"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div
+  *ngIf="openSecondsuccess"
+  class="your-animation-class modal-container-success"
+  [@slideIn]
+  aria-labelledby="modal-title"
+  role="dialog"
+  aria-modal="true"
+>
+  <div>
+    <div
+      class="p-4 d-flex justify-content-between align-items-center success-content"
+    >
+      <span class="icon-success me-2"><i class="fa-solid fa-check"></i></span>
+      <p class="text-green-900 text-capitalize mb-0">
+        {{ successName }} successfully
+      </p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,552 @@
+<div
+  class="report-header print-hide w-3/4 mx-auto"
+  style="
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  "
+>
+  <h1 style="font-size: 20px; font-weight: bold; margin: 0">
+    Laboratory Report
+  </h1>
+  <button
+    class="download-btn"
+    (click)="downloadReportAsPDF()"
+    style="
+      background-color: #4caf50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    "
+  >
+    Download Report
+  </button>
+  <!-- <button
+    class="btn btn-primary main-btnfs px-4 py-2 download-btn"
+    [useExistingCss]="true"
+    printTitle="Print Report"
+    [openNewTab]="true"
+    printSectionId="print-section"
+    ngxPrint
+  >
+    <i class="fas fa-download"></i> Download Report
+  </button> -->
+</div>
+<div class="w-3/4 mx-auto">
+  <table
+    id="reportTable"
+    style="
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid #000;
+      font-size: 14px;
+    "
+  >
+    <!-- Header Section -->
+    <thead>
+      <tr>
+        <th colspan="2" style="border: 1px solid #000; padding: 10px">
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+            "
+          >
+            <!-- Logo Placeholder -->
+            <div
+              style="
+                width: 64px;
+                height: 64px;
+                background-color: #e5e7eb;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              "
+            >
+              <span style="color: #6b7280">Logo</span>
+            </div>
+            <div style="text-align: center">
+              <h1
+                style="
+                  font-size: 18px;
+                  font-weight: bold;
+                  text-transform: uppercase;
+                  margin: 0;
+                "
+              >
+                Laboratory Quality System Format - Manglam Consultancy Services,
+                Udaipur
+              </h1>
+              <h2
+                style="
+                  font-size: 16px;
+                  font-weight: bold;
+                  text-transform: uppercase;
+                  margin: 5px 0;
+                "
+              >
+                FMT-OBS-003
+              </h2>
+              <h3
+                style="
+                  font-size: 16px;
+                  font-weight: bold;
+                  text-transform: uppercase;
+                  margin: 0;
+                "
+              >
+                Results of Test on Reinforcement Bars
+              </h3>
+            </div>
+            <div style="width: 64px; height: 64px"></div>
+            <!-- Spacer for alignment -->
+          </div>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- First Section: General Details -->
+      <tr>
+        <td
+          style="
+            border: 1px solid #000;
+            padding: 8px;
+            vertical-align: top;
+            width: 50%;
+          "
+        >
+          <p style="font-weight: bold; margin: 0">1. Sample ID No.</p>
+        </td>
+        <td style="border: 1px solid #000; padding: 8px">
+          {{ reportData.sampleId }}
+        </td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #000; padding: 8px; vertical-align: top">
+          <p style="font-weight: bold; margin: 0">2. Job No.</p>
+        </td>
+        <td style="border: 1px solid #000; padding: 8px">
+          {{ reportData.jobNo }}
+        </td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #000; padding: 8px; vertical-align: top">
+          <p style="font-weight: bold; margin: 0">3. Brand</p>
+        </td>
+        <td style="border: 1px solid #000; padding: 8px">
+          {{ reportData.brand }}
+        </td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #000; padding: 8px; vertical-align: top">
+          <p style="font-weight: bold; margin: 0">4. Type of Steel & Grade</p>
+        </td>
+        <td style="border: 1px solid #000; padding: 8px">
+          {{ reportData.steelType }}
+        </td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #000; padding: 8px; vertical-align: top">
+          <p style="font-weight: bold; margin: 0">
+            5. Date of receipt of sample
+          </p>
+        </td>
+        <td style="border: 1px solid #000; padding: 8px">
+          {{ reportData.receiptDate }}
+        </td>
+      </tr>
+      <!-- Test Details Section -->
+      <tr>
+        <td
+          colspan="2"
+          style="
+            border: 1px solid #000;
+            padding: 8px;
+            font-weight: bold;
+            text-align: center;
+          "
+        >
+          (A) As Per IS: 1786-2008 IS: 1599-2019 IS: 1608-2022 P-1)
+        </td>
+      </tr>
+      <tr>
+        <td
+          colspan="2"
+          style="
+            border: 1px solid #000;
+            padding: 8px;
+            font-weight: bold;
+            text-align: center;
+          "
+        >
+          Determination of Mass Per Meter, Tensile strength, Ultimate Tensile
+          strength Yield stress/proof stress and Elongation Percent
+        </td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #000; padding: 8px; vertical-align: top">
+          <p style="font-weight: bold; margin: 0">1. Diameter in mm</p>
+        </td>
+        <td style="border: 1px solid #000; padding: 8px">
+          {{ reportData.testDetails.diameter }}
+        </td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #000; padding: 8px; vertical-align: top">
+          <p style="font-weight: bold; margin: 0">2. Weight of Bar W (kg)</p>
+        </td>
+        <td style="border: 1px solid #000; padding: 8px">
+          {{ reportData.testDetails.weight }}
+        </td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #000; padding: 8px; vertical-align: top">
+          <p style="font-weight: bold; margin: 0">3. Length of Bar L (m)</p>
+        </td>
+        <td style="border: 1px solid #000; padding: 8px">
+          {{ reportData.testDetails.length }}
+        </td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #000; padding: 8px; vertical-align: top">
+          <p style="font-weight: bold; margin: 0">4. Mass Per Meter (kg/m)</p>
+        </td>
+        <td style="border: 1px solid #000; padding: 8px">
+          {{ reportData.testDetails.massPerMeter }}
+        </td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #000; padding: 8px; vertical-align: top">
+          <p style="font-weight: bold; margin: 0">
+            5. Cross-sectional area = W mm²
+          </p>
+        </td>
+        <td style="border: 1px solid #000; padding: 8px">
+          {{ reportData.testDetails.crossSectionalArea }}
+        </td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #000; padding: 8px; vertical-align: top">
+          <p style="font-weight: bold; margin: 0">
+            6. Initial gauge length 5.65A mm
+          </p>
+        </td>
+        <td style="border: 1px solid #000; padding: 8px">
+          {{ reportData.testDetails.initialGaugeLength }}
+        </td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #000; padding: 8px; vertical-align: top">
+          <p style="font-weight: bold; margin: 0">
+            7. Dial reading of yield point(load:1)
+          </p>
+        </td>
+        <td style="border: 1px solid #000; padding: 8px">
+          {{ reportData.testDetails.yieldPoint }}
+        </td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #000; padding: 8px; vertical-align: top">
+          <p style="font-weight: bold; margin: 0">
+            8. Dial reading of ultimate tensile load(1)
+          </p>
+        </td>
+        <td style="border: 1px solid #000; padding: 8px">
+          {{ reportData.testDetails.ultimateTensileLoad }}
+        </td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #000; padding: 8px; vertical-align: top">
+          <p style="font-weight: bold; margin: 0">
+            9. Yield stress = load/area(N/mm²)/true load
+          </p>
+        </td>
+        <td style="border: 1px solid #000; padding: 8px">
+          {{ reportData.testDetails.yieldStress }}
+        </td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #000; padding: 8px; vertical-align: top">
+          <p style="font-weight: bold; margin: 0">
+            10. Ultimate tensile strength = (N/mm²)/load-area
+          </p>
+        </td>
+        <td style="border: 1px solid #000; padding: 8px">
+          {{ reportData.testDetails.ultimateTensileStrength }}
+        </td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #000; padding: 8px; vertical-align: top">
+          <p style="font-weight: bold; margin: 0">
+            11. Original gauge length = f(mm)
+          </p>
+        </td>
+        <td style="border: 1px solid #000; padding: 8px">
+          {{ reportData.testDetails.originalGaugeLength }}
+        </td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #000; padding: 8px; vertical-align: top">
+          <p style="font-weight: bold; margin: 0">
+            12. % age of elongation = f(f-f0),x100/f0
+          </p>
+        </td>
+        <td style="border: 1px solid #000; padding: 8px">
+          {{ reportData.testDetails.elongationPercentage }}
+        </td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #000; padding: 8px; vertical-align: top">
+          <p style="font-weight: bold; margin: 0">13. Bend Test</p>
+        </td>
+        <td style="border: 1px solid #000; padding: 8px">
+          {{ reportData.testDetails.bendTest }}
+        </td>
+      </tr>
+      <!-- Footer Section -->
+      <tr>
+        <td colspan="2" style="border: 1px solid #000; padding: 8px">
+          <p style="margin: 5px 0">
+            <strong>Tested By:</strong> {{ reportData.testedBy }}
+          </p>
+          <p style="margin: 5px 0">
+            <strong>Checked By:</strong> {{ reportData.checkedBy }}
+          </p>
+          <p style="margin: 5px 0">
+            <strong>Witness By:</strong> {{ reportData.witnessBy }}
+          </p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div
+  id="lawReportTable"
+  style="font-family: Arial, sans-serif; margin: 20px; background: #f0f0f0"
+>
+  <div
+    style="
+      width: 100%;
+      background: #1e3a8a;
+      color: white;
+      padding: 5px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    "
+  >
+    <div
+      style="
+        width: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      "
+    >
+      <img
+        src="assets/logoLaw.png"
+        alt="Logo"
+        style="width: 100%; height: 100%; object-fit: cover"
+      />
+    </div>
+
+    <div
+      style="
+        font-size: 20px;
+        font-weight: bold;
+        text-align: center;
+        flex-grow: 1;
+      "
+    >
+      <p style="margin-bottom: 0; font-size: 14px; line-height: 16px">ॐ</p>
+      <p style="font-size: 24px; width: 220px; margin: auto; line-height: 26px">
+        AKSH LEXIS LLP
+      </p>
+      <p style="font-size: 16px">ADVOCATES & ASSOCIATES</p>
+    </div>
+
+    <div style="text-align: right; font-weight: 600; font-size: 14px">
+      Ashok Kumar Vyas<br />
+      Dr. Shalini Vyas <br />Advocates
+    </div>
+  </div>
+
+  <table style="width: 100%; border-collapse: collapse; background: #fff">
+    <thead>
+      <tr>
+        <th
+          style="
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            background: #f2f2f2;
+            font-weight: bold;
+          "
+        >
+          Sr. No.
+        </th>
+        <th
+          style="
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            background: #f2f2f2;
+            font-weight: bold;
+          "
+        >
+          Case No.
+        </th>
+        <th
+          style="
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            background: #f2f2f2;
+            font-weight: bold;
+          "
+        >
+          Case Type
+        </th>
+        <th
+          style="
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            background: #f2f2f2;
+            font-weight: bold;
+          "
+        >
+          Case Name
+        </th>
+        <th
+          style="
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            background: #f2f2f2;
+            font-weight: bold;
+          "
+        >
+          Client Name
+        </th>
+        <th
+          style="
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            background: #f2f2f2;
+            font-weight: bold;
+          "
+        >
+          Client Mobile
+        </th>
+        <th
+          style="
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            background: #f2f2f2;
+            font-weight: bold;
+          "
+        >
+          CNR No.
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="border: 1px solid #ddd; padding: 8px; text-align: left">
+          1
+        </td>
+        <td style="border: 1px solid #ddd; padding: 8px; text-align: left">
+          CS/001/2025
+        </td>
+        <td style="border: 1px solid #ddd; padding: 8px; text-align: left">
+          Civil
+        </td>
+        <td style="border: 1px solid #ddd; padding: 8px; text-align: left">
+          Property Dispute
+        </td>
+        <td style="border: 1px solid #ddd; padding: 8px; text-align: left">
+          John Doe
+        </td>
+        <td style="border: 1px solid #ddd; padding: 8px; text-align: left">
+          987-654-3210
+        </td>
+        <td style="border: 1px solid #ddd; padding: 8px; text-align: left">
+          CNR123456
+        </td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #ddd; padding: 8px; text-align: left">
+          2
+        </td>
+        <td style="border: 1px solid #ddd; padding: 8px; text-align: left">
+          CS/002/2025
+        </td>
+        <td style="border: 1px solid #ddd; padding: 8px; text-align: left">
+          Criminal
+        </td>
+        <td style="border: 1px solid #ddd; padding: 8px; text-align: left">
+          Theft Case
+        </td>
+        <td style="border: 1px solid #ddd; padding: 8px; text-align: left">
+          Jane Smith
+        </td>
+        <td style="border: 1px solid #ddd; padding: 8px; text-align: left">
+          876-543-2109
+        </td>
+        <td style="border: 1px solid #ddd; padding: 8px; text-align: left">
+          CNR789012
+        </td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #ddd; padding: 8px; text-align: left">
+          3
+        </td>
+        <td style="border: 1px solid #ddd; padding: 8px; text-align: left">
+          CS/003/2025
+        </td>
+        <td style="border: 1px solid #ddd; padding: 8px; text-align: left">
+          Family
+        </td>
+        <td style="border: 1px solid #ddd; padding: 8px; text-align: left">
+          Divorce Case
+        </td>
+        <td style="border: 1px solid #ddd; padding: 8px; text-align: left">
+          Alice Johnson
+        </td>
+        <td style="border: 1px solid #ddd; padding: 8px; text-align: left">
+          765-432-1098
+        </td>
+        <td style="border: 1px solid #ddd; padding: 8px; text-align: left">
+          CNR345678
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div
+    style="
+      width: 100%;
+      background: #1e3a8a;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 15px;
+      font-size: 12px;
+    "
+  >
+    Rajasthan High Court <br />
+    Office: A-88, Sadul Ganj, Bikaner (Raj.)
+  </div>
+</div>

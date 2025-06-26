@@ -1,0 +1,48 @@
+@media screen and (max-width: 600px) {
+
+    table,
+    tr,
+    td,
+    th {
+        display: block;
+        width: 100%;
+    }
+
+    td,
+    th {
+        box-sizing: border-box;
+        padding: 8px !important;
+    }
+
+    tr {
+        margin-bottom: 10px;
+    }
+
+    td:nth-child(2) {
+        background-color: #f9f9f9;
+    }
+
+    .report-header {
+        display: block !important;
+        text-align: center;
+    }
+
+    .report-header h1 {
+        margin-bottom: 10px;
+    }
+}
+
+@media print {
+    table {
+        page-break-inside: auto;
+    }
+
+    tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+    }
+
+    .print-hide {
+        display: none !important;
+    }
+}

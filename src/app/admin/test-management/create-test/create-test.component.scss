@@ -1,0 +1,156 @@
+.step-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+
+    .step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        &.active {
+            .step-number {
+                background-color: #007bff;
+                color: white;
+            }
+        }
+
+        &.completed {
+            .step-number {
+                background-color: #28a745;
+                color: white;
+            }
+        }
+    }
+
+    .step-number {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background-color: #e0e0e0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 5px;
+    }
+
+    .step-label {
+        font-size: 14px;
+    }
+
+    .step-connector {
+        width: 50px;
+        height: 2px;
+        background-color: #e0e0e0;
+        margin: 0 10px;
+    }
+}
+
+.form-input-custom {
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.admin-form-lable {
+    font-weight: 500;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.text-danger {
+    font-size: 12px;
+}
+
+.table-heading-detail {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.btn-custom-primary {
+    background-color: #007bff;
+    color: white;
+
+    &:hover {
+        background-color: #0056b3;
+    }
+}
+
+.modal-container-success {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    border-radius: 5px;
+    z-index: 1000;
+}
+
+.success-content {
+    color: #155724;
+}
+
+.icon-success {
+    font-size: 20px;
+    color: #28a745;
+}
+
+// Fix for ng-select dropdown not showing full height
+.table-responsive {
+    // Ensure the table-responsive doesn't clip the dropdown
+    position: relative;
+    overflow: visible !important;
+
+    // Ensure the table cell containing the ng-select has proper positioning
+    td {
+        position: relative;
+    }
+}
+
+ng-select {
+
+    // Ensure the ng-select container doesn't restrict the dropdown
+    &.form-input-custom {
+        min-height: 38px; // Match the height of other inputs for consistency
+    }
+
+    // Style the dropdown panel
+    .ng-dropdown-panel {
+        z-index: 1050 !important; // Ensure the dropdown appears above other elements
+        max-height: 200px !important; // Set a reasonable max height for the dropdown
+        overflow-y: auto !important; // Allow scrolling if there are many options
+        width: 100%; // Ensure the dropdown width matches the input
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+        // Ensure the dropdown items are fully visible
+        .ng-option {
+            padding: 8px 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+
+    // Ensure the input inside ng-select doesn't restrict height
+    .ng-select-container {
+        min-height: 38px;
+        align-items: center;
+    }
+}
+
+::ng-deep .ng-dropdown-panel {
+    z-index: 1050 !important;
+}
+
+.table-responsive {
+    overflow: visible !important;
+}
+
+ng-select {
+    position: relative;
+    z-index: 10;
+    padding: 4px !important;
+
+}

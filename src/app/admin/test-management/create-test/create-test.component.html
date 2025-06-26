@@ -1,0 +1,1029 @@
+<div class="container mb-4">
+  <h1 class="text-primary table-heading-detail">Create Test</h1>
+
+  <!-- Step Indicator -->
+  <div class="step-indicator mb-4">
+    <div
+      class="step"
+      [ngClass]="{ active: currentStep === 1, completed: currentStep > 1 }"
+    >
+      <span class="step-number">1</span>
+      <span class="step-label">Test Information</span>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step" [ngClass]="{ active: currentStep === 2 }">
+      <span class="step-number">2</span>
+      <span class="step-label">Test Details</span>
+    </div>
+  </div>
+
+  <!-- Step 1: Test Information -->
+  <div *ngIf="currentStep === 1" class="card border-0 p-4">
+    <form [formGroup]="step1Form">
+      <div class="row">
+        <!-- Test Request No. -->
+        <!-- <div class="col-lg-6 col-md-12 mb-3">
+          <label
+            class="d-block text-capitalize form-label admin-form-lable"
+            for="test_request_no"
+          >
+            Test Request No.
+            <span class="text-muted">(For Office use only)</span>
+          </label>
+          <input
+            type="text"
+            class="d-block form-control form-input-custom"
+            formControlName="test_request_no"
+            [ngClass]="{
+              'is-invalid':
+                step1Form.get('test_request_no')?.invalid &&
+                (step1Form.get('test_request_no')?.touched ||
+                  step1Form.get('test_request_no')?.dirty)
+            }"
+          />
+        </div>
+
+    
+        <div class="col-lg-6 col-md-12 mb-3">
+          <label
+            class="d-block text-capitalize form-label admin-form-lable"
+            for="date"
+            >Date</label
+          >
+          <input
+            type="date"
+            class="d-block form-control form-input-custom"
+            formControlName="date"
+            [ngClass]="{
+              'is-invalid':
+                step1Form.get('date')?.invalid &&
+                (step1Form.get('date')?.touched || step1Form.get('date')?.dirty)
+            }"
+          />
+          <div
+            class="text-danger error-message"
+            *ngIf="
+              step1Form.get('date')?.invalid &&
+              (step1Form.get('date')?.touched || step1Form.get('date')?.dirty)
+            "
+          >
+            <p
+              class="fw-light text-danger"
+              *ngIf="step1Form.get('date')?.hasError('required')"
+            >
+              Date is required
+            </p>
+          </div>
+        </div> -->
+
+        <!-- Name of Customer -->
+        <div class="col-lg-6 col-md-12 mb-3">
+          <label
+            class="d-block text-capitalize form-label admin-form-lable"
+            for="name_of_customer"
+            >Name of Customer</label
+          >
+          <input
+            type="text"
+            class="d-block form-control form-input-custom"
+            formControlName="name_of_customer"
+            placeholder="Enter customer name"
+            [ngClass]="{
+              'is-invalid':
+                step1Form.get('name_of_customer')?.invalid &&
+                (step1Form.get('name_of_customer')?.touched ||
+                  step1Form.get('name_of_customer')?.dirty)
+            }"
+          />
+          <div
+            class="text-danger error-message"
+            *ngIf="
+              step1Form.get('name_of_customer')?.invalid &&
+              (step1Form.get('name_of_customer')?.touched ||
+                step1Form.get('name_of_customer')?.dirty)
+            "
+          >
+            <p
+              class="fw-light text-danger"
+              *ngIf="step1Form.get('name_of_customer')?.hasError('required')"
+            >
+              Name of Customer is required
+            </p>
+          </div>
+        </div>
+
+        <!-- Mobile No. -->
+        <div class="col-lg-6 col-md-12 mb-3">
+          <label
+            class="d-block text-capitalize form-label admin-form-lable"
+            for="mobile_no"
+            >Mobile No.</label
+          >
+          <input
+            type="text"
+            class="d-block form-control form-input-custom"
+            formControlName="mobile_no"
+            maxlength="10"
+            placeholder="Enter 10-digit mobile number"
+            [ngClass]="{
+              'is-invalid':
+                step1Form.get('mobile_no')?.invalid &&
+                (step1Form.get('mobile_no')?.touched ||
+                  step1Form.get('mobile_no')?.dirty)
+            }"
+          />
+          <div
+            class="text-danger error-message"
+            *ngIf="
+              step1Form.get('mobile_no')?.invalid &&
+              (step1Form.get('mobile_no')?.touched ||
+                step1Form.get('mobile_no')?.dirty)
+            "
+          >
+            <p
+              class="fw-light text-danger"
+              *ngIf="step1Form.get('mobile_no')?.hasError('required')"
+            >
+              Mobile No. is required
+            </p>
+            <p
+              class="fw-light text-danger"
+              *ngIf="step1Form.get('mobile_no')?.hasError('pattern')"
+            >
+              Please enter a valid 10-digit mobile number
+            </p>
+          </div>
+        </div>
+
+        <!-- Address -->
+        <div class="col-lg-12 col-md-12 mb-3">
+          <label
+            class="d-block text-capitalize form-label admin-form-lable"
+            for="address"
+            >Address</label
+          >
+          <textarea
+            class="d-block form-control form-input-custom"
+            formControlName="address"
+            rows="3"
+            [ngClass]="{
+              'is-invalid':
+                step1Form.get('address')?.invalid &&
+                (step1Form.get('address')?.touched ||
+                  step1Form.get('address')?.dirty)
+            }"
+          ></textarea>
+          <div
+            class="text-danger error-message"
+            *ngIf="
+              step1Form.get('address')?.invalid &&
+              (step1Form.get('address')?.touched ||
+                step1Form.get('address')?.dirty)
+            "
+          >
+            <p
+              class="fw-light text-danger"
+              *ngIf="step1Form.get('address')?.hasError('required')"
+            >
+              Address is required
+            </p>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="col-lg-6 col-md-12 mb-3">
+          <label
+            class="d-block text-capitalize form-label admin-form-lable"
+            for="email"
+            >Email</label
+          >
+          <input
+            type="email"
+            class="d-block form-control form-input-custom"
+            formControlName="email"
+            placeholder="Enter email address"
+            [ngClass]="{
+              'is-invalid':
+                step1Form.get('email')?.invalid &&
+                (step1Form.get('email')?.touched ||
+                  step1Form.get('email')?.dirty)
+            }"
+          />
+          <div
+            class="text-danger error-message"
+            *ngIf="
+              step1Form.get('email')?.invalid &&
+              (step1Form.get('email')?.touched || step1Form.get('email')?.dirty)
+            "
+          >
+            <p
+              class="fw-light text-danger"
+              *ngIf="step1Form.get('email')?.hasError('required')"
+            >
+              Email is required
+            </p>
+            <p
+              class="fw-light text-danger"
+              *ngIf="step1Form.get('email')?.hasError('email')"
+            >
+              Please enter a valid email address
+            </p>
+          </div>
+        </div>
+
+        <!-- Name of Work/Project -->
+        <div class="col-lg-6 col-md-12 mb-3">
+          <label
+            class="d-block text-capitalize form-label admin-form-lable"
+            for="name_of_work_project"
+            >Name of Work/Project</label
+          >
+          <input
+            type="text"
+            class="d-block form-control form-input-custom"
+            formControlName="name_of_work_project"
+            placeholder="Enter work/project name"
+            [ngClass]="{
+              'is-invalid':
+                step1Form.get('name_of_work_project')?.invalid &&
+                (step1Form.get('name_of_work_project')?.touched ||
+                  step1Form.get('name_of_work_project')?.dirty)
+            }"
+          />
+          <div
+            class="text-danger error-message"
+            *ngIf="
+              step1Form.get('name_of_work_project')?.invalid &&
+              (step1Form.get('name_of_work_project')?.touched ||
+                step1Form.get('name_of_work_project')?.dirty)
+            "
+          >
+            <p
+              class="fw-light text-danger"
+              *ngIf="
+                step1Form.get('name_of_work_project')?.hasError('required')
+              "
+            >
+              Name of Work/Project is required
+            </p>
+          </div>
+        </div>
+
+        <!-- Expected Date of Delivery -->
+        <div class="col-lg-6 col-md-12 mb-3">
+          <label
+            class="d-block text-capitalize form-label admin-form-lable"
+            for="expected_date_of_delivery"
+            >Expected Date of Delivery</label
+          >
+          <input
+            type="date"
+            class="d-block form-control form-input-custom"
+            formFormControlName="expected_date_of_delivery"
+            [min]="today"
+            [ngClass]="{
+              'is-invalid':
+                step1Form.get('expected_date_of_delivery')?.invalid &&
+                (step1Form.get('expected_date_of_delivery')?.touched ||
+                  step1Form.get('expected_date_of_delivery')?.dirty)
+            }"
+          />
+          <div
+            class="text-danger error-message"
+            *ngIf="
+              step1Form.get('expected_date_of_delivery')?.invalid &&
+              (step1Form.get('expected_date_of_delivery')?.touched ||
+                step1Form.get('expected_date_of_delivery')?.dirty)
+            "
+          >
+            <p
+              class="fw-light text-danger"
+              *ngIf="
+                step1Form.get('expected_date_of_delivery')?.hasError('required')
+              "
+            >
+              Expected Date of Delivery is required
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tests to be Performed -->
+      <p class="text-primary mt-4 text-xl font-semibold">
+        Tests to be Performed
+      </p>
+      <!-- Material Based Test Table -->
+      <div class="table-responsive mb-5">
+        <p class="text-primary mt-4 text-xl font-semibold">
+          Material Based Tests
+        </p>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Sr. No.</th>
+              <th>Material</th>
+              <th>Test Name</th>
+              <th>Sample ID</th>
+              <th>Remark</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody formArrayName="materialTests">
+            <tr
+              *ngFor="let test of materialTests.controls; let i = index"
+              [formGroupName]="i"
+            >
+              <td>{{ i + 1 }}</td>
+              <td>
+                <select
+                  class="form-select form-control form-input-custom"
+                  formControlName="material"
+                  (change)="onTestMaterialChange(i)"
+                >
+                  <option value="" disabled>Select Material</option>
+                  <option
+                    *ngFor="let material of materials"
+                    [value]="material.value"
+                  >
+                    {{ material.label }}
+                  </option>
+                </select>
+              </td>
+              <td>
+                <ng-select
+                  [items]="filteredTestDescriptions[i]"
+                  bindLabel="label"
+                  bindValue="value"
+                  [multiple]="true"
+                  placeholder="Select Test Description(s)"
+                  formControlName="test_description"
+                  class="form-control form-input-custom z-10"
+                >
+                </ng-select>
+              </td>
+              <td>
+                <input
+                  type="text"
+                  class="form-control form-input-custom"
+                  formControlName="sample_id"
+                />
+              </td>
+              <td>
+                <input
+                  type="text"
+                  class="form-control form-input-custom"
+                  formControlName="remark"
+                />
+              </td>
+              <td>
+                <button
+                  type="button"
+                  class="btn btn-danger btn-sm"
+                  (click)="removeTest(i, 'material')"
+                  [disabled]="materialTests.controls.length <= 1"
+                >
+                  Remove
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <button
+          type="button"
+          class="btn btn-primary mt-3"
+          (click)="addTest('material')"
+        >
+          Add Material Test
+        </button>
+      </div>
+
+      <!-- Field Based Test Table -->
+      <div class="table-responsive mb-5">
+        <p class="text-primary mt-4 text-xl font-semibold">Field Based Tests</p>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Sr. No.</th>
+              <th>Test Name</th>
+              <th>Sample ID</th>
+              <th>Remark</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody formArrayName="fieldTests">
+            <tr
+              *ngFor="let test of fieldTests.controls; let i = index"
+              [formGroupName]="i"
+            >
+              <td>{{ i + 1 }}</td>
+              <td>
+                <ng-select
+                  [items]="filteredTestDescriptions[i + materialTests.length]"
+                  bindLabel="label"
+                  bindValue="value"
+                  [multiple]="true"
+                  placeholder="Select Test Description(s)"
+                  formControlName="test_description"
+                  class="form-control form-input-custom z-10"
+                >
+                </ng-select>
+              </td>
+              <td>
+                <input
+                  type="text"
+                  class="form-control form-input-custom"
+                  formControlName="sample_id"
+                />
+              </td>
+              <td>
+                <input
+                  type="text"
+                  class="form-control form-input-custom"
+                  formControlName="remark"
+                />
+              </td>
+              <td>
+                <button
+                  type="button"
+                  class="btn btn-danger btn-sm"
+                  (click)="removeTest(i, 'field')"
+                  [disabled]="fieldTests.controls.length <= 1"
+                >
+                  Remove
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <button
+          type="button"
+          class="btn btn-primary mt-3"
+          (click)="addTest('field')"
+        >
+          Add Field Test
+        </button>
+      </div>
+
+      <div class="text-end mt-4">
+        <button
+          class="btn btn-secondary main-btnfs px-4 py-2 me-4 text-gray-200"
+          (click)="cancel()"
+        >
+          Cancel
+        </button>
+        <button class="btn btn-custom-primary px-4 py-2" (click)="saveStep1()">
+          Next
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Step 2: Test Details -->
+  <div *ngIf="currentStep === 2" class="card border-0 p-4">
+    <form [formGroup]="step2Form">
+      <!-- Checklist - Sample Receiving -->
+      <p class="text-primary mt-4 text-xl font-semibold">
+        Checklist - Sample Receiving
+      </p>
+      <div class="row mb-3 step2-grid">
+        <!-- Does sample bear proper label? -->
+        <div class="col-8">
+          <label class="d-block text-capitalize admin-form-lable"
+            >Does sample bear proper label?</label
+          >
+        </div>
+        <div class="col-4 text-end">
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="sample_proper_label"
+              id="sampleProperLabelYes"
+              value="Yes"
+              formControlName="sample_proper_label"
+            />
+            <label class="form-check-label" for="sampleProperLabelYes"
+              >Yes</label
+            >
+          </div>
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="sample_proper_label"
+              id="sampleProperLabelNo"
+              value="No"
+              formControlName="sample_proper_label"
+            />
+            <label class="form-check-label" for="sampleProperLabelNo">No</label>
+          </div>
+          <div
+            class="text-danger error-message"
+            *ngIf="
+              step2Form.get('sample_proper_label')?.invalid &&
+              (step2Form.get('sample_proper_label')?.touched ||
+                step2Form.get('sample_proper_label')?.dirty)
+            "
+          >
+            <p class="fw-light text-danger">This field is required</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mb-3 step2-grid">
+        <!-- Does the sample have appropriate quantity? -->
+        <div class="col-8">
+          <label class="d-block text-capitalize admin-form-lable"
+            >Does the sample have appropriate quantity?</label
+          >
+        </div>
+        <div class="col-4 text-end">
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="sample_appropriate_quantity"
+              id="sampleAppropriateQuantityYes"
+              value="Yes"
+              formControlName="sample_appropriate_quantity"
+            />
+            <label class="form-check-label" for="sampleAppropriateQuantityYes"
+              >Yes</label
+            >
+          </div>
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="sample_appropriate_quantity"
+              id="sampleAppropriateQuantityNo"
+              value="No"
+              formControlName="sample_appropriate_quantity"
+            />
+            <label class="form-check-label" for="sampleAppropriateQuantityNo"
+              >No</label
+            >
+          </div>
+          <div
+            class="text-danger error-message"
+            *ngIf="
+              step2Form.get('sample_appropriate_quantity')?.invalid &&
+              (step2Form.get('sample_appropriate_quantity')?.touched ||
+                step2Form.get('sample_appropriate_quantity')?.dirty)
+            "
+          >
+            <p class="fw-light text-danger">This field is required</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mb-3 step2-grid">
+        <!-- Is sample packed/sealed properly? -->
+        <div class="col-8">
+          <label class="d-block text-capitalize admin-form-lable"
+            >Is sample packed/sealed properly?</label
+          >
+        </div>
+        <div class="col-4 text-end">
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="sample_packed_sealed_properly"
+              id="samplePackedSealedYes"
+              value="Yes"
+              formControlName="sample_packed_sealed_properly"
+            />
+            <label class="form-check-label" for="samplePackedSealedYes"
+              >Yes</label
+            >
+          </div>
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="sample_packed_sealed_properly"
+              id="samplePackedSealedNo"
+              value="No"
+              formControlName="sample_packed_sealed_properly"
+            />
+            <label class="form-check-label" for="samplePackedSealedNo"
+              >No</label
+            >
+          </div>
+          <div
+            class="text-danger error-message"
+            *ngIf="
+              step2Form.get('sample_packed_sealed_properly')?.invalid &&
+              (step2Form.get('sample_packed_sealed_properly')?.touched ||
+                step2Form.get('sample_packed_sealed_properly')?.dirty)
+            "
+          >
+            <p class="fw-light text-danger">This field is required</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sample Condition for Testing at the Time of Receipt -->
+      <div class="row mb-3 step2-grid">
+        <div class="col-8">
+          <label class="d-block text-capitalize admin-form-lable"
+            >Sample Condition for Testing at the Time of Receipt</label
+          >
+        </div>
+        <div class="col-4 text-end">
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="sample_condition"
+              id="sampleConditionAcceptable"
+              value="Acceptable"
+              formControlName="sample_condition"
+              (change)="onSampleConditionChange()"
+            />
+            <label class="form-check-label" for="sampleConditionAcceptable"
+              >Acceptable</label
+            >
+          </div>
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="sample_condition"
+              id="sampleConditionNotAcceptable"
+              value="Not Acceptable"
+              formControlName="sample_condition"
+              (change)="onSampleConditionChange()"
+            />
+            <label class="form-check-label" for="sampleConditionNotAcceptable"
+              >Not Acceptable</label
+            >
+          </div>
+          <div
+            class="text-danger error-message"
+            *ngIf="
+              step2Form.get('sample_condition')?.invalid &&
+              (step2Form.get('sample_condition')?.touched ||
+                step2Form.get('sample_condition')?.dirty)
+            "
+          >
+            <p class="fw-light text-danger">This field is required</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reason if Not Acceptable -->
+      <div
+        class="row mb-3 step2-grid"
+        *ngIf="step2Form.get('sample_condition')?.value === 'Not Acceptable'"
+      >
+        <div class="col-12">
+          <label
+            class="d-block text-capitalize admin-form-lable"
+            for="sample_condition_reason"
+            >Reason</label
+          >
+          <textarea
+            class="d-block form-control form-input-custom"
+            formControlName="sample_condition_reason"
+            rows="3"
+            [ngClass]="{
+              'is-invalid':
+                step2Form.get('sample_condition_reason')?.invalid &&
+                (step2Form.get('sample_condition_reason')?.touched ||
+                  step2Form.get('sample_condition_reason')?.dirty)
+            }"
+          ></textarea>
+          <div
+            class="text-danger error-message"
+            *ngIf="
+              step2Form.get('sample_condition_reason')?.invalid &&
+              (step2Form.get('sample_condition_reason')?.touched ||
+                step2Form.get('sample_condition_reason')?.dirty)
+            "
+          >
+            <p
+              class="fw-light text-danger"
+              *ngIf="
+                step2Form.get('sample_condition_reason')?.hasError('required')
+              "
+            >
+              Reason is required
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Requirement Understanding -->
+      <p class="text-primary mt-4 text-xl font-semibold">
+        Requirement Understanding
+      </p>
+      <div class="row mb-3 step2-grid">
+        <!-- Are the requirements defined, documented and understood by MCS, Udaipur? -->
+        <div class="col-8">
+          <label class="d-block text-capitalize admin-form-lable">
+            Are the requirements, including the test method to be used,
+            adequately defined, documented and understood by MCS, Udaipur?
+          </label>
+        </div>
+        <div class="col-4 text-end">
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="requirements_defined_documented"
+              id="requirementsDefinedYes"
+              value="Yes"
+              formControlName="requirements_defined_documented"
+            />
+            <label class="form-check-label" for="requirementsDefinedYes"
+              >Yes</label
+            >
+          </div>
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="requirements_defined_documented"
+              id="requirementsDefinedNo"
+              value="No"
+              formControlName="requirements_defined_documented"
+            />
+            <label class="form-check-label" for="requirementsDefinedNo"
+              >No</label
+            >
+          </div>
+          <div
+            class="text-danger error-message"
+            *ngIf="
+              step2Form.get('requirements_defined_documented')?.invalid &&
+              (step2Form.get('requirements_defined_documented')?.touched ||
+                step2Form.get('requirements_defined_documented')?.dirty)
+            "
+          >
+            <p class="fw-light text-danger">This field is required</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mb-3 step2-grid">
+        <!-- Does MCS, Udaipur have the capability and resources to meet the requirements? -->
+        <div class="col-8">
+          <label class="d-block text-capitalize admin-form-lable">
+            Does MCS, Udaipur have the capability and resources to meet the
+            requirements?
+          </label>
+        </div>
+        <div class="col-4 text-end">
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="requirements_adequate"
+              id="requirementsAdequateYes"
+              value="Yes"
+              formControlName="requirements_adequate"
+            />
+            <label class="form-check-label" for="requirementsAdequateYes"
+              >Yes</label
+            >
+          </div>
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="requirements_adequate"
+              id="requirementsAdequateNo"
+              value="No"
+              formControlName="requirements_adequate"
+            />
+            <label class="form-check-label" for="requirementsAdequateNo"
+              >No</label
+            >
+          </div>
+          <div
+            class="text-danger error-message"
+            *ngIf="
+              step2Form.get('requirements_adequate')?.invalid &&
+              (step2Form.get('requirements_adequate')?.touched ||
+                step2Form.get('requirements_adequate')?.dirty)
+            "
+          >
+            <p class="fw-light text-danger">This field is required</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mb-3 step2-grid">
+        <!-- Is the appropriate test method selected? Is it capable of meeting the customer's requirements? -->
+        <div class="col-8">
+          <label class="d-block text-capitalize admin-form-lable">
+            Is the appropriate test method selected? Is it capable of meeting
+            the customer's requirements?
+          </label>
+        </div>
+        <div class="col-4 text-end">
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="test_method_capability"
+              id="testMethodCapabilityYes"
+              value="Yes"
+              formControlName="test_method_capability"
+            />
+            <label class="form-check-label" for="testMethodCapabilityYes"
+              >Yes</label
+            >
+          </div>
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="test_method_capability"
+              id="testMethodCapabilityNo"
+              value="No"
+              formControlName="test_method_capability"
+            />
+            <label class="form-check-label" for="testMethodCapabilityNo"
+              >No</label
+            >
+          </div>
+          <div
+            class="text-danger error-message"
+            *ngIf="
+              step2Form.get('test_method_capability')?.invalid &&
+              (step2Form.get('test_method_capability')?.touched ||
+                step2Form.get('test_method_capability')?.dirty)
+            "
+          >
+            <p class="fw-light text-danger">This field is required</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mb-3 step2-grid">
+        <!-- Are tests required as per NABL scope? -->
+        <div class="col-8">
+          <label class="d-block text-capitalize admin-form-lable"
+            >Are tests required as per NABL scope?</label
+          >
+        </div>
+        <div class="col-4 text-end">
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="tests_per_nabl_scope"
+              id="testsPerNABLYes"
+              value="Yes"
+              formControlName="tests_per_nabl_scope"
+            />
+            <label class="form-check-label" for="testsPerNABLYes">Yes</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="tests_per_nabl_scope"
+              id="testsPerNABLNo"
+              value="No"
+              formControlName="tests_per_nabl_scope"
+            />
+            <label class="form-check-label" for="testsPerNABLNo">No</label>
+          </div>
+          <div
+            class="text-danger error-message"
+            *ngIf="
+              step2Form.get('tests_per_nabl_scope')?.invalid &&
+              (step2Form.get('tests_per_nabl_scope')?.touched ||
+                step2Form.get('tests_per_nabl_scope')?.dirty)
+            "
+          >
+            <p class="fw-light text-danger">This field is required</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mb-3 step2-grid">
+        <!-- Will the tests be witnessed by the customer or its representative? -->
+        <div class="col-8">
+          <label class="d-block text-capitalize admin-form-lable">
+            Will the tests be witnessed by the customer or its representative?
+          </label>
+        </div>
+        <div class="col-4 text-end">
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="tests_witnessed_by_customer"
+              id="testsWitnessedYes"
+              value="Yes"
+              formControlName="tests_witnessed_by_customer"
+            />
+            <label class="form-check-label" for="testsWitnessedYes">Yes</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="tests_witnessed_by_customer"
+              id="testsWitnessedNo"
+              value="No"
+              formControlName="tests_witnessed_by_customer"
+            />
+            <label class="form-check-label" for="testsWitnessedNo">No</label>
+          </div>
+          <div
+            class="text-danger error-message"
+            *ngIf="
+              step2Form.get('tests_witnessed_by_customer')?.invalid &&
+              (step2Form.get('tests_witnessed_by_customer')?.touched ||
+                step2Form.get('tests_witnessed_by_customer')?.dirty)
+            "
+          >
+            <p class="fw-light text-danger">This field is required</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mb-3 step2-grid">
+        <!-- Is Decision Rule / Statement of conformity required? -->
+        <div class="col-8">
+          <label class="d-block text-capitalize admin-form-lable">
+            Is Decision Rule / Statement of conformity required?
+          </label>
+        </div>
+        <div class="col-4 text-end">
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="decision_rule_required"
+              id="decisionRuleYes"
+              value="Yes"
+              formControlName="decision_rule_required"
+            />
+            <label class="form-check-label" for="decisionRuleYes">Yes</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="decision_rule_required"
+              id="decisionRuleNo"
+              value="No"
+              formControlName="decision_rule_required"
+            />
+            <label class="form-check-label" for="decisionRuleNo">No</label>
+          </div>
+          <div
+            class="text-danger error-message"
+            *ngIf="
+              step2Form.get('decision_rule_required')?.invalid &&
+              (step2Form.get('decision_rule_required')?.touched ||
+                step2Form.get('decision_rule_required')?.dirty)
+            "
+          >
+            <p class="fw-light text-danger">This field is required</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-end mt-4">
+        <button
+          class="btn btn-secondary main-btnfs px-4 py-2 me-4 text-gray-200"
+          (click)="previousStep()"
+        >
+          Previous
+        </button>
+        <button class="btn btn-custom-primary px-4 py-2" (click)="submitTest()">
+          Submit
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Success Message -->
+  <div
+    *ngIf="openSuccessMessage"
+    class="your-animation-class modal-container-success"
+    [@slideIn]
+    aria-labelledby="modal-title"
+    role="dialog"
+    aria-modal="true"
+  >
+    <div>
+      <div
+        class="p-4 d-flex justify-content-between align-items-center success-content"
+      >
+        <span class="icon-success me-2"><i class="fa-solid fa-check"></i></span>
+        <p class="text-green-900 text-capitalize mb-0">
+          {{ successMessage }} successfully
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

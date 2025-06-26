@@ -1,0 +1,232 @@
+<div class="space-y-6 px-3">
+  <!-- Header -->
+  <div class="flex justify-between items-center">
+    <div>
+      <p class="text-2xl font-bold text-gray-900">Equipment Status</p>
+      <p class="text-gray-600 mt-1">Monitor and manage laboratory equipment</p>
+    </div>
+    <div class="flex gap-3">
+      <button
+        class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
+      >
+        Schedule Maintenance
+      </button>
+      <button
+        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+      >
+        Add Equipment
+      </button>
+    </div>
+  </div>
+
+  <!-- Status Overview -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div class="bg-white p-4 rounded-lg shadow">
+      <div class="flex items-center">
+        <div class="p-3 bg-green-100 rounded-lg">
+          <svg
+            class="w-6 h-6 text-green-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M5 13l4 4L19 7"
+            ></path>
+          </svg>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-600">Available</p>
+          <p class="text-2xl font-bold text-gray-900">
+            {{ getEquipmentCount("available") }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white p-4 rounded-lg shadow">
+      <div class="flex items-center">
+        <div class="p-3 bg-blue-100 rounded-lg">
+          <svg
+            class="w-6 h-6 text-blue-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-600">In Use</p>
+          <p class="text-2xl font-bold text-gray-900">
+            {{ getEquipmentCount("in-use") }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white p-4 rounded-lg shadow">
+      <div class="flex items-center">
+        <div class="p-3 bg-yellow-100 rounded-lg">
+          <svg
+            class="w-6 h-6 text-yellow-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 00.8 1.2l1.825 1.087c1.531.914 1.531 3.183 0 4.098l-1.825 1.087a1.724 1.724 0 00-.8 1.2c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-.8-1.2l-1.825-1.087c-1.531-.914-1.531-3.183 0-4.098l1.825-1.087a1.724 1.724 0 00.8-1.2z"
+            ></path>
+          </svg>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-600">Maintenance</p>
+          <p class="text-2xl font-bold text-gray-900">
+            {{ getEquipmentCount("maintenance") }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white p-4 rounded-lg shadow">
+      <div class="flex items-center">
+        <div class="p-3 bg-red-100 rounded-lg">
+          <svg
+            class="w-6 h-6 text-red-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
+          </svg>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-600">Offline</p>
+          <p class="text-2xl font-bold text-gray-900">
+            {{ getEquipmentCount("offline") }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Equipment List -->
+  <div class="bg-white rounded-lg shadow">
+    <div class="flex justify-between items-center p-6">
+      <p class="text-xl font-semibold text-gray-900">Equipment Inventory</p>
+      <div class="flex gap-3">
+        <select
+          class="border border-gray-300 rounded-md px-3 py-2 w-40 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">All Types</option>
+          <option value="tensile">Tensile Tester</option>
+          <option value="compression">Compression Tester</option>
+          <option value="hardness">Hardness Tester</option>
+          <option value="impact">Impact Tester</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6">
+      <div
+        *ngFor="let equipment of equipmentList"
+        class="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow duration-200"
+      >
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <p class="text-lg font-medium text-gray-900">
+              {{ equipment.name }}
+            </p>
+            <p class="text-sm text-gray-500">
+              {{ equipment.type }} • {{ equipment.location }}
+            </p>
+            <p class="text-xs text-gray-400 font-mono mt-1">
+              ID: {{ equipment.id }}
+            </p>
+          </div>
+          <span
+            class="inline-flex px-2 py-1 text-xs font-medium rounded-full"
+            [ngClass]="{
+              'bg-green-100 text-green-800': equipment.status === 'available',
+              'bg-blue-100 text-blue-800': equipment.status === 'in-use',
+              'bg-yellow-100 text-yellow-800':
+                equipment.status === 'maintenance',
+              'bg-red-100 text-red-800': equipment.status === 'offline'
+            }"
+          >
+            {{ equipment.status | titlecase }}
+          </span>
+        </div>
+
+        <div *ngIf="equipment.currentTest" class="mb-4">
+          <p class="text-sm text-gray-600">
+            <span class="font-medium">Current Test:</span>
+            {{ equipment.currentTest }}
+          </p>
+        </div>
+
+        <div class="space-y-2 text-sm">
+          <div class="flex justify-between">
+            <span class="text-gray-600">Last Calibration:</span>
+            <span>{{ equipment.lastCalibration | date : "shortDate" }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-600">Next Maintenance:</span>
+            <span
+              [ngClass]="{
+                'text-red-600': isMaintenanceDue(equipment.nextMaintenance)
+              }"
+            >
+              {{ equipment.nextMaintenance | date : "shortDate" }}
+            </span>
+          </div>
+        </div>
+
+        <div class="mt-4 pt-4 border-t border-gray-100">
+          <div class="flex justify-between items-center">
+            <button
+              class="text-blue-600 hover:text-blue-700 text-sm font-medium"
+            >
+              View Details
+            </button>
+            <div class="flex gap-2">
+              <button
+                *ngIf="equipment.status === 'available'"
+                class="text-green-600 hover:text-green-700 text-sm font-medium"
+              >
+                Use
+              </button>
+              <button
+                *ngIf="equipment.status === 'in-use'"
+                class="text-gray-600 hover:text-gray-700 text-sm font-medium"
+              >
+                Release
+              </button>
+              <button
+                class="text-gray-600 hover:text-gray-700 text-sm font-medium"
+              >
+                Maintenance
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

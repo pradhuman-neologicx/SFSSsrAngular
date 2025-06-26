@@ -1,0 +1,1044 @@
+<div class="space-y-6 p-6">
+  <!-- Header -->
+  <div
+    class="flex flex-col md:flex-row md:justify-between md:items-center gap-4"
+  >
+    <div>
+      <p class="text-2xl font-semibold text-gray-800 dark:text-gray-100">
+        Financial Account Management
+      </p>
+      <p class="text-gray-500 mt-1 dark:text-gray-300">
+        Manage client billing accounts and financial operations
+      </p>
+    </div>
+    <div class="flex space-x-3">
+      <button
+        class="bg-blue-500 text-white hover:bg-blue-600 px-4 py-2 rounded-lg text-sm"
+      >
+        Export Accounts
+      </button>
+    </div>
+  </div>
+
+  <!-- Accounts Table -->
+  <div class="bg-white dark:bg-gray-800 shadow rounded-xl overflow-x-auto">
+    <div
+      class="flex flex-col md:flex-row justify-between items-center my-4 space-y-3 md:space-y-0 px-4"
+    >
+      <!-- Show Entries Dropdown -->
+      <div class="flex items-center space-x-2">
+        <span class="text-sm text-gray-700">Show</span>
+        <select
+          class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring focus:border-blue-300"
+          (change)="onTableSizeChange($event)"
+        >
+          <option *ngFor="let size of tableSizes" [ngValue]="size">
+            {{ size }}
+          </option>
+        </select>
+        <span class="text-sm text-gray-700">entries</span>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="flex items-center space-x-2 w-full md:w-auto">
+        <form
+          [formGroup]="searchbarform"
+          class="flex items-center w-full space-x-2"
+        >
+          <span class="text-sm text-gray-700">Search:</span>
+          <div class="flex-1 relative">
+            <input
+              type="text"
+              formControlName="searchbar"
+              autocomplete="off"
+              class="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring focus:border-blue-400"
+              [ngClass]="{
+                'border-red-500':
+                  searchbarform.controls['searchbar'].errors &&
+                  (searchbarform.controls['searchbar'].touched ||
+                    searchbarform.controls['searchbar'].dirty)
+              }"
+            />
+            <div
+              class="text-red-500 text-xs mt-1"
+              *ngIf="
+                searchbarform.controls['searchbar'].errors &&
+                (searchbarform.controls['searchbar'].touched ||
+                  searchbarform.controls['searchbar'].dirty)
+              "
+            >
+              <p *ngIf="searchbarform.controls['searchbar'].errors['required']">
+                This is required
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-md text-sm"
+            (click)="searchfun()"
+          >
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
+          <button
+            type="submit"
+            *ngIf="showreset"
+            (click)="resetsearchbar()"
+            class="bg-gray-500 hover:bg-gray-600 text-white px-3 py-2 rounded-md text-sm"
+          >
+            <i class="fa-solid fa-rotate-right"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+    <table class="min-w-full text-sm">
+      <thead>
+        <tr class="text-left border-b border-gray-200 dark:border-gray-700">
+          <th class="py-3 px-4 text-gray-600 dark:text-gray-300">Account ID</th>
+          <th class="py-3 px-4 text-gray-600 dark:text-gray-300">
+            Client Name
+          </th>
+          <th class="py-3 px-4 text-gray-600 dark:text-gray-300">Balance</th>
+          <th class="py-3 px-4 text-gray-600 dark:text-gray-300">Status</th>
+          <th class="py-3 px-4 text-gray-600 dark:text-gray-300">
+            Last Invoice
+          </th>
+          <th class="py-3 px-4 text-gray-600 dark:text-gray-300">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let account of filteredAccounts"
+          class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
+        >
+          <td class="py-3 px-4 font-mono text-gray-900 dark:text-gray-100">
+            {{ account.id }}
+          </td>
+          <td class="py-3 px-4 text-gray-900 dark:text-gray-100">
+            {{ account.clientName }}
+          </td>
+          <td class="py-3 px-4 text-gray-600 dark:text-gray-300">
+            ${{ account.balance | number : "1.2-2" }}
+          </td>
+          <td class="py-3 px-4">
+            <span
+              class="inline-flex px-2 py-1 text-xs font-medium rounded-full"
+              [ngClass]="{
+                'bg-green-100 text-green-800': account.status === 'Active',
+                'bg-red-100 text-red-800': account.status === 'Overdue',
+                'bg-gray-100 text-gray-800': account.status === 'Closed'
+              }"
+              >{{ account.status }}</span
+            >
+          </td>
+          <td class="py-3 px-4 text-gray-600 dark:text-gray-300">
+            {{ account.lastInvoiceDate | date : "shortDate" }}
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex space-x-2">
+              <button
+                (click)="openInvoiceModal(account)"
+                class="text-indigo-600 hover:underline text-sm"
+              >
+                Invoice
+              </button>
+              <button
+                (click)="openReportModal(account)"
+                class="text-green-600 hover:underline text-sm"
+              >
+                Report
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div
+      class="d-md-flex justify-content-between bottom-0 end-0 py-2 align-items-center px-4"
+    >
+      <span class="showalltext"
+        >Showing
+        {{ tableSize * (page - 1) > 0 ? tableSize * (page - 1) + 1 : 1 }} to
+        {{ tableSize * page <= totalRecords ? tableSize * page : totalRecords }}
+        of {{ totalRecords }} entries</span
+      >
+      <pagination-controls
+        previousLabel="Prev"
+        nextLabel="Next"
+        [responsive]="true"
+        (pageChange)="onTableDataChange($event)"
+        target="_top"
+      ></pagination-controls>
+    </div>
+  </div>
+
+  <!-- Account Modal -->
+  <div
+    *ngIf="showModal"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+  >
+    <div class="bg-white dark:bg-gray-900 rounded-xl p-6 max-w-lg w-full mx-4">
+      <div class="flex justify-between items-center mb-6">
+        <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">
+          {{ isAddMode ? "Add Account" : "Edit Account" }}
+        </p>
+        <button
+          (click)="closeModal()"
+          class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
+          </svg>
+        </button>
+      </div>
+      <form [formGroup]="accountForm" (ngSubmit)="submitForm()">
+        <div class="space-y-4">
+          <div>
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >Client Name</label
+            >
+            <input
+              formControlName="clientName"
+              type="text"
+              class="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 rounded-lg px-3 py-2"
+              [ngClass]="{
+                'border-red-500':
+                  accountForm.get('clientName')?.invalid &&
+                  accountForm.get('clientName')?.touched
+              }"
+            />
+            <p
+              *ngIf="
+                accountForm.get('clientName')?.invalid &&
+                accountForm.get('clientName')?.touched
+              "
+              class="text-red-500 text-xs mt-1"
+            >
+              Client name is required (min 2 characters).
+            </p>
+          </div>
+          <div>
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >Contact Email</label
+            >
+            <input
+              formControlName="contactEmail"
+              type="email"
+              class="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 rounded-lg px-3 py-2"
+              [ngClass]="{
+                'border-red-500':
+                  accountForm.get('contactEmail')?.invalid &&
+                  accountForm.get('contactEmail')?.touched
+              }"
+            />
+            <p
+              *ngIf="
+                accountForm.get('contactEmail')?.invalid &&
+                accountForm.get('contactEmail')?.touched
+              "
+              class="text-red-500 text-xs mt-1"
+            >
+              Valid email is required.
+            </p>
+          </div>
+          <div>
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >Balance</label
+            >
+            <input
+              formControlName="balance"
+              algorithm="any"
+              type="number"
+              step="0.01"
+              class="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 rounded-lg px-3 py-2"
+              [ngClass]="{
+                'border-red-500':
+                  accountForm.get('balance')?.invalid &&
+                  accountForm.get('balance')?.touched
+              }"
+            />
+            <p
+              *ngIf="
+                accountForm.get('balance')?.invalid &&
+                accountForm.get('balance')?.touched
+              "
+              class="text-red-500 text-xs mt-1"
+            >
+              Balance must be a non-negative number.
+            </p>
+          </div>
+          <div>
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >Credit Limit</label
+            >
+            <input
+              formControlName="creditLimit"
+              type="number"
+              step="0.01"
+              class="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 rounded-lg px-3 py-2"
+              [ngClass]="{
+                'border-red-500':
+                  accountForm.get('creditLimit')?.invalid &&
+                  accountForm.get('creditLimit')?.touched
+              }"
+            />
+            <p
+              *ngIf="
+                accountForm.get('creditLimit')?.invalid &&
+                accountForm.get('creditLimit')?.touched
+              "
+              class="text-red-500 text-xs mt-1"
+            >
+              Credit limit must be a non-negative number.
+            </p>
+          </div>
+          <div>
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >Payment Terms</label
+            >
+            <select
+              formControlName="paymentTerms"
+              class="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 rounded-lg px-3 py-2"
+              [ngClass]="{
+                'border-red-500':
+                  accountForm.get('paymentTerms')?.invalid &&
+                  accountForm.get('paymentTerms')?.touched
+              }"
+            >
+              <option value="Net 30">Net 30</option>
+              <option value="Net 60">Net 60</option>
+              <option value="Prepaid">Prepaid</option>
+            </select>
+          </div>
+          <div>
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >Status</label
+            >
+            <select
+              formControlName="status"
+              class="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 rounded-lg px-3 py-2"
+            >
+              <option value="Active">Active</option>
+              <option value="Overdue">Overdue</option>
+              <option value="Closed">Closed</option>
+            </select>
+          </div>
+        </div>
+        <div class="mt-6 flex justify-end space-x-3">
+          <button
+            type="button"
+            (click)="closeModal()"
+            class="bg-gray-200 text-gray-700 hover:bg-gray-300 px-4 py-2 rounded-lg text-sm"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-lg text-sm"
+          >
+            Save
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Report Modal -->
+  <div
+    *ngIf="showReportModal"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+  >
+    <div
+      class="bg-white dark:bg-gray-900 rounded-xl p-6 max-w-4xl w-full mx-4 overflow-y-auto max-h-[90vh]"
+    >
+      <div class="flex justify-between items-center mb-6">
+        <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">
+          Test Report
+        </p>
+        <div class="flex items-center gap-3">
+          <button
+            class="download-btn"
+            (click)="downloadReportAsPDF()"
+            style="
+              background-color: #4caf50;
+              color: white;
+              padding: 10px 20px;
+              border: none;
+              border-radius: 4px;
+              cursor: pointer;
+              font-size: 14px;
+            "
+          >
+            Download Report
+          </button>
+          <button
+            (click)="closeReportModal()"
+            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="w-full mx-auto">
+        <table
+          id="reportTable"
+          style="
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #000;
+            font-size: 14px;
+          "
+        >
+          <thead>
+            <tr>
+              <th colspan="2" style="border: 1px solid #000; padding: 10px">
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                  "
+                >
+                  <div
+                    style="
+                      width: 64px;
+                      height: 64px;
+                      background-color: #e5e7eb;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                    "
+                  >
+                    <span style="color: #6b7280">Logo</span>
+                  </div>
+                  <div style="text-align: center">
+                    <p
+                      style="
+                        font-size: 18px;
+                        font-weight: bold;
+                        text-transform: uppercase;
+                        margin: 0;
+                      "
+                    >
+                      Laboratory Quality System Format - Manglam Consultancy
+                      Services, Udaipur
+                    </p>
+                    <p
+                      style="
+                        font-size: 16px;
+                        font-weight: bold;
+                        text-transform: uppercase;
+                        margin: 5px 0;
+                      "
+                    >
+                      FMT-OBS-003
+                    </p>
+                    <p
+                      style="
+                        font-size: 16px;
+                        font-weight: bold;
+                        text-transform: uppercase;
+                        margin: 0;
+                      "
+                    >
+                      Results of Test on Reinforcement Bars
+                    </p>
+                  </div>
+                  <div style="width: 64px; height: 64px"></div>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td
+                style="
+                  border: 1px solid #000;
+                  padding: 8px;
+                  vertical-align: top;
+                  width: 50%;
+                "
+              >
+                <p style="font-weight: bold; margin: 0">1. Sample ID No.</p>
+              </td>
+              <td style="border: 1px solid #000; padding: 8px">
+                {{ reportData.sampleId }}
+              </td>
+            </tr>
+            <tr>
+              <td
+                style="
+                  border: 1px solid #000;
+                  padding: 8px;
+                  vertical-align: top;
+                "
+              >
+                <p style="font-weight: bold; margin: 0">2. Job No.</p>
+              </td>
+              <td style="border: 1px solid #000; padding: 8px">
+                {{ reportData.jobNo }}
+              </td>
+            </tr>
+            <tr>
+              <td
+                style="
+                  border: 1px solid #000;
+                  padding: 8px;
+                  vertical-align: top;
+                "
+              >
+                <p style="font-weight: bold; margin: 0">3. Brand</p>
+              </td>
+              <td style="border: 1px solid #000; padding: 8px">
+                {{ reportData.brand }}
+              </td>
+            </tr>
+            <tr>
+              <td
+                style="
+                  border: 1px solid #000;
+                  padding: 8px;
+                  vertical-align: top;
+                "
+              >
+                <p style="font-weight: bold; margin: 0">
+                  4. Type of Steel & Grade
+                </p>
+              </td>
+              <td style="border: 1px solid #000; padding: 8px">
+                {{ reportData.steelType }}
+              </td>
+            </tr>
+            <tr>
+              <td
+                style="
+                  border: 1px solid #000;
+                  padding: 8px;
+                  vertical-align: top;
+                "
+              >
+                <p style="font-weight: bold; margin: 0">
+                  5. Date of receipt of sample
+                </p>
+              </td>
+              <td style="border: 1px solid #000; padding: 8px">
+                {{ reportData.receiptDate }}
+              </td>
+            </tr>
+            <tr>
+              <td
+                colspan="2"
+                style="
+                  border: 1px solid #000;
+                  padding: 8px;
+                  font-weight: bold;
+                  text-align: center;
+                "
+              >
+                (A) As Per IS: 1786-2008 IS: 1599-2019 IS: 1608-2022 P-1)
+              </td>
+            </tr>
+            <tr>
+              <td
+                colspan="2"
+                style="
+                  border: 1px solid #000;
+                  padding: 8px;
+                  font-weight: bold;
+                  text-align: center;
+                "
+              >
+                Determination of Mass Per Meter, Tensile strength, Ultimate
+                Tensile strength Yield stress/proof stress and Elongation
+                Percent
+              </td>
+            </tr>
+            <tr>
+              <td
+                style="
+                  border: 1px solid #000;
+                  padding: 8px;
+                  vertical-align: top;
+                "
+              >
+                <p style="font-weight: bold; margin: 0">1. Diameter in mm</p>
+              </td>
+              <td style="border: 1px solid #000; padding: 8px">
+                {{ reportData.testDetails.diameter }}
+              </td>
+            </tr>
+            <tr>
+              <td
+                style="
+                  border: 1px solid #000;
+                  padding: 8px;
+                  vertical-align: top;
+                "
+              >
+                <p style="font-weight: bold; margin: 0">
+                  2. Weight of Bar W (kg)
+                </p>
+              </td>
+              <td style="border: 1px solid #000; padding: 8px">
+                {{ reportData.testDetails.weight }}
+              </td>
+            </tr>
+            <tr>
+              <td
+                style="
+                  border: 1px solid #000;
+                  padding: 8px;
+                  vertical-align: top;
+                "
+              >
+                <p style="font-weight: bold; margin: 0">
+                  3. Length of Bar L (m)
+                </p>
+              </td>
+              <td style="border: 1px solid #000; padding: 8px">
+                {{ reportData.testDetails.length }}
+              </td>
+            </tr>
+            <tr>
+              <td
+                style="
+                  border: 1px solid #000;
+                  padding: 8px;
+                  vertical-align: top;
+                "
+              >
+                <p style="font-weight: bold; margin: 0">
+                  4. Mass Per Meter (kg/m)
+                </p>
+              </td>
+              <td style="border: 1px solid #000; padding: 8px">
+                {{ reportData.testDetails.massPerMeter }}
+              </td>
+            </tr>
+            <tr>
+              <td
+                style="
+                  border: 1px solid #000;
+                  padding: 8px;
+                  vertical-align: top;
+                "
+              >
+                <p style="font-weight: bold; margin: 0">
+                  5. Cross-sectional area = W mm²
+                </p>
+              </td>
+              <td style="border: 1px solid #000; padding: 8px">
+                {{ reportData.testDetails.crossSectionalArea }}
+              </td>
+            </tr>
+            <tr>
+              <td
+                style="
+                  border: 1px solid #000;
+                  padding: 8px;
+                  vertical-align: top;
+                "
+              >
+                <p style="font-weight: bold; margin: 0">
+                  6. Initial gauge length 5.65A mm
+                </p>
+              </td>
+              <td style="border: 1px solid #000; padding: 8px">
+                {{ reportData.testDetails.initialGaugeLength }}
+              </td>
+            </tr>
+            <tr>
+              <td
+                style="
+                  border: 1px solid #000;
+                  padding: 8px;
+                  vertical-align: top;
+                "
+              >
+                <p style="font-weight: bold; margin: 0">
+                  7. Dial reading of yield point(load:1)
+                </p>
+              </td>
+              <td style="border: 1px solid #000; padding: 8px">
+                {{ reportData.testDetails.yieldPoint }}
+              </td>
+            </tr>
+            <tr>
+              <td
+                style="
+                  border: 1px solid #000;
+                  padding: 8px;
+                  vertical-align: top;
+                "
+              >
+                <p style="font-weight: bold; margin: 0">
+                  8. Dial reading of ultimate tensile load(1)
+                </p>
+              </td>
+              <td style="border: 1px solid #000; padding: 8px">
+                {{ reportData.testDetails.ultimateTensileLoad }}
+              </td>
+            </tr>
+            <tr>
+              <td
+                style="
+                  border: 1px solid #000;
+                  padding: 8px;
+                  vertical-align: top;
+                "
+              >
+                <p style="font-weight: bold; margin: 0">
+                  9. Yield stress = load/area(N/mm²)/true load
+                </p>
+              </td>
+              <td style="border: 1px solid #000; padding: 8px">
+                {{ reportData.testDetails.yieldStress }}
+              </td>
+            </tr>
+            <tr>
+              <td
+                style="
+                  border: 1px solid #000;
+                  padding: 8px;
+                  vertical-align: top;
+                "
+              >
+                <p style="font-weight: bold; margin: 0">
+                  10. Ultimate tensile strength = (N/mm²)/load-area
+                </p>
+              </td>
+              <td style="border: 1px solid #000; padding: 8px">
+                {{ reportData.testDetails.ultimateTensileStrength }}
+              </td>
+            </tr>
+            <tr>
+              <td
+                style="
+                  border: 1px solid #000;
+                  padding: 8px;
+                  vertical-align: top;
+                "
+              >
+                <p style="font-weight: bold; margin: 0">
+                  11. Original gauge length = f(mm)
+                </p>
+              </td>
+              <td style="border: 1px solid #000; padding: 8px">
+                {{ reportData.testDetails.originalGaugeLength }}
+              </td>
+            </tr>
+            <tr>
+              <td
+                style="
+                  border: 1px solid #000;
+                  padding: 8px;
+                  vertical-align: top;
+                "
+              >
+                <p style="font-weight: bold; margin: 0">
+                  12. % age of elongation = f(f-f0),x100/f0
+                </p>
+              </td>
+              <td style="border: 1px solid #000; padding: 8px">
+                {{ reportData.testDetails.elongationPercentage }}
+              </td>
+            </tr>
+            <tr>
+              <td
+                style="
+                  border: 1px solid #000;
+                  padding: 8px;
+                  vertical-align: top;
+                "
+              >
+                <p style="font-weight: bold; margin: 0">13. Bend Test</p>
+              </td>
+              <td style="border: 1px solid #000; padding: 8px">
+                {{ reportData.testDetails.bendTest }}
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2" style="border: 1px solid #000; padding: 8px">
+                <p style="margin: 5px 0">
+                  <strong>Tested By:</strong> {{ reportData.testedBy }}
+                </p>
+                <p style="margin: 5px 0">
+                  <strong>Checked By:</strong> {{ reportData.checkedBy }}
+                </p>
+                <p style="margin: 5px 0">
+                  <strong>Witness By:</strong> {{ reportData.witnessBy }}
+                </p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-6 flex justify-end">
+        <button
+          (click)="closeReportModal()"
+          class="bg-gray-300 text-gray-700 hover:bg-gray-300 px-4 py-2 rounded-lg text-sm"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Invoice Modal -->
+  <div
+    *ngIf="showInvoiceModal"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+  >
+    <div
+      class="bg-white dark:bg-gray-900 rounded-xl p-6 max-w-4xl w-full mx-4 overflow-y-auto max-h-[90vh]"
+    >
+      <div class="flex justify-between items-center mb-6">
+        <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">
+          Invoice
+        </p>
+        <div class="flex items-center space-x-3">
+          <button
+            class="download-btn"
+            (click)="downloadInvoiceAsPDF()"
+            style="
+              background-color: #4caf50;
+              color: white;
+              padding: 10px 20px;
+              border: none;
+              border-radius: 4px;
+              cursor: pointer;
+              font-size: 14px;
+            "
+          >
+            Download Invoice
+          </button>
+          <button
+            (click)="closeInvoiceModal()"
+            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="w-full mx-auto">
+        <table
+          id="invoiceTable"
+          style="
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #000;
+            font-size: 14px;
+          "
+        >
+          <thead>
+            <tr>
+              <th colspan="2" style="border: 1px solid #000; padding: 10px">
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                  "
+                >
+                  <div
+                    style="
+                      width: 64px;
+                      height: 64px;
+                      background-color: #e5e7eb;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                    "
+                  >
+                    <span style="color: #6b7280">Logo</span>
+                  </div>
+                  <div style="text-align: center">
+                    <p
+                      style="
+                        font-size: 18px;
+                        font-weight: bold;
+                        text-transform: uppercase;
+                        margin: 0;
+                      "
+                    >
+                      Invoice - Manglam Consultancy Services, Udaipur
+                    </p>
+                    <p
+                      style="
+                        font-size: 16px;
+                        font-weight: bold;
+                        text-transform: uppercase;
+                        margin: 5px 0;
+                      "
+                    >
+                      INV-{{ selectedAccount?.id }}
+                    </p>
+                  </div>
+                  <div style="width: 64px; height: 64px"></div>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td
+                style="
+                  border: 1px solid #000;
+                  padding: 8px;
+                  vertical-align: top;
+                  width: 50%;
+                "
+              >
+                <p style="font-weight: bold; margin: 0">Account ID</p>
+              </td>
+              <td style="border: 1px solid #000; padding: 8px">
+                {{ selectedAccount?.id }}
+              </td>
+            </tr>
+            <tr>
+              <td
+                style="
+                  border: 1px solid #000;
+                  padding: 8px;
+                  vertical-align: top;
+                "
+              >
+                <p style="font-weight: bold; margin: 0">Client Name</p>
+              </td>
+              <td style="border: 1px solid #000; padding: 8px">
+                {{ selectedAccount?.clientName }}
+              </td>
+            </tr>
+            <tr>
+              <td
+                style="
+                  border: 1px solid #000;
+                  padding: 8px;
+                  vertical-align: top;
+                "
+              >
+                <p style="font-weight: bold; margin: 0">Contact Email</p>
+              </td>
+              <td style="border: 1px solid #000; padding: 8px">
+                {{ selectedAccount?.contactEmail }}
+              </td>
+            </tr>
+            <tr>
+              <td
+                style="
+                  border: 1px solid #000;
+                  padding: 8px;
+                  vertical-align: top;
+                "
+              >
+                <p style="font-weight: bold; margin: 0">Balance Due</p>
+              </td>
+              <td style="border: 1px solid #000; padding: 8px">
+                ${{ selectedAccount?.balance | number : "1.2-2" }}
+              </td>
+            </tr>
+            <tr>
+              <td
+                style="
+                  border: 1px solid #000;
+                  padding: 8px;
+                  vertical-align: top;
+                "
+              >
+                <p style="font-weight: bold; margin: 0">Invoice Date</p>
+              </td>
+              <td style="border: 1px solid #000; padding: 8px">
+                {{ selectedAccount?.lastInvoiceDate | date : "shortDate" }}
+              </td>
+            </tr>
+            <tr>
+              <td
+                style="
+                  border: 1px solid #000;
+                  padding: 8px;
+                  vertical-align: top;
+                "
+              >
+                <p style="font-weight: bold; margin: 0">Payment Terms</p>
+              </td>
+              <td style="border: 1px solid #000; padding: 8px">
+                {{ selectedAccount?.paymentTerms }}
+              </td>
+            </tr>
+            <tr>
+              <td
+                style="
+                  border: 1px solid #000;
+                  padding: 8px;
+                  vertical-align: top;
+                "
+              >
+                <p style="font-weight: bold; margin: 0">Status</p>
+              </td>
+              <td style="border: 1px solid #000; padding: 8px">
+                {{ selectedAccount?.status }}
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2" style="border: 1px solid #000; padding: 8px">
+                <p style="margin: 5px 0">
+                  <strong>Issued By:</strong> Manglam Consultancy Services
+                </p>
+                <p style="margin: 5px 0">
+                  <strong>Contact:</strong> accounts&#64;manglamconsultancy.com
+                </p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-6 flex justify-end">
+        <button
+          (click)="closeInvoiceModal()"
+          class="bg-gray-300 text-gray-700 hover:bg-gray-300 px-4 py-2 rounded-lg text-sm"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,912 @@
+<div class="container-fluid mb-4">
+  <div class="d-md-flex justify-content-between align-items-center mb-4">
+    <h1 class="text-primary table-heading-detail">Test Management</h1>
+    <div>
+      <button
+        [routerLink]="['/create-test']"
+        class="btn btn-custom-primary px-4 py-2 mb-md-0 mb-2"
+      >
+        Create Test
+      </button>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+      <a
+        class="nav-link cursor-pointer"
+        [class.active]="activeTab === 'unassigned'"
+        (click)="setActiveTab('unassigned')"
+        >Unassigned</a
+      >
+    </li>
+    <li class="nav-item">
+      <a
+        class="nav-link cursor-pointer"
+        [class.active]="activeTab === 'assigned'"
+        (click)="setActiveTab('assigned')"
+        >Assigned</a
+      >
+    </li>
+    <li class="nav-item">
+      <a
+        class="nav-link cursor-pointer"
+        [class.active]="activeTab === 'completed'"
+        (click)="setActiveTab('completed')"
+        >Completed</a
+      >
+    </li>
+  </ul>
+
+  <!-- Unassigned Tab -->
+  <div *ngIf="activeTab === 'unassigned'" class="card border-0 mb-4 px-4 py-4">
+    <div class="d-md-flex justify-content-between align-items-center my-3">
+      <div class="d-flex align-items-center mb-md-0 mb-2">
+        <span class="me-1 show-entery-text">Show</span>
+        <select
+          class="form-control form-select show-entries-select"
+          (change)="onTableSizeChange($event)"
+        >
+          <option *ngFor="let size of tableSizes" [ngValue]="size">
+            {{ size }}
+          </option>
+        </select>
+        <span class="ms-1 show-entery-text">entries</span>
+      </div>
+      <div class="d-flex align-items-center">
+        <form [formGroup]="searchbarform" class="d-flex align-items-center">
+          <span class="me-1">Search:</span>
+          <div
+            [ngClass]="{
+              'table-card table':
+                searchbarform.controls['searchbar'].errors?.['required'] &&
+                (searchbarform.controls['searchbar'].touched ||
+                  searchbarform.controls['searchbar'].dirty)
+            }"
+          >
+            <input
+              type="text"
+              class="form-control search-user position-relative"
+              autocomplete="off"
+              formControlName="searchbar"
+              [ngClass]="{
+                'is-invalid':
+                  searchbarform.controls['searchbar'].errors &&
+                  (searchbarform.controls['searchbar'].touched ||
+                    searchbarform.controls['searchbar'].dirty)
+              }"
+            />
+            <div
+              class="text-danger error-message d-block"
+              *ngIf="
+                searchbarform.controls['searchbar'].errors &&
+                (searchbarform.controls['searchbar'].touched ||
+                  searchbarform.controls['searchbar'].dirty)
+              "
+            >
+              <p
+                class="fw-light text-danger search-required"
+                *ngIf="searchbarform.controls['searchbar'].errors['required']"
+              >
+                This is required
+              </p>
+            </div>
+          </div>
+          <button class="btn btn-primary search-btn ms-2" (click)="searchfun()">
+            <span
+              ><i class="fa-solid fa-magnifying-glass form-control-feedback"></i
+            ></span>
+          </button>
+          <button
+            class="btn btn-primary search-btn ms-2"
+            (click)="resetsearchbar()"
+            type="submit"
+            *ngIf="showreset"
+          >
+            <span
+              ><i class="fa-solid fa-rotate-right form-control-feedback"></i
+            ></span>
+          </button>
+        </form>
+      </div>
+    </div>
+    <div class="d-flex justify-content-end mb-3">
+      <button
+        class="btn btn-custom-primary px-4 py-2"
+        [disabled]="selectedTests.length === 0"
+        (click)="openAssignModal()"
+      >
+        Assign
+      </button>
+    </div>
+    <div class="table-responsive-sm">
+      <table class="table table-bordered table-hover table-striped mb-0">
+        <thead class="table-header">
+          <tr>
+            <th>
+              <input
+                type="checkbox"
+                (change)="toggleSelectAll($event)"
+                [checked]="isAllSelected()"
+              />
+            </th>
+            <th><p class="table-heading">Test Name</p></th>
+            <th><p class="table-heading">Client Name</p></th>
+            <th><p class="table-heading">Test In</p></th>
+            <th><p class="table-heading">Action</p></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="
+              let test of unassignedTests
+                | paginate
+                  : {
+                      itemsPerPage:
+                        tableSize != 'all' ? tableSize : totalRecordsUnassigned,
+                      currentPage: pageUnassigned,
+                      totalItems: totalRecordsUnassigned
+                    };
+              index as i
+            "
+          >
+            <td>
+              <input
+                type="checkbox"
+                [(ngModel)]="test.isSelected"
+                (change)="onTestSelect()"
+              />
+            </td>
+            <td>
+              <p>{{ test.test_name }}</p>
+            </td>
+            <td>
+              <p>{{ test.client_name }}</p>
+            </td>
+            <td>
+              <p>{{ test.test_in | date : "dd-MM-yyyy" }}</p>
+            </td>
+            <td>
+              <p>
+                <button mat-icon-button [matMenuTriggerFor]="menu">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu">
+                  <button mat-menu-item (click)="openViewModal(test)">
+                    View Details
+                  </button>
+                </mat-menu>
+              </p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div
+        class="d-md-flex justify-content-between bottom-0 end-0 py-2 align-items-center"
+      >
+        <span class="showalltext"
+          >Showing
+          {{
+            tableSize * (pageUnassigned - 1) > 0
+              ? tableSize * (pageUnassigned - 1) + 1
+              : 1
+          }}
+          to
+          {{
+            tableSize * pageUnassigned <= totalRecordsUnassigned
+              ? tableSize * pageUnassigned
+              : totalRecordsUnassigned
+          }}
+          of
+          {{
+            totalRecordsUnassigned != undefined ? totalRecordsUnassigned : ""
+          }}
+          entries</span
+        >
+        <pagination-controls
+          previousLabel="Prev"
+          nextLabel="Next"
+          [responsive]="true"
+          (pageChange)="onTableDataChangeUnassigned($event)"
+          target="_top"
+        ></pagination-controls>
+      </div>
+    </div>
+  </div>
+
+  <!-- Assigned Tab -->
+  <div *ngIf="activeTab === 'assigned'" class="card border-0 mb-4 px-4 py-4">
+    <div class="d-md-flex justify-content-between align-items-center my-3">
+      <div class="d-flex align-items-center mb-md-0 mb-2">
+        <span class="me-1 show-entery-text">Show</span>
+        <select
+          class="form-control form-select show-entries-select"
+          (change)="onTableSizeChange($event)"
+        >
+          <option *ngFor="let size of tableSizes" [ngValue]="size">
+            {{ size }}
+          </option>
+        </select>
+        <span class="ms-1 show-entery-text">entries</span>
+      </div>
+      <div class="d-flex align-items-center">
+        <form [formGroup]="searchbarform" class="d-flex align-items-center">
+          <span class="me-1">Search:</span>
+          <div
+            [ngClass]="{
+              'table-card table':
+                searchbarform.controls['searchbar'].errors?.['required'] &&
+                (searchbarform.controls['searchbar'].touched ||
+                  searchbarform.controls['searchbar'].dirty)
+            }"
+          >
+            <input
+              type="text"
+              class="form-control search-user position-relative"
+              autocomplete="off"
+              formControlName="searchbar"
+              [ngClass]="{
+                'is-invalid':
+                  searchbarform.controls['searchbar'].errors &&
+                  (searchbarform.controls['searchbar'].touched ||
+                    searchbarform.controls['searchbar'].dirty)
+              }"
+            />
+            <div
+              class="text-danger error-message d-block"
+              *ngIf="
+                searchbarform.controls['searchbar'].errors &&
+                (searchbarform.controls['searchbar'].touched ||
+                  searchbarform.controls['searchbar'].dirty)
+              "
+            >
+              <p
+                class="fw-light text-danger search-required"
+                *ngIf="searchbarform.controls['searchbar'].errors['required']"
+              >
+                This is required
+              </p>
+            </div>
+          </div>
+          <button class="btn btn-primary search-btn ms-2" (click)="searchfun()">
+            <span
+              ><i class="fa-solid fa-magnifying-glass form-control-feedback"></i
+            ></span>
+          </button>
+          <button
+            class="btn btn-primary search-btn ms-2"
+            (click)="resetsearchbar()"
+            type="submit"
+            *ngIf="showreset"
+          >
+            <span
+              ><i class="fa-solid fa-rotate-right form-control-feedback"></i
+            ></span>
+          </button>
+        </form>
+      </div>
+    </div>
+    <div class="table-responsive-sm">
+      <table class="table table-bordered table-hover table-striped mb-0">
+        <thead class="table-header">
+          <tr>
+            <th><p class="table-heading">Test Name</p></th>
+            <th><p class="table-heading">Client Name</p></th>
+            <th><p class="table-heading">Test In</p></th>
+            <th><p class="table-heading">Assigned To</p></th>
+            <th><p class="table-heading">Action</p></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="
+              let test of assignedTests
+                | paginate
+                  : {
+                      itemsPerPage:
+                        tableSize != 'all' ? tableSize : totalRecordsAssigned,
+                      currentPage: pageAssigned,
+                      totalItems: totalRecordsAssigned
+                    };
+              index as i
+            "
+          >
+            <td>
+              <p>{{ test.test_name }}</p>
+            </td>
+            <td>
+              <p>{{ test.client_name }}</p>
+            </td>
+            <td>
+              <p>{{ test.test_in | date : "dd-MM-yyyy" }}</p>
+            </td>
+            <td>
+              <p>{{ test.assigned_to_name }}</p>
+            </td>
+            <td>
+              <p>
+                <button mat-icon-button [matMenuTriggerFor]="menu">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu">
+                  <button mat-menu-item (click)="markAsCompleted(test.id)">
+                    Complete
+                  </button>
+                  <button mat-menu-item (click)="openViewModal(test)">
+                    View Details
+                  </button>
+                </mat-menu>
+              </p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div
+        class="d-md-flex justify-content-between bottom-0 end-0 py-2 align-items-center"
+      >
+        <span class="showalltext"
+          >Showing
+          {{
+            tableSize * (pageAssigned - 1) > 0
+              ? tableSize * (pageAssigned - 1) + 1
+              : 1
+          }}
+          to
+          {{
+            tableSize * pageAssigned <= totalRecordsAssigned
+              ? tableSize * pageAssigned
+              : totalRecordsAssigned
+          }}
+          of
+          {{ totalRecordsAssigned != undefined ? totalRecordsAssigned : "" }}
+          entries</span
+        >
+        <pagination-controls
+          previousLabel="Prev"
+          nextLabel="Next"
+          [responsive]="true"
+          (pageChange)="onTableDataChangeAssigned($event)"
+          target="_top"
+        ></pagination-controls>
+      </div>
+    </div>
+  </div>
+
+  <!-- Completed Tab -->
+  <div *ngIf="activeTab === 'completed'" class="card border-0 mb-4 px-4 py-4">
+    <div class="d-md-flex justify-content-between align-items-center my-3">
+      <div class="d-flex align-items-center mb-md-0 mb-2">
+        <span class="me-1 show-entery-text">Show</span>
+        <select
+          class="form-control form-select show-entries-select"
+          (change)="onTableSizeChange($event)"
+        >
+          <option *ngFor="let size of tableSizes" [ngValue]="size">
+            {{ size }}
+          </option>
+        </select>
+        <span class="ms-1 show-entery-text">entries</span>
+      </div>
+      <div class="d-flex align-items-center">
+        <form [formGroup]="searchbarform" class="d-flex align-items-center">
+          <span class="me-1">Search:</span>
+          <div
+            [ngClass]="{
+              'table-card table':
+                searchbarform.controls['searchbar'].errors?.['required'] &&
+                (searchbarform.controls['searchbar'].touched ||
+                  searchbarform.controls['searchbar'].dirty)
+            }"
+          >
+            <input
+              type="text"
+              class="form-control search-user position-relative"
+              autocomplete="off"
+              formControlName="searchbar"
+              [ngClass]="{
+                'is-invalid':
+                  searchbarform.controls['searchbar'].errors &&
+                  (searchbarform.controls['searchbar'].touched ||
+                    searchbarform.controls['searchbar'].dirty)
+              }"
+            />
+            <div
+              class="text-danger error-message d-block"
+              *ngIf="
+                searchbarform.controls['searchbar'].errors &&
+                (searchbarform.controls['searchbar'].touched ||
+                  searchbarform.controls['searchbar'].dirty)
+              "
+            >
+              <p
+                class="fw-light text-danger search-required"
+                *ngIf="searchbarform.controls['searchbar'].errors['required']"
+              >
+                This is required
+              </p>
+            </div>
+          </div>
+          <button class="btn btn-primary search-btn ms-2" (click)="searchfun()">
+            <span
+              ><i class="fa-solid fa-magnifying-glass form-control-feedback"></i
+            ></span>
+          </button>
+          <button
+            class="btn btn-primary search-btn ms-2"
+            (click)="resetsearchbar()"
+            type="submit"
+            *ngIf="showreset"
+          >
+            <span
+              ><i class="fa-solid fa-rotate-right form-control-feedback"></i
+            ></span>
+          </button>
+        </form>
+      </div>
+    </div>
+    <div class="table-responsive-sm">
+      <table class="table table-bordered table-hover table-striped mb-0">
+        <thead class="table-header">
+          <tr>
+            <th><p class="table-heading">Test Name</p></th>
+            <th><p class="table-heading">Client Name</p></th>
+            <th><p class="table-heading">Test In</p></th>
+            <th><p class="table-heading">Assigned To</p></th>
+            <th><p class="table-heading">Completed On</p></th>
+            <th><p class="table-heading">Action</p></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="
+              let test of completedTests
+                | paginate
+                  : {
+                      itemsPerPage:
+                        tableSize != 'all' ? tableSize : totalRecordsCompleted,
+                      currentPage: pageCompleted,
+                      totalItems: totalRecordsCompleted
+                    };
+              index as i
+            "
+          >
+            <td>
+              <p>{{ test.test_name }}</p>
+            </td>
+            <td>
+              <p>{{ test.client_name }}</p>
+            </td>
+            <td>
+              <p>{{ test.test_in | date : "dd-MM-yyyy" }}</p>
+            </td>
+            <td>
+              <p>{{ test.assigned_to_name }}</p>
+            </td>
+            <td>
+              <p>{{ test.completed_on | date : "dd-MM-yyyy" }}</p>
+            </td>
+            <td>
+              <p>
+                <button mat-icon-button [matMenuTriggerFor]="menu">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu">
+                  <button mat-menu-item (click)="openViewModal(test)">
+                    View Details
+                  </button>
+                </mat-menu>
+              </p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div
+        class="d-md-flex justify-content-between bottom-0 end-0 py-2 align-items-center"
+      >
+        <span class="showalltext"
+          >Showing
+          {{
+            tableSize * (pageCompleted - 1) > 0
+              ? tableSize * (pageCompleted - 1) + 1
+              : 1
+          }}
+          to
+          {{
+            tableSize * pageCompleted <= totalRecordsCompleted
+              ? tableSize * pageCompleted
+              : totalRecordsCompleted
+          }}
+          of
+          {{ totalRecordsCompleted != undefined ? totalRecordsCompleted : "" }}
+          entries</span
+        >
+        <pagination-controls
+          previousLabel="Prev"
+          nextLabel="Next"
+          [responsive]="true"
+          (pageChange)="onTableDataChangeCompleted($event)"
+          target="_top"
+        ></pagination-controls>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Test Modal -->
+  <div
+    *ngIf="testCreateOpen"
+    class="your-animation-class modal-container"
+    aria-labelledby="modal-Test"
+    role="dialog"
+    aria-modal="true"
+  >
+    <div class="modal-content modal-content-50" [@fadeIn]>
+      <div (click)="clickModalContent($event)">
+        <form [formGroup]="testCreateForm">
+          <div class="card">
+            <div
+              class="card-header bg-white d-flex justify-content-between align-items-center"
+            >
+              <h5 class="modal-title pt-1">Create Test</h5>
+              <button
+                class="btn btn-primary main-btn bg-transparent border-0 pb-0 pt-1 text-black"
+                type="button"
+                (click)="closeModal()"
+              >
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+            <div class="modal-content-width card-body mb-0 pb-0">
+              <div class="row">
+                <div class="col-lg-12 col-md-12 mb-3">
+                  <label
+                    class="d-block text-capitalize form-label admin-form-lable"
+                    for="test_name"
+                    >Test Name</label
+                  >
+                  <input
+                    type="text"
+                    class="d-block form-control form-input-custom"
+                    formControlName="test_name"
+                    [ngClass]="{
+                      'is-invalid':
+                        testCreateForm.controls['test_name'].errors &&
+                        (testCreateForm.controls['test_name'].touched ||
+                          testCreateForm.controls['test_name'].dirty)
+                    }"
+                  />
+                  <div
+                    class="text-danger error-message"
+                    *ngIf="
+                      testCreateForm.controls['test_name'].errors &&
+                      (testCreateForm.controls['test_name'].touched ||
+                        testCreateForm.controls['test_name'].dirty)
+                    "
+                  >
+                    <p
+                      class="fw-light text-danger"
+                      *ngIf="
+                        testCreateForm.controls['test_name'].errors['required']
+                      "
+                    >
+                      Test name is required
+                    </p>
+                  </div>
+                </div>
+                <div class="col-lg-12 col-md-12 mb-3">
+                  <label
+                    class="d-block text-capitalize form-label admin-form-lable"
+                    for="client_name"
+                    >Client Name</label
+                  >
+                  <input
+                    type="text"
+                    class="d-block form-control form-input-custom"
+                    formControlName="client_name"
+                    [ngClass]="{
+                      'is-invalid':
+                        testCreateForm.controls['client_name'].errors &&
+                        (testCreateForm.controls['client_name'].touched ||
+                          testCreateForm.controls['client_name'].dirty)
+                    }"
+                  />
+                  <div
+                    class="text-danger error-message"
+                    *ngIf="
+                      testCreateForm.controls['client_name'].errors &&
+                      (testCreateForm.controls['client_name'].touched ||
+                        testCreateForm.controls['client_name'].dirty)
+                    "
+                  >
+                    <p
+                      class="fw-light text-danger"
+                      *ngIf="
+                        testCreateForm.controls['client_name'].errors[
+                          'required'
+                        ]
+                      "
+                    >
+                      Client name is required
+                    </p>
+                  </div>
+                </div>
+                <div class="col-lg-12 col-md-12 mb-3">
+                  <label
+                    class="d-block text-capitalize form-label admin-form-lable"
+                    for="test_in"
+                    >Test In Date</label
+                  >
+                  <input
+                    type="date"
+                    class="d-block form-control form-input-custom"
+                    formControlName="test_in"
+                    [ngClass]="{
+                      'is-invalid':
+                        testCreateForm.controls['test_in'].errors &&
+                        (testCreateForm.controls['test_in'].touched ||
+                          testCreateForm.controls['test_in'].dirty)
+                    }"
+                  />
+                  <div
+                    class="text-danger error-message"
+                    *ngIf="
+                      testCreateForm.controls['test_in'].errors &&
+                      (testCreateForm.controls['test_in'].touched ||
+                        testCreateForm.controls['test_in'].dirty)
+                    "
+                  >
+                    <p
+                      class="fw-light text-danger"
+                      *ngIf="
+                        testCreateForm.controls['test_in'].errors['required']
+                      "
+                    >
+                      Test in date is required
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer text-end me-4 mb-3">
+              <button
+                class="btn btn-secondary main-btnfs px-4 py-2 me-4 text-gray-100"
+                type="button"
+                (click)="closeModal()"
+              >
+                Cancel
+              </button>
+              <button
+                class="btn btn-custom-primary px-4 py-2"
+                type="submit"
+                (click)="createTest()"
+              >
+                Create
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Assign Test Modal -->
+  <div
+    *ngIf="assignModalOpen"
+    class="your-animation-class modal-container"
+    aria-labelledby="modal-Assign"
+    role="dialog"
+    aria-modal="true"
+  >
+    <div class="modal-content modal-content-50" [@fadeIn]>
+      <div (click)="clickModalContent($event)">
+        <form [formGroup]="assignForm">
+          <div class="card">
+            <div
+              class="card-header bg-white d-flex justify-content-between align-items-center"
+            >
+              <h5 class="modal-title pt-1">Assign Tests</h5>
+              <button
+                class="btn btn-primary main-btn bg-transparent border-0 pb-0 pt-1 text-black"
+                type="button"
+                (click)="closeModal()"
+              >
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+            <div class="modal-content-width card-body mb-0 pb-0">
+              <div class="row">
+                <div class="col-lg-12 col-md-12 mb-3">
+                  <label
+                    class="d-block text-capitalize form-label admin-form-lable"
+                    for="staff_id"
+                    >Select Staff</label
+                  >
+                  <select
+                    class="d-block form-select form-control form-input-custom"
+                    formControlName="staff_id"
+                    [ngClass]="{
+                      'is-invalid':
+                        assignForm.controls['staff_id'].errors &&
+                        (assignForm.controls['staff_id'].touched ||
+                          assignForm.controls['staff_id'].dirty)
+                    }"
+                  >
+                    <option [ngValue]="null" disabled>Select Staff</option>
+                    <option *ngFor="let staff of staffList" [value]="staff.id">
+                      {{ staff.name }}
+                    </option>
+                  </select>
+                  <div
+                    class="text-danger error-message"
+                    *ngIf="
+                      assignForm.controls['staff_id'].errors &&
+                      (assignForm.controls['staff_id'].touched ||
+                        assignForm.controls['staff_id'].dirty)
+                    "
+                  >
+                    <p
+                      class="fw-light text-danger"
+                      *ngIf="assignForm.controls['staff_id'].errors['required']"
+                    >
+                      Staff selection is required
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer text-end me-4 mb-3">
+              <button
+                class="btn btn-secondary main-btnfs px-4 py-2 me-4 text-gray-100"
+                type="button"
+                (click)="closeModal()"
+              >
+                Cancel
+              </button>
+              <button
+                class="btn btn-custom-primary px-4 py-2"
+                type="submit"
+                (click)="assignTests()"
+              >
+                Assign
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- View Test Modal -->
+  <div
+    *ngIf="testViewOpen"
+    class="your-animation-class modal-container"
+    aria-labelledby="modal-Test"
+    role="dialog"
+    aria-modal="true"
+  >
+    <div class="modal-content modal-content-50" [@fadeIn]>
+      <div (click)="clickModalContent($event)">
+        <form [formGroup]="testViewForm">
+          <div class="card">
+            <div
+              class="card-header bg-white d-flex justify-content-between align-items-center"
+            >
+              <h5 class="modal-title pt-1">View Test</h5>
+              <button
+                class="btn btn-primary main-btn bg-transparent border-0 pb-0 pt-1 text-black"
+                type="button"
+                (click)="closeModal()"
+              >
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+            <div class="modal-content-width card-body mb-0 pb-0">
+              <div class="row">
+                <div class="col-lg-12 col-md-12 mb-3">
+                  <label
+                    class="d-block text-capitalize form-label admin-form-lable"
+                    for="test_name"
+                    >Test Name</label
+                  >
+                  <input
+                    type="text"
+                    class="d-block form-control form-input-custom"
+                    formControlName="test_name"
+                    [readOnly]="true"
+                  />
+                </div>
+                <div class="col-lg-12 col-md-12 mb-3">
+                  <label
+                    class="d-block text-capitalize form-label admin-form-lable"
+                    for="client_name"
+                    >Client Name</label
+                  >
+                  <input
+                    type="text"
+                    class="d-block form-control form-input-custom"
+                    formControlName="client_name"
+                    [readOnly]="true"
+                  />
+                </div>
+                <div class="col-lg-12 col-md-12 mb-3">
+                  <label
+                    class="d-block text-capitalize form-label admin-form-lable"
+                    for="test_in"
+                    >Test In Date</label
+                  >
+                  <input
+                    type="text"
+                    class="d-block form-control form-input-custom"
+                    formControlName="test_in"
+                    [readOnly]="true"
+                  />
+                </div>
+                <div
+                  class="col-lg-12 col-md-12 mb-3"
+                  *ngIf="testViewForm.controls['assigned_to_name']"
+                >
+                  <label
+                    class="d-block text-capitalize form-label admin-form-lable"
+                    for="assigned_to_name"
+                    >Assigned To</label
+                  >
+                  <input
+                    type="text"
+                    class="d-block form-control form-input-custom"
+                    formControlName="assigned_to_name"
+                    [readOnly]="true"
+                  />
+                </div>
+                <div
+                  class="col-lg-12 col-md-12 mb-3"
+                  *ngIf="testViewForm.controls['completed_on']"
+                >
+                  <label
+                    class="d-block text-capitalize form-label admin-form-lable"
+                    for="completed_on"
+                    >Completed On</label
+                  >
+                  <input
+                    type="text"
+                    class="d-block form-control form-input-custom"
+                    formControlName="completed_on"
+                    [readOnly]="true"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer text-end mb-4 me-4">
+              <button
+                class="btn btn-secondary main-btnfs px-4 py-2 text-gray-100"
+                type="button"
+                (click)="closeModal()"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div
+    *ngIf="openSuccessMessage"
+    class="your-animation-class modal-container-success"
+    [@slideIn]
+    aria-labelledby="modal-title"
+    role="dialog"
+    aria-modal="true"
+  >
+    <div>
+      <div
+        class="p-4 d-flex justify-content-between align-items-center success-content"
+      >
+        <span class="icon-success me-2"><i class="fa-solid fa-check"></i></span>
+        <p class="text-green-900 text-capitalize mb-0">
+          {{ successMessage }} successfully
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

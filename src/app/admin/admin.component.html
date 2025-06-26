@@ -1,0 +1,12 @@
+<!-- correct code -->
+<app-sidenav-header (toggleCollapsed)="toggleCollapsed()"></app-sidenav-header>
+<mat-sidenav-container class="admin-container">
+  <mat-sidenav opened [mode]="sidenavMode" [style.width]="sidenavWidth">
+    <app-sidenav [collapsed]="collapsed"></app-sidenav>
+  </mat-sidenav>
+  <mat-sidenav-content [style.margin-left]="contentMargin" [style.transition]="'margin-left 0.3s ease-in-out'" class="pt-4">
+    <app-spinner></app-spinner>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+
