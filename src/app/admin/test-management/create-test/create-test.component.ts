@@ -225,6 +225,7 @@ export class CreateTestComponent implements OnInit {
     this.addTest('material');
     this.addTest('field');
     this.testId = null;
+    this.router.navigate(['/admin/test-management']);
   }
   minDateValidator() {
     return (control: AbstractControl): ValidationErrors | null => {

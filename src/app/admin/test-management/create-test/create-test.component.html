@@ -317,77 +317,80 @@
         <p class="text-primary mt-4 text-xl font-semibold">
           Material Based Tests
         </p>
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th>Sr. No.</th>
-              <th>Material</th>
-              <th>Test Name</th>
-              <th>Sample ID</th>
-              <th>Remark</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody formArrayName="materialTests">
-            <tr
-              *ngFor="let test of materialTests.controls; let i = index"
-              [formGroupName]="i"
-            >
-              <td>{{ i + 1 }}</td>
-              <td>
-                <select
-                  class="form-select form-control form-input-custom"
-                  formControlName="material"
-                  (change)="onTestMaterialChange(i)"
-                >
-                  <option value="" disabled>Select Material</option>
-                  <option
-                    *ngFor="let material of materials"
-                    [value]="material.value"
+
+        <div class="overflow-x-auto">
+          <table class="table table-bordered w-full">
+            <thead>
+              <tr>
+                <th>Sr. No.</th>
+                <th>Material</th>
+                <th>Test Name</th>
+                <th>Sample ID</th>
+                <th>Remark</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody formArrayName="materialTests">
+              <tr
+                *ngFor="let test of materialTests.controls; let i = index"
+                [formGroupName]="i"
+              >
+                <td>{{ i + 1 }}</td>
+                <td>
+                  <select
+                    class="form-select form-control form-input-custom"
+                    formControlName="material"
+                    (change)="onTestMaterialChange(i)"
                   >
-                    {{ material.label }}
-                  </option>
-                </select>
-              </td>
-              <td>
-                <ng-select
-                  [items]="filteredTestDescriptions[i]"
-                  bindLabel="label"
-                  bindValue="value"
-                  [multiple]="true"
-                  placeholder="Select Test Description(s)"
-                  formControlName="test_description"
-                  class="form-control form-input-custom z-10"
-                >
-                </ng-select>
-              </td>
-              <td>
-                <input
-                  type="text"
-                  class="form-control form-input-custom"
-                  formControlName="sample_id"
-                />
-              </td>
-              <td>
-                <input
-                  type="text"
-                  class="form-control form-input-custom"
-                  formControlName="remark"
-                />
-              </td>
-              <td>
-                <button
-                  type="button"
-                  class="btn btn-danger btn-sm"
-                  (click)="removeTest(i, 'material')"
-                  [disabled]="materialTests.controls.length <= 1"
-                >
-                  Remove
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                    <option value="" disabled>Select Material</option>
+                    <option
+                      *ngFor="let material of materials"
+                      [value]="material.value"
+                    >
+                      {{ material.label }}
+                    </option>
+                  </select>
+                </td>
+                <td>
+                  <ng-select
+                    [items]="filteredTestDescriptions[i]"
+                    bindLabel="label"
+                    bindValue="value"
+                    [multiple]="true"
+                    placeholder="Select Test Description(s)"
+                    formControlName="test_description"
+                    class="form-control form-input-custom z-10"
+                  >
+                  </ng-select>
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    class="form-control form-input-custom"
+                    formControlName="sample_id"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    class="form-control form-input-custom"
+                    formControlName="remark"
+                  />
+                </td>
+                <td>
+                  <button
+                    type="button"
+                    class="btn btn-danger btn-sm"
+                    (click)="removeTest(i, 'material')"
+                    [disabled]="materialTests.controls.length <= 1"
+                  >
+                    Remove
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <button
           type="button"
           class="btn btn-primary mt-3"
@@ -400,61 +403,63 @@
       <!-- Field Based Test Table -->
       <div class="table-responsive mb-5">
         <p class="text-primary mt-4 text-xl font-semibold">Field Based Tests</p>
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th>Sr. No.</th>
-              <th>Test Name</th>
-              <th>Sample ID</th>
-              <th>Remark</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody formArrayName="fieldTests">
-            <tr
-              *ngFor="let test of fieldTests.controls; let i = index"
-              [formGroupName]="i"
-            >
-              <td>{{ i + 1 }}</td>
-              <td>
-                <ng-select
-                  [items]="filteredTestDescriptions[i + materialTests.length]"
-                  bindLabel="label"
-                  bindValue="value"
-                  [multiple]="true"
-                  placeholder="Select Test Description(s)"
-                  formControlName="test_description"
-                  class="form-control form-input-custom z-10"
-                >
-                </ng-select>
-              </td>
-              <td>
-                <input
-                  type="text"
-                  class="form-control form-input-custom"
-                  formControlName="sample_id"
-                />
-              </td>
-              <td>
-                <input
-                  type="text"
-                  class="form-control form-input-custom"
-                  formControlName="remark"
-                />
-              </td>
-              <td>
-                <button
-                  type="button"
-                  class="btn btn-danger btn-sm"
-                  (click)="removeTest(i, 'field')"
-                  [disabled]="fieldTests.controls.length <= 1"
-                >
-                  Remove
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="overflow-x-auto">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Sr. No.</th>
+                <th>Test Name</th>
+                <th>Sample ID</th>
+                <th>Remark</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody formArrayName="fieldTests">
+              <tr
+                *ngFor="let test of fieldTests.controls; let i = index"
+                [formGroupName]="i"
+              >
+                <td>{{ i + 1 }}</td>
+                <td>
+                  <ng-select
+                    [items]="filteredTestDescriptions[i + materialTests.length]"
+                    bindLabel="label"
+                    bindValue="value"
+                    [multiple]="true"
+                    placeholder="Select Test Description(s)"
+                    formControlName="test_description"
+                    class="form-control form-input-custom z-10"
+                  >
+                  </ng-select>
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    class="form-control form-input-custom"
+                    formControlName="sample_id"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    class="form-control form-input-custom"
+                    formControlName="remark"
+                  />
+                </td>
+                <td>
+                  <button
+                    type="button"
+                    class="btn btn-danger btn-sm"
+                    (click)="removeTest(i, 'field')"
+                    [disabled]="fieldTests.controls.length <= 1"
+                  >
+                    Remove
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <button
           type="button"
           class="btn btn-primary mt-3"
@@ -626,12 +631,12 @@
 
       <!-- Sample Condition for Testing at the Time of Receipt -->
       <div class="row mb-3 step2-grid">
-        <div class="col-8">
+        <div class="col-6 sm:col-8">
           <label class="d-block text-capitalize admin-form-lable"
             >Sample Condition for Testing at the Time of Receipt</label
           >
         </div>
-        <div class="col-4 text-end">
+        <div class="col-6 sm:col-4 text-end">
           <div class="form-check form-check-inline">
             <input
               class="form-check-input"
@@ -642,7 +647,9 @@
               formControlName="sample_condition"
               (change)="onSampleConditionChange()"
             />
-            <label class="form-check-label" for="sampleConditionAcceptable"
+            <label
+              class="form-check-label whitespace-normal break-words"
+              for="sampleConditionAcceptable"
               >Acceptable</label
             >
           </div>
@@ -656,7 +663,9 @@
               formControlName="sample_condition"
               (change)="onSampleConditionChange()"
             />
-            <label class="form-check-label" for="sampleConditionNotAcceptable"
+            <label
+              class="form-check-label whitespace-normal break-words"
+              for="sampleConditionNotAcceptable"
               >Not Acceptable</label
             >
           </div>

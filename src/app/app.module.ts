@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { HomeComponent } from './website/home/home.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
@@ -35,6 +36,7 @@ import { ReportComponent } from './admin/report/report.component';
 import { TestResultsComponent } from './admin/test-results/test-results.component';
 import { EquipmentStatusComponent } from './admin/equipment-status/equipment-status.component';
 import { AccountManagementComponent } from './admin/account-management/account-management.component';
+import { NavbarComponent } from './website/navbar/navbar.component';
 
 @NgModule({
   declarations: [
@@ -57,6 +59,8 @@ import { AccountManagementComponent } from './admin/account-management/account-m
     TestResultsComponent,
     EquipmentStatusComponent,
     AccountManagementComponent,
+    HomeComponent,
+    NavbarComponent,
   ],
   imports: [
     BrowserModule,

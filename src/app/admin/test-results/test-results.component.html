@@ -6,10 +6,8 @@
     class="flex flex-col md:flex-row md:justify-between md:items-center gap-4"
   >
     <div>
-      <p class="text-2xl font-semibold text-gray-800 dark:text-gray-100">
-        Test Results
-      </p>
-      <p class="text-gray-500 mt-1 dark:text-gray-300">
+      <p class="text-2xl font-semibold text-gray-800">Test Results</p>
+      <p class="text-gray-500 mt-1">
         View and analyze test results and reports
       </p>
     </div>
@@ -31,12 +29,11 @@
   <div class="bg-white dark:bg-gray-800 shadow rounded-xl p-4">
     <div class="flex flex-wrap gap-4">
       <div>
-        <label
-          class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+        <label class="block text-sm font-medium text-gray-700 mb-1"
           >Test Type</label
         >
         <select
-          class="border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 rounded-lg px-3 py-2 w-48"
+          class="border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 rounded-lg px-3 py-2 w-48"
         >
           <option value="">All Types</option>
           <option value="tensile">Tensile Strength</option>
@@ -47,12 +44,11 @@
       </div>
 
       <div>
-        <label
-          class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+        <label class="block text-sm font-medium text-gray-700 mb-1"
           >Status</label
         >
         <select
-          class="border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 rounded-lg px-3 py-2 w-32"
+          class="border border-gray-300 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 rounded-lg px-3 py-2 w-32"
         >
           <option value="">All</option>
           <option value="passed">Passed</option>
@@ -62,13 +58,12 @@
       </div>
 
       <div>
-        <label
-          class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+        <label class="block text-sm font-medium text-gray-700 mb-1"
           >Date Range</label
         >
         <input
           type="date"
-          class="border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 rounded-lg px-3 py-2 w-40"
+          class="border border-gray-300 bg-white text-gray-700 rounded-lg px-3 py-2 w-40"
         />
       </div>
 
@@ -83,9 +78,9 @@
   </div>
 
   <!-- Results Table -->
-  <div class="bg-white dark:bg-gray-800 shadow rounded-xl overflow-x-auto">
+  <div class="bg-white shadow rounded-xl">
     <div
-      class="flex flex-col md:flex-row justify-between items-center my-4 space-y-3 md:space-y-0 px-4"
+      class="flex flex-col md:flex-row justify-between items-center my-4 space-y-3 md:space-y-0 px-4 mobileResponsive"
     >
       <!-- Show Entries Dropdown -->
       <div class="flex items-center space-x-2">
@@ -153,73 +148,75 @@
       </div>
     </div>
 
-    <table class="min-w-full text-sm">
-      <thead>
-        <tr class="text-left border-b border-gray-200 dark:border-gray-700">
-          <th class="py-3 px-4 text-gray-600 dark:text-gray-300">Test ID</th>
-          <th class="py-3 px-4 text-gray-600 dark:text-gray-300">Test Name</th>
-          <th class="py-3 px-4 text-gray-600 dark:text-gray-300">Type</th>
-          <th class="py-3 px-4 text-gray-600 dark:text-gray-300">Sample ID</th>
-          <th class="py-3 px-4 text-gray-600 dark:text-gray-300">Status</th>
-          <th class="py-3 px-4 text-gray-600 dark:text-gray-300">Date</th>
-          <th class="py-3 px-4 text-gray-600 dark:text-gray-300">Operator</th>
-          <th class="py-3 px-4 text-gray-600 dark:text-gray-300">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          *ngFor="let result of testResults"
-          class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
-        >
-          <td class="py-3 px-4 font-mono text-gray-900 dark:text-gray-100">
-            {{ result.id }}
-          </td>
-          <td class="py-3 px-4 text-gray-900 dark:text-gray-100">
-            {{ result.testName }}
-          </td>
-          <td class="py-3 px-4 text-gray-600 dark:text-gray-300">
-            {{ result.testType }}
-          </td>
-          <td class="py-3 px-4 font-mono text-gray-600 dark:text-gray-300">
-            {{ result.sampleId }}
-          </td>
-          <td class="py-3 px-4">
-            <span
-              class="inline-flex px-2 py-1 text-xs font-medium rounded-full"
-              [ngClass]="{
-                'bg-green-100 text-green-800': result.status === 'passed',
-                'bg-red-100 text-red-800': result.status === 'failed',
-                'bg-yellow-100 text-yellow-800': result.status === 'pending'
-              }"
-            >
-              {{ result.status | titlecase }}
-            </span>
-          </td>
-          <td class="py-3 px-4 text-gray-600 dark:text-gray-300">
-            {{ result.completedDate | date : "short" }}
-          </td>
-          <td class="py-3 px-4 text-gray-600 dark:text-gray-300">
-            {{ result.operator }}
-          </td>
-          <td class="py-3 px-4">
-            <div class="flex space-x-2">
-              <button
-                class="text-[#1075bc] hover:underline text-sm"
-                (click)="viewDetails(result)"
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead>
+          <tr class="text-left border-b border-gray-200 dark:border-gray-700">
+            <th class="py-3 px-4 text-gray-600">Test ID</th>
+            <th class="py-3 px-4 text-gray-600">Test Name</th>
+            <th class="py-3 px-4 text-gray-600">Type</th>
+            <th class="py-3 px-4 text-gray-600">Sample ID</th>
+            <th class="py-3 px-4 text-gray-600">Status</th>
+            <th class="py-3 px-4 text-gray-600">Date</th>
+            <th class="py-3 px-4 text-gray-600">Operator</th>
+            <th class="py-3 px-4 text-gray-600">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let result of testResults"
+            class="border-b border-gray-100 hover:bg-gray-50"
+          >
+            <td class="py-3 px-4 font-mono text-gray-900">
+              {{ result.id }}
+            </td>
+            <td class="py-3 px-4 text-gray-900">
+              {{ result.testName }}
+            </td>
+            <td class="py-3 px-4 text-gray-600">
+              {{ result.testType }}
+            </td>
+            <td class="py-3 px-4 font-mono text-gray-600">
+              {{ result.sampleId }}
+            </td>
+            <td class="py-3 px-4">
+              <span
+                class="inline-flex px-2 py-1 text-xs font-medium rounded-full"
+                [ngClass]="{
+                  'bg-green-100 text-green-800': result.status === 'passed',
+                  'bg-red-100 text-red-800': result.status === 'failed',
+                  'bg-yellow-100 text-yellow-800': result.status === 'pending'
+                }"
               >
-                View
-              </button>
-              <button
-                *ngIf="result.reportUrl"
-                class="text-indigo-600 hover:underline text-sm"
-              >
-                Report
-              </button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+                {{ result.status | titlecase }}
+              </span>
+            </td>
+            <td class="py-3 px-4 text-gray-600">
+              {{ result.completedDate | date : "yyyy-MM-dd" }}
+            </td>
+            <td class="py-3 px-4 text-gray-600">
+              {{ result.operator }}
+            </td>
+            <td class="py-3 px-4">
+              <div class="flex space-x-2">
+                <button
+                  class="text-[#1075bc] hover:underline text-sm"
+                  (click)="viewDetails(result)"
+                >
+                  View
+                </button>
+                <!-- <button
+                  *ngIf="result.reportUrl"
+                  class="text-indigo-600 hover:underline text-sm"
+                >
+                  Report
+                </button> -->
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <div
       class="d-md-flex justify-content-between bottom-0 end-0 py-2 align-items-center px-4"
     >
@@ -248,12 +245,10 @@
       class="bg-white dark:bg-gray-900 rounded-xl p-6 max-w-4xl w-full mx-4 max-h-[80vh] overflow-y-auto"
     >
       <div class="flex justify-between items-center mb-6">
-        <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">
-          Test Results Details
-        </p>
+        <p class="text-2xl font-bold text-gray-800">Test Results Details</p>
         <button
           (click)="closeDetails()"
-          class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+          class="text-gray-400 hover:text-gray-600"
         >
           <svg
             class="w-6 h-6"
@@ -272,57 +267,45 @@
       </div>
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="space-y-4">
-          <p class="text-lg font-semibold text-gray-800 dark:text-gray-100">
-            Test Information
-          </p>
+          <p class="text-lg font-semibold text-gray-800">Test Information</p>
           <div class="space-y-2">
             <div class="flex justify-between">
-              <span class="text-gray-600 dark:text-gray-300">Test ID:</span>
-              <span class="font-mono text-gray-900 dark:text-gray-100">{{
+              <span class="text-gray-600">Test ID:</span>
+              <span class="font-mono text-gray-900">{{
                 selectedResult.id
               }}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-gray-600 dark:text-gray-300">Test Name:</span>
-              <span class="text-gray-900 dark:text-gray-100">{{
-                selectedResult.testName
-              }}</span>
+              <span class="text-gray-600">Test Name:</span>
+              <span class="text-gray-900">{{ selectedResult.testName }}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-gray-600 dark:text-gray-300">Sample ID:</span>
-              <span class="font-mono text-gray-900 dark:text-gray-100">{{
+              <span class="text-gray-600">Sample ID:</span>
+              <span class="font-mono text-gray-900">{{
                 selectedResult.sampleId
               }}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-gray-600 dark:text-gray-300">Date:</span>
-              <span class="text-gray-900 dark:text-gray-100">{{
+              <span class="text-gray-600">Date:</span>
+              <span class="text-gray-900">{{
                 selectedResult.completedDate | date : "full"
               }}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-gray-600 dark:text-gray-300">Operator:</span>
-              <span class="text-gray-900 dark:text-gray-100">{{
-                selectedResult.operator
-              }}</span>
+              <span class="text-gray-600">Operator:</span>
+              <span class="text-gray-900">{{ selectedResult.operator }}</span>
             </div>
           </div>
         </div>
         <div class="space-y-4">
-          <p class="text-lg font-semibold text-gray-800 dark:text-gray-100">
-            Measured Values
-          </p>
+          <p class="text-lg font-semibold text-gray-800">Measured Values</p>
           <div class="space-y-2">
             <div
               *ngFor="let item of getResultEntries(selectedResult.results)"
               class="flex justify-between"
             >
-              <span class="text-gray-600 dark:text-gray-300"
-                >{{ item.key }}:</span
-              >
-              <span class="text-gray-900 dark:text-gray-100 font-medium">{{
-                item.value
-              }}</span>
+              <span class="text-gray-600">{{ item.key }}:</span>
+              <span class="text-gray-900 font-medium">{{ item.value }}</span>
             </div>
           </div>
         </div>

@@ -3,8 +3,27 @@
     // background: linear-gradient(90deg, rgba(103,58,183,1) 0%, rgba(103,58,183,0.6979166666666667) 25%);
     // background-image: url("assets/motion graphic background_12.png");
 
-    
+
     height: 100%;
+}
+
+@media (max-width: 768px) {
+    .login-row {
+        flex-direction: column !important;
+        padding-top: 30px;
+        gap: 1rem;
+    }
+
+    .login-content {
+        width: 100% !important;
+        margin-bottom: 1rem;
+    }
+
+    .logo-img {
+        max-width: 100px;
+        margin-top: 20px;
+        height: 40px;
+    }
 }
 
 
@@ -18,11 +37,11 @@
 
 .orange-card {
     color: #d66112;
-  }
+}
 
 //d45812
-  
-.login-row{
 
-    padding-top:70px;
+.login-row {
+
+    padding-top: 70px;
 }

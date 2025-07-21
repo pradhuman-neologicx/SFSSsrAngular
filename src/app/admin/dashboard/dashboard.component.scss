@@ -15,3 +15,20 @@
         color: #333;
     }
 }
+
+@media (max-width: 768px) {
+    .container {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    .bg-\[\#1075bc\] {
+        padding: 1rem;
+    }
+
+    .flex,
+    .md\:flex-row {
+        // flex-direction: column !important;
+        gap: 1rem;
+    }
+}

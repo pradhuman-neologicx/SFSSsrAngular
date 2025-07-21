@@ -4,10 +4,10 @@
     class="flex flex-col md:flex-row md:justify-between md:items-center gap-4"
   >
     <div>
-      <p class="text-2xl font-semibold text-gray-800 dark:text-gray-100">
+      <p class="text-2xl font-semibold text-gray-800">
         Financial Account Management
       </p>
-      <p class="text-gray-500 mt-1 dark:text-gray-300">
+      <p class="text-gray-500 mt-1">
         Manage client billing accounts and financial operations
       </p>
     </div>
@@ -21,7 +21,7 @@
   </div>
 
   <!-- Accounts Table -->
-  <div class="bg-white dark:bg-gray-800 shadow rounded-xl overflow-x-auto">
+  <div class="bg-white shadow rounded-xl overflow-x-auto">
     <div
       class="flex flex-col md:flex-row justify-between items-center my-4 space-y-3 md:space-y-0 px-4"
     >
@@ -90,68 +90,66 @@
         </form>
       </div>
     </div>
-    <table class="min-w-full text-sm">
-      <thead>
-        <tr class="text-left border-b border-gray-200 dark:border-gray-700">
-          <th class="py-3 px-4 text-gray-600 dark:text-gray-300">Account ID</th>
-          <th class="py-3 px-4 text-gray-600 dark:text-gray-300">
-            Client Name
-          </th>
-          <th class="py-3 px-4 text-gray-600 dark:text-gray-300">Balance</th>
-          <th class="py-3 px-4 text-gray-600 dark:text-gray-300">Status</th>
-          <th class="py-3 px-4 text-gray-600 dark:text-gray-300">
-            Last Invoice
-          </th>
-          <th class="py-3 px-4 text-gray-600 dark:text-gray-300">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          *ngFor="let account of filteredAccounts"
-          class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
-        >
-          <td class="py-3 px-4 font-mono text-gray-900 dark:text-gray-100">
-            {{ account.id }}
-          </td>
-          <td class="py-3 px-4 text-gray-900 dark:text-gray-100">
-            {{ account.clientName }}
-          </td>
-          <td class="py-3 px-4 text-gray-600 dark:text-gray-300">
-            ${{ account.balance | number : "1.2-2" }}
-          </td>
-          <td class="py-3 px-4">
-            <span
-              class="inline-flex px-2 py-1 text-xs font-medium rounded-full"
-              [ngClass]="{
-                'bg-green-100 text-green-800': account.status === 'Active',
-                'bg-red-100 text-red-800': account.status === 'Overdue',
-                'bg-gray-100 text-gray-800': account.status === 'Closed'
-              }"
-              >{{ account.status }}</span
-            >
-          </td>
-          <td class="py-3 px-4 text-gray-600 dark:text-gray-300">
-            {{ account.lastInvoiceDate | date : "shortDate" }}
-          </td>
-          <td class="py-3 px-4">
-            <div class="flex space-x-2">
-              <button
-                (click)="openInvoiceModal(account)"
-                class="text-[#1075bc] hover:underline text-sm"
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead>
+          <tr class="text-left border-b border-gray-200">
+            <th class="py-3 px-4 text-gray-600">Account ID</th>
+            <th class="py-3 px-4 text-gray-600">Client Name</th>
+            <th class="py-3 px-4 text-gray-600">Balance</th>
+            <th class="py-3 px-4 text-gray-600">Status</th>
+            <th class="py-3 px-4 text-gray-600">Last Invoice</th>
+            <th class="py-3 px-4 text-gray-600">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let account of filteredAccounts"
+            class="border-b border-gray-100 hover:bg-gray-50"
+          >
+            <td class="py-3 px-4 font-mono text-gray-900">
+              {{ account.id }}
+            </td>
+            <td class="py-3 px-4 text-gray-900">
+              {{ account.clientName }}
+            </td>
+            <td class="py-3 px-4 text-gray-600">
+              ${{ account.balance | number : "1.2-2" }}
+            </td>
+            <td class="py-3 px-4">
+              <span
+                class="inline-flex px-2 py-1 text-xs font-medium rounded-full"
+                [ngClass]="{
+                  'bg-green-100 text-green-800': account.status === 'Active',
+                  'bg-red-100 text-red-800': account.status === 'Overdue',
+                  'bg-gray-100 text-gray-800': account.status === 'Closed'
+                }"
+                >{{ account.status }}</span
               >
-                Invoice
-              </button>
-              <button
-                (click)="openReportModal(account)"
-                class="text-green-600 hover:underline text-sm"
-              >
-                Report
-              </button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+            </td>
+            <td class="py-3 px-4 text-gray-600">
+              {{ account.lastInvoiceDate | date : "shortDate" }}
+            </td>
+            <td class="py-3 px-4">
+              <div class="flex space-x-2">
+                <button
+                  (click)="openInvoiceModal(account)"
+                  class="text-[#1075bc] hover:underline text-sm"
+                >
+                  Invoice
+                </button>
+                <button
+                  (click)="openReportModal(account)"
+                  class="text-green-600 hover:underline text-sm"
+                >
+                  Report
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <div
       class="d-md-flex justify-content-between bottom-0 end-0 py-2 align-items-center px-4"
     >
@@ -176,14 +174,14 @@
     *ngIf="showModal"
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
   >
-    <div class="bg-white dark:bg-gray-900 rounded-xl p-6 max-w-lg w-full mx-4">
+    <div class="bg-white rounded-xl p-6 max-w-lg w-full mx-4">
       <div class="flex justify-between items-center mb-6">
-        <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">
+        <p class="text-2xl font-bold text-gray-800">
           {{ isAddMode ? "Add Account" : "Edit Account" }}
         </p>
         <button
           (click)="closeModal()"
-          class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+          class="text-gray-400 hover:text-gray-600"
         >
           <svg
             class="w-6 h-6"
@@ -203,14 +201,13 @@
       <form [formGroup]="accountForm" (ngSubmit)="submitForm()">
         <div class="space-y-4">
           <div>
-            <label
-              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+            <label class="block text-sm font-medium text-gray-700"
               >Client Name</label
             >
             <input
               formControlName="clientName"
               type="text"
-              class="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 rounded-lg px-3 py-2"
+              class="w-full border border-gray-300 bg-white text-gray-700 rounded-lg px-3 py-2"
               [ngClass]="{
                 'border-red-500':
                   accountForm.get('clientName')?.invalid &&
@@ -228,14 +225,13 @@
             </p>
           </div>
           <div>
-            <label
-              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+            <label class="block text-sm font-medium text-gray-700"
               >Contact Email</label
             >
             <input
               formControlName="contactEmail"
               type="email"
-              class="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 rounded-lg px-3 py-2"
+              class="w-full border border-gray-300 bg-white text-gray-700 rounded-lg px-3 py-2"
               [ngClass]="{
                 'border-red-500':
                   accountForm.get('contactEmail')?.invalid &&
@@ -253,8 +249,7 @@
             </p>
           </div>
           <div>
-            <label
-              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+            <label class="block text-sm font-medium text-gray-700"
               >Balance</label
             >
             <input
@@ -262,7 +257,7 @@
               algorithm="any"
               type="number"
               step="0.01"
-              class="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 rounded-lg px-3 py-2"
+              class="w-full border border-gray-300 bg-white text-gray-700 rounded-lg px-3 py-2"
               [ngClass]="{
                 'border-red-500':
                   accountForm.get('balance')?.invalid &&
@@ -280,15 +275,14 @@
             </p>
           </div>
           <div>
-            <label
-              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+            <label class="block text-sm font-medium text-gray-700"
               >Credit Limit</label
             >
             <input
               formControlName="creditLimit"
               type="number"
               step="0.01"
-              class="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 rounded-lg px-3 py-2"
+              class="w-full border border-gray-300 bg-white text-gray-700 rounded-lg px-3 py-2"
               [ngClass]="{
                 'border-red-500':
                   accountForm.get('creditLimit')?.invalid &&
@@ -306,13 +300,12 @@
             </p>
           </div>
           <div>
-            <label
-              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+            <label class="block text-sm font-medium text-gray-700"
               >Payment Terms</label
             >
             <select
               formControlName="paymentTerms"
-              class="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 rounded-lg px-3 py-2"
+              class="w-full border border-gray-300 bg-white text-gray-700 rounded-lg px-3 py-2"
               [ngClass]="{
                 'border-red-500':
                   accountForm.get('paymentTerms')?.invalid &&
@@ -325,13 +318,12 @@
             </select>
           </div>
           <div>
-            <label
-              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+            <label class="block text-sm font-medium text-gray-700"
               >Status</label
             >
             <select
               formControlName="status"
-              class="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 rounded-lg px-3 py-2"
+              class="w-full border border-gray-300 bg-white text-gray-700 rounded-lg px-3 py-2"
             >
               <option value="Active">Active</option>
               <option value="Overdue">Overdue</option>
@@ -364,12 +356,10 @@
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
   >
     <div
-      class="bg-white dark:bg-gray-900 rounded-xl p-6 max-w-4xl w-full mx-4 overflow-y-auto max-h-[90vh]"
+      class="bg-white rounded-xl p-6 max-w-4xl w-full mx-4 overflow-y-auto max-h-[90vh]"
     >
       <div class="flex justify-between items-center mb-6">
-        <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">
-          Test Report
-        </p>
+        <p class="text-2xl font-bold text-gray-800">Test Report</p>
         <div class="flex items-center gap-3">
           <button
             class="download-btn"
@@ -388,7 +378,7 @@
           </button>
           <button
             (click)="closeReportModal()"
-            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            class="text-gray-400 hover:text-gray-600"
           >
             <svg
               class="w-6 h-6"
@@ -817,12 +807,10 @@
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
   >
     <div
-      class="bg-white dark:bg-gray-900 rounded-xl p-6 max-w-4xl w-full mx-4 overflow-y-auto max-h-[90vh]"
+      class="bg-white rounded-xl p-6 max-w-4xl w-full mx-4 overflow-y-auto max-h-[90vh]"
     >
       <div class="flex justify-between items-center mb-6">
-        <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">
-          Invoice
-        </p>
+        <p class="text-2xl font-bold text-gray-800">Invoice</p>
         <div class="flex items-center space-x-3">
           <button
             class="download-btn"
@@ -841,7 +829,7 @@
           </button>
           <button
             (click)="closeInvoiceModal()"
-            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            class="text-gray-400 hover:text-gray-600"
           >
             <svg
               class="w-6 h-6"

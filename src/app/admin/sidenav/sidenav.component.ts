@@ -20,6 +20,8 @@ interface MenuItem {
 export class SidenavComponent {
   menuItems: MenuItem[] = [];
   @Input() collapsed: boolean = false;
+  @Input() isMobile: boolean = false;
+  @Output() closeSidenav = new EventEmitter<void>();
 
   // constructor(private route: ActivatedRoute, private jwtService: JwtService,
   //   private employeeService: EmployeeService, private router: Router, private dataService: DataService) {
@@ -98,12 +100,12 @@ export class SidenavComponent {
         label: 'Test Management',
         route: 'test-management',
       },
-      {
-        index: 4,
-        icon: 'business',
-        label: 'Equipment Management',
-        route: 'equipment',
-      },
+      // {
+      //   index: 4,
+      //   icon: 'business',
+      //   label: 'Equipment Management',
+      //   route: 'equipment',
+      // },
       {
         index: 5,
         icon: 'import_contacts',

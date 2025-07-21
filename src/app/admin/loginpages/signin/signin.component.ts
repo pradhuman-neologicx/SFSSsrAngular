@@ -130,7 +130,7 @@ export class SigninComponent {
   }
 
   AdminLoginfun() {
-    this.router.navigate(['/dashboard']);
+    this.router.navigate(['admin/dashboard']);
     this.errorMessage = '';
     // if (this.signIn.valid) {
     //   const formData: FormData = new FormData();

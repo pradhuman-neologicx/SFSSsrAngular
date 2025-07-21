@@ -11,6 +11,8 @@ import { OverlayContainer } from '@angular/cdk/overlay';
 export class AdminComponent {
   title = 'mat_admin';
   themeSectionOpen: boolean = false;
+  isMobile: boolean = false;
+  sidenavOpened: boolean = false;
 
   constructor(
     @Inject(DOCUMENT) private document: Document,
@@ -27,8 +29,6 @@ export class AdminComponent {
 
   ngOnInit(): void {
     this.lang = localStorage.getItem('lang') || 'en';
-    // this.render.addClass(this.document.body, 'lightTheme')
-
     const theme = localStorage.getItem('theme');
     if (theme) {
       this.applyTheme(theme);
@@ -41,6 +41,7 @@ export class AdminComponent {
   // sidenav properties
   sidenavMode: MatDrawerMode = 'side';
   contentMargin: string = '0'; // Initially, no margin
+  collapsed = false;
 
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {
@@ -48,32 +49,25 @@ export class AdminComponent {
   }
 
   checkScreenSize() {
-    if (window.innerWidth <= 768) {
-      // md and below
-      this.sidenavMode = 'side';
+    this.isMobile = window.innerWidth <= 768;
+    if (this.isMobile) {
+      this.sidenavMode = 'over';
+      this.contentMargin = '0';
+      this.sidenavOpened = false;
     } else {
-      // lg and above
       this.sidenavMode = 'side';
-    }
-
-    // Set margin based on collapse state
-    if (this.collapsed) {
-      this.contentMargin = '95';
-    } else {
-      this.contentMargin = this.sidenavMode === 'side' ? '270px' : '';
+      this.contentMargin = this.collapsed ? '95px' : '270px';
+      this.sidenavOpened = true;
     }
   }
 
   // sidenav toggle
-  collapsed = false;
-
   toggleCollapsed() {
-    this.collapsed = !this.collapsed;
-    // Update margin based on collapse state and screen size
-    if (this.collapsed) {
-      this.contentMargin = '95px';
+    if (this.isMobile) {
+      this.sidenavOpened = !this.sidenavOpened;
     } else {
-      this.contentMargin = this.sidenavMode === 'side' ? '270px' : '0';
+      this.collapsed = !this.collapsed;
+      this.checkScreenSize();
     }
   }
 

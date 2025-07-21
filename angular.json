@@ -24,7 +24,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/panel",
+            "outputPath": "dist/lab-testing",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -45,7 +45,14 @@
             "scripts": [
 
        
-            ]
+            ],
+            "allowedCommonJsDependencies": [
+        "canvg",
+        "html2canvas",
+        "raf",
+        "rgbcolor",
+        "core-js"
+      ]
           },
           "configurations": {
             "production": {

@@ -3,7 +3,7 @@
     <h1 class="text-primary table-heading-detail">Test Management</h1>
     <div>
       <button
-        [routerLink]="['/create-test']"
+        [routerLink]="['/admin/create-test']"
         class="btn btn-custom-primary px-4 py-2 mb-md-0 mb-2"
       >
         Create Test
@@ -59,7 +59,7 @@
           <span class="me-1">Search:</span>
           <div
             [ngClass]="{
-              'table-card table':
+              'table-card table shadow-none':
                 searchbarform.controls['searchbar'].errors?.['required'] &&
                 (searchbarform.controls['searchbar'].touched ||
                   searchbarform.controls['searchbar'].dirty)

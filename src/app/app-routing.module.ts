@@ -1,3 +1,4 @@
+import { HomeComponent } from './website/home/home.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AdminComponent } from './admin/admin.component';
@@ -20,6 +21,10 @@ import { AccountManagementComponent } from './admin/account-management/account-m
 
 const routes: Routes = [
   {
+    path: 'home',
+    component: HomeComponent,
+  },
+  {
     path: '',
 
     component: LoginpagesComponent,
@@ -31,7 +36,7 @@ const routes: Routes = [
     ],
   },
   {
-    path: '',
+    path: 'admin',
 
     component: AdminComponent,
     children: [
