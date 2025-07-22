@@ -22,8 +22,9 @@ interface Staff {
   name: string;
   email: string;
   mobile: string;
+  department: string;
   role: string;
-  status: any;
+  is_active: any;
 }
 @Component({
   selector: 'app-staff',
@@ -95,6 +96,12 @@ export class StaffComponent implements OnInit {
   staffviewopen: boolean = false;
   staffupdateopen: boolean = false;
 
+  // Upload modal state
+  uploadModalOpen: boolean = false;
+  uploadForm!: FormGroup;
+  selectedUploadFile: File | null = null;
+  selectedUploadFileName: string = '';
+
   constructor(
     private formBuilder: FormBuilder,
     private employeeService: EmployeeService,
@@ -112,7 +119,7 @@ export class StaffComponent implements OnInit {
       name: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       mobile: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
-      gender: ['', [Validators.required]],
+      department: ['', [Validators.required]],
       role: ['', [Validators.required]],
     });
     this.staffupdate = this.formBuilder.group({
@@ -120,7 +127,7 @@ export class StaffComponent implements OnInit {
       name: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       mobile: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
-      gender: ['', [Validators.required]],
+      department: ['', [Validators.required]],
       role: ['', [Validators.required]],
     });
     this.staffview = this.formBuilder.group({
@@ -128,8 +135,11 @@ export class StaffComponent implements OnInit {
       name: [''],
       email: [''],
       mobile: [''],
-      gender: [''],
+      department: [''],
       role: [''],
+    });
+    this.uploadForm = this.formBuilder.group({
+      file: ['', Validators.required],
     });
 
     this.GetStaff();
@@ -142,24 +152,27 @@ export class StaffComponent implements OnInit {
         name: 'Ravi Kumar',
         email: 'ravi.kumar@example.com',
         mobile: '9876543210',
+        department: 'Administration',
         role: 'Manager',
-        status: 1,
+        is_active: 1,
       },
       {
         id: 2,
         name: 'Aarti Mehta',
         email: 'aarti.mehta@example.com',
         mobile: '9123456789',
-        role: 'Staff',
-        status: 0,
+        department: 'Accounts',
+        role: 'Account Executive',
+        is_active: 0,
       },
       {
         id: 3,
         name: 'Suresh Gupta',
         email: 'suresh.gupta@example.com',
         mobile: '9988776655',
-        role: 'Supervisor',
-        status: 1,
+        department: 'Office',
+        role: 'Front Office',
+        is_active: 1,
       },
     ];
   }
@@ -181,6 +194,7 @@ export class StaffComponent implements OnInit {
       heading1: 'Name',
       heading2: 'Email',
       heading3: 'Mobile',
+      headin04: 'Department',
       heading4: 'Role',
       heading5: 'Status',
       heading6: 'Action',
@@ -611,5 +625,45 @@ export class StaffComponent implements OnInit {
     //       }, 200);
     //     }
     //   });
+  }
+
+  openUploadModal() {
+    this.uploadModalOpen = true;
+    this.uploadForm.reset();
+    this.selectedUploadFile = null;
+    this.selectedUploadFileName = '';
+  }
+
+  closeUploadModal() {
+    this.uploadModalOpen = false;
+    this.selectedUploadFile = null;
+    this.selectedUploadFileName = '';
+  }
+
+  onUploadFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedUploadFile = file;
+      this.selectedUploadFileName = file.name;
+      this.uploadForm.patchValue({ file: file });
+      this.uploadForm.get('file')?.updateValueAndValidity();
+    }
+  }
+
+  uploadFile() {
+    if (this.uploadForm.invalid || !this.selectedUploadFile) {
+      this.uploadForm.markAllAsTouched();
+      return;
+    }
+    // Example upload logic:
+    // const formData = new FormData();
+    // formData.append('file', this.selectedUploadFile, this.selectedUploadFile.name);
+    // this.employeeService.uploadStaffFile(formData).subscribe(res => {
+    //   // handle response
+    //   this.closeUploadModal();
+    //   this.GetStaff();
+    // });
+    this.closeUploadModal();
+    // Optionally show a success message
   }
 }

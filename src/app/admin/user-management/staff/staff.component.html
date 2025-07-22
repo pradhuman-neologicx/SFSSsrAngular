@@ -1,12 +1,18 @@
 <div class="container-fluid mb-4">
   <div class="d-md-flex justify-content-between align-items-center">
-    <h1 class="text-primary table-heading-detail">Staff Management</h1>
+    <h1 class="text-primary table-heading-detail">Employee Management</h1>
     <div>
       <button
         (click)="bannermodal()"
+        class="btn btn-custom-primary px-4 py-2 mb-md-0 mb-2 mr-2"
+      >
+        Create
+      </button>
+      <button
+        (click)="openUploadModal()"
         class="btn btn-custom-primary px-4 py-2 mb-md-0 mb-2"
       >
-        Create Staff
+        Upload
       </button>
     </div>
   </div>
@@ -95,6 +101,9 @@
               <p class="table-heading">{{ detail.heading3 }}</p>
             </th>
             <th>
+              <p class="table-heading">{{ detail.headin04 }}</p>
+            </th>
+            <th>
               <p class="table-heading">{{ detail.heading4 }}</p>
             </th>
             <th>
@@ -128,6 +137,9 @@
             </td>
             <td>
               <p>{{ staff.mobile }}</p>
+            </td>
+            <td>
+              <p>{{ staff.department }}</p>
             </td>
             <td>
               <p>{{ staff.role }}</p>
@@ -212,7 +224,7 @@
           <div
             class="card-header bg-white d-flex justify-content-between align-items-center"
           >
-            <h5 class="modal-title pt-1">Create Staff</h5>
+            <h5 class="modal-title pt-1">Create Employee</h5>
             <button
               class="btn btn-primary main-btn bg-transparent border-0 pb-0 pt-1 text-black"
               type="button"
@@ -408,36 +420,38 @@
               <div class="col-lg-12 col-md-12 mb-3">
                 <label
                   class="d-block text-capitalize form-label admin-form-lable"
-                  for="gender"
-                  >Gender</label
+                  for="department"
+                  >Department</label
                 >
                 <select
                   class="d-block form-select form-control form-input-custom"
-                  formControlName="gender"
+                  formControlName="department"
                   [ngClass]="{
                     'is-invalid':
-                      staffcreate.controls['gender'].errors &&
-                      (staffcreate.controls['gender'].touched ||
-                        staffcreate.controls['gender'].dirty)
+                      staffcreate.controls['department'].errors &&
+                      (staffcreate.controls['department'].touched ||
+                        staffcreate.controls['department'].dirty)
                   }"
                 >
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Other">Other</option>
+                  <option value="Reception">Reception</option>
+                  <option value="Engineering">Engineering</option>
+                  <option value="Accounts">Accounts</option>
                 </select>
                 <div
                   class="text-danger error-message"
                   *ngIf="
-                    staffcreate.controls['gender'].errors &&
-                    (staffcreate.controls['gender'].touched ||
-                      staffcreate.controls['gender'].dirty)
+                    staffcreate.controls['department'].errors &&
+                    (staffcreate.controls['department'].touched ||
+                      staffcreate.controls['department'].dirty)
                   "
                 >
                   <p
                     class="fw-light text-danger"
-                    *ngIf="staffcreate.controls['gender'].errors['required']"
+                    *ngIf="
+                      staffcreate.controls['department'].errors['required']
+                    "
                   >
-                    Gender is required
+                    Department is required
                   </p>
                 </div>
               </div>
@@ -516,7 +530,7 @@
           <div
             class="card-header bg-white d-flex justify-content-between align-items-center"
           >
-            <h5 class="modal-title pt-1">Update Staff</h5>
+            <h5 class="modal-title pt-1">Update Employee</h5>
             <button
               class="btn btn-primary main-btn bg-transparent border-0 pb-0 pt-1 text-black"
               type="button"
@@ -711,36 +725,38 @@
               <div class="col-lg-12 col-md-12 mb-3">
                 <label
                   class="d-block text-capitalize form-label admin-form-lable"
-                  for="gender"
-                  >Gender</label
+                  for="department"
+                  >Department</label
                 >
                 <select
                   class="d-block form-select form-control form-input-custom"
-                  formControlName="gender"
+                  formControlName="department"
                   [ngClass]="{
                     'is-invalid':
-                      staffupdate.controls['gender'].errors &&
-                      (staffupdate.controls['gender'].touched ||
-                        staffupdate.controls['gender'].dirty)
+                      staffupdate.controls['department'].errors &&
+                      (staffupdate.controls['department'].touched ||
+                        staffupdate.controls['department'].dirty)
                   }"
                 >
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Other">Other</option>
+                  <option value="Male">Department 1</option>
+                  <option value="Female">Department 2</option>
+                  <option value="Other">Department 3</option>
                 </select>
                 <div
                   class="text-danger error-message"
                   *ngIf="
-                    staffupdate.controls['gender'].errors &&
-                    (staffupdate.controls['gender'].touched ||
-                      staffupdate.controls['gender'].dirty)
+                    staffupdate.controls['department'].errors &&
+                    (staffupdate.controls['department'].touched ||
+                      staffupdate.controls['department'].dirty)
                   "
                 >
                   <p
                     class="fw-light text-danger"
-                    *ngIf="staffupdate.controls['gender'].errors['required']"
+                    *ngIf="
+                      staffupdate.controls['department'].errors['required']
+                    "
                   >
-                    Gender is required
+                    Department is required
                   </p>
                 </div>
               </div>
@@ -819,7 +835,7 @@
           <div
             class="card-header bg-white d-flex justify-content-between align-items-center"
           >
-            <h5 class="modal-title pt-1">View Staff</h5>
+            <h5 class="modal-title pt-1">View Employee</h5>
             <button
               class="btn btn-primary main-btn bg-transparent border-0 pb-0 pt-1 text-black"
               type="button"
@@ -909,13 +925,13 @@
               <div class="col-lg-12 col-md-12 mb-3">
                 <label
                   class="d-block text-capitalize form-label admin-form-lable"
-                  for="gender"
-                  >Gender</label
+                  for="department"
+                  >Department</label
                 >
                 <input
                   type="text"
                   class="d-block form-control form-input-custom"
-                  formControlName="gender"
+                  formControlName="department"
                   [readOnly]="true"
                 />
               </div>
@@ -941,6 +957,90 @@
               (click)="closeModal()"
             >
               Cancel
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Upload Modal -->
+<div
+  *ngIf="uploadModalOpen"
+  class="your-animation-class modal-container"
+  aria-labelledby="modal-Upload"
+  role="dialog"
+  aria-modal="true"
+>
+  <div class="modal-content modal-content-50" [@fadeIn]>
+    <div (click)="ClickexamModalconent($event)">
+      <form [formGroup]="uploadForm">
+        <div class="card">
+          <div
+            class="card-header bg-white d-flex justify-content-between align-items-center"
+          >
+            <h5 class="modal-title pt-1 text-center">Upload File</h5>
+            <button
+              class="btn btn-primary main-btn bg-transparent border-0 pb-0 pt-1 text-black"
+              type="button"
+              (click)="closeUploadModal()"
+            >
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+          <div class="modal-content-width card-body mb-0 pb-0">
+            <div class="row">
+              <div class="col-lg-12 col-md-12 mb-3">
+                <label
+                  class="d-block text-capitalize form-label admin-form-lable text-center cursor-pointer"
+                  for="upload-file"
+                >
+                  Select File
+                </label>
+                <input
+                  type="file"
+                  id="upload-file"
+                  class="form-control"
+                  formControlName="file"
+                  (change)="onUploadFileSelected($event)"
+                  accept=".xlsx,.xls,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,*/*"
+                />
+                <div
+                  class="text-danger error-message"
+                  *ngIf="
+                    uploadForm.controls['file'].errors &&
+                    (uploadForm.controls['file'].touched ||
+                      uploadForm.controls['file'].dirty)
+                  "
+                >
+                  <p
+                    class="fw-light text-danger"
+                    *ngIf="uploadForm.controls['file'].errors['required']"
+                  >
+                    File is required
+                  </p>
+                </div>
+                <div *ngIf="selectedUploadFileName" class="mt-2">
+                  <span>Selected: {{ selectedUploadFileName }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer text-end me-4 mb-3">
+            <button
+              class="btn btn-secondary main-btnfs px-4 py-2 me-4 text-gray-100"
+              type="button"
+              (click)="closeUploadModal()"
+            >
+              Cancel
+            </button>
+            <button
+              class="btn btn-custom-primary px-4 py-2"
+              type="submit"
+              (click)="uploadFile()"
+            >
+              Upload
             </button>
           </div>
         </div>

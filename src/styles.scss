@@ -458,7 +458,17 @@ mat-sidenav-container {
 // table content 
 .table-heading-detail {
   font-size: 22px !important;
-  font-weight: 600 !important;
+  font-weight: 500 !important;
+}
+
+.table-heading {
+  font-size: 14px;
+}
+
+.table-responsive-sm tbody tr td,
+.table-responsive-sm tbody tr td p {
+  font-size: 13px;
+
 }
 
 .main-btnfs {

@@ -66,7 +66,7 @@ import { JwtService } from 'src/app/core/services/jwt.service';
     ]),
   ],
 })
-export class TestManagementComponent {
+export class TestManagementComponent implements OnInit {
   activeTab: string = 'unassigned';
   showreset: boolean = false;
   searchText: string | undefined;
@@ -93,12 +93,21 @@ export class TestManagementComponent {
   selectedTests: any[] = [];
   // staffList: any[] = [];
 
+  updateAssignModalOpen = false;
+  updateAssignForm: FormGroup;
+  updateAssignTestId: number | null = null;
+
   constructor(
     private formBuilder: FormBuilder,
     private employeeService: EmployeeService,
     private jwtService: JwtService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private fb: FormBuilder
+  ) {
+    this.updateAssignForm = this.fb.group({
+      staff_id: [null, Validators.required],
+    });
+  }
 
   user_id: any;
   ngOnInit(): void {
@@ -263,6 +272,12 @@ export class TestManagementComponent {
     this.assignForm.reset();
   }
 
+  openUpdateAssign(testId: number) {
+    this.updateAssignTestId = testId;
+    this.updateAssignForm.reset();
+    this.updateAssignModalOpen = true;
+  }
+
   openViewModal(test: any) {
     this.testViewOpen = true;
     // this.testService.getTestById(test.id).subscribe((response: any) => {
@@ -292,6 +307,7 @@ export class TestManagementComponent {
     this.testCreateOpen = false;
     this.testViewOpen = false;
     this.assignModalOpen = false;
+    this.updateAssignModalOpen = false;
   }
 
   clickModalContent(event: Event): void {
@@ -460,4 +476,25 @@ export class TestManagementComponent {
       completed_on: '2025-05-15',
     },
   ];
+
+  updateAssign() {
+    if (this.updateAssignForm.invalid || this.updateAssignTestId == null) {
+      this.updateAssignForm.markAllAsTouched();
+      return;
+    }
+    const staffId = this.updateAssignForm.value.staff_id;
+    // Call your service to update assignment here
+    // Example:
+    // this.testService.updateAssignment(this.updateAssignTestId, staffId).subscribe(() => {
+    //   this.loadAssignedTests(); // or refresh data as needed
+    //   this.closeUpdateAssignModal();
+    //   this.showSuccess('Assignment updated');
+    // });
+    this.closeUpdateAssignModal();
+    // Optionally show a success message
+  }
+
+  closeUpdateAssignModal() {
+    this.updateAssignModalOpen = false;
+  }
 }
