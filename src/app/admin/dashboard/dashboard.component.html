@@ -37,8 +37,9 @@
           Manage and monitor all laboratory tests
         </p>
       </div>
-      <!-- <button
+      <button
         class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow"
+        [routerLink]="['/admin/create-test']"
       >
         <svg
           class="w-5 h-5"
@@ -53,8 +54,8 @@
             d="M12 6v6m0 0v6m0-6h6m-6 0H6"
           />
         </svg>
-        New Test
-      </button> -->
+        Create Test
+      </button>
     </div>
 
     <!-- Stats Cards -->
@@ -159,7 +160,297 @@
         </div>
       </div>
     </div>
+    <!-- Completed & Pending Tests Side-by-Side -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+      <!-- Completed Tests -->
+      <div class="bg-white rounded-xl shadow p-6">
+        <div class="flex justify-between items-center mb-4">
+          <p class="text-lg font-semibold text-gray-900">Completed Tests</p>
+          <!-- <button class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+            View All
+          </button> -->
+        </div>
+        <div class="d-md-flex justify-content-between align-items-center my-3">
+          <div class="d-flex align-items-center mb-md-0 mb-2">
+            <span class="me-1 show-entery-text">Show</span>
+            <select
+              class="form-control form-select show-entries-select"
+              (change)="onTableSizeChange($event)"
+            >
+              <option *ngFor="let size of tableSizes" [ngValue]="size">
+                {{ size }}
+              </option>
+            </select>
+            <!-- <span class="ms-1 show-entery-text">entries</span> -->
+          </div>
 
+          <div class="d-flex align-items-center">
+            <form [formGroup]="searchbarform" class="d-flex align-items-center">
+              <span class="me-1">Search:</span>
+              <div
+                [ngClass]="{'table-card table': searchbarform.controls['searchbar'].errors?.['required'] && (searchbarform.controls['searchbar'].touched || searchbarform.controls['searchbar'].dirty)}"
+              >
+                <input
+                  type="text"
+                  class="form-control search-user position-relative"
+                  autocomplete="off"
+                  formControlName="searchbar"
+                  [ngClass]="{
+                    'is-invalid':
+                      searchbarform.controls['searchbar'].errors &&
+                      (searchbarform.controls['searchbar'].touched ||
+                        searchbarform.controls['searchbar'].dirty)
+                  }"
+                />
+                <div
+                  class="text-danger error-message d-block"
+                  *ngIf="
+                    searchbarform.controls['searchbar'].errors &&
+                    (searchbarform.controls['searchbar'].touched ||
+                      searchbarform.controls['searchbar'].dirty)
+                  "
+                >
+                  <p
+                    class="fw-light text-danger search-required"
+                    *ngIf="
+                      searchbarform.controls['searchbar'].errors['required']
+                    "
+                  >
+                    This is required
+                  </p>
+                </div>
+              </div>
+              <button
+                class="btn btn-primary search-btn ms-2"
+                (click)="searchfun()"
+              >
+                <span
+                  ><i
+                    class="fa-solid fa-magnifying-glass form-control-feedback"
+                  ></i
+                ></span>
+              </button>
+              <button
+                class="btn btn-primary search-btn ms-2"
+                (click)="resetsearchbar()"
+                type="submit"
+                *ngIf="showreset == true"
+              >
+                <span
+                  ><i class="fa-solid fa-rotate-right form-control-feedback"></i
+                ></span>
+              </button>
+            </form>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-gray-200 text-left">
+                <th class="px-4 py-2 text-gray-500 font-medium">Test ID</th>
+                <th class="px-4 py-2 text-gray-500 font-medium">Name</th>
+                <th class="px-4 py-2 text-gray-500 font-medium">Date</th>
+                <th class="px-4 py-2 text-gray-500 font-medium">Operator</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let test of completedTests
+                    | paginate
+                      : {
+                          itemsPerPage:
+                            tableSize != 'all' ? tableSize : totalRecords,
+                          currentPage: completedTestsPage,
+                          totalItems: totalRecords
+                        };
+                  index as i
+                "
+                class="border-b hover:bg-gray-50"
+              >
+                <td class="px-4 py-2 font-mono text-gray-800">{{ test.id }}</td>
+                <td class="px-4 py-2 text-gray-900">{{ test.name }}</td>
+                <td class="px-4 py-2 text-gray-600">
+                  {{ test.date | date : "short" }}
+                </td>
+                <td class="px-4 py-2 text-gray-600">{{ test.operator }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div
+            class="d-md-flex justify-content-between bottom-0 end-0 py-2 align-items-center"
+          >
+            <span class="showalltext"
+              >Showing
+              {{
+                tableSize * (completedTestsPage - 1) > 0
+                  ? tableSize * (completedTestsPage - 1) + 1
+                  : 1
+              }}
+              to
+              {{
+                tableSize * completedTestsPage <= totalRecords
+                  ? tableSize * completedTestsPage
+                  : totalRecords
+              }}
+              of
+              {{ totalRecords != undefined ? totalRecords : "" }} entries</span
+            >
+            <pagination-controls
+              previousLabel="Prev"
+              nextLabel="Next"
+              [responsive]="true"
+              (pageChange)="onTableDataChange($event)"
+              target="_top"
+            ></pagination-controls>
+          </div>
+        </div>
+      </div>
+      <!-- Pending Tests -->
+      <div class="bg-white rounded-xl shadow p-6">
+        <div class="flex justify-between items-center mb-4">
+          <p class="text-lg font-semibold text-gray-900">Pending Tests</p>
+          <button class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+            View All
+          </button>
+        </div>
+        <div class="d-md-flex justify-content-between align-items-center my-3">
+          <div class="d-flex align-items-center mb-md-0 mb-2">
+            <span class="me-1 show-entery-text">Show</span>
+            <select
+              class="form-control form-select show-entries-select"
+              (change)="onTableSizeChange($event)"
+            >
+              <option *ngFor="let size of tableSizes" [ngValue]="size">
+                {{ size }}
+              </option>
+            </select>
+            <!-- <span class="ms-1 show-entery-text">entries</span> -->
+          </div>
+
+          <div class="d-flex align-items-center">
+            <form [formGroup]="searchbarform" class="d-flex align-items-center">
+              <span class="me-1">Search:</span>
+              <div
+                [ngClass]="{'table-card table': searchbarform.controls['searchbar'].errors?.['required'] && (searchbarform.controls['searchbar'].touched || searchbarform.controls['searchbar'].dirty)}"
+              >
+                <input
+                  type="text"
+                  class="form-control search-user position-relative"
+                  autocomplete="off"
+                  formControlName="searchbar"
+                  [ngClass]="{
+                    'is-invalid':
+                      searchbarform.controls['searchbar'].errors &&
+                      (searchbarform.controls['searchbar'].touched ||
+                        searchbarform.controls['searchbar'].dirty)
+                  }"
+                />
+                <div
+                  class="text-danger error-message d-block"
+                  *ngIf="
+                    searchbarform.controls['searchbar'].errors &&
+                    (searchbarform.controls['searchbar'].touched ||
+                      searchbarform.controls['searchbar'].dirty)
+                  "
+                >
+                  <p
+                    class="fw-light text-danger search-required"
+                    *ngIf="
+                      searchbarform.controls['searchbar'].errors['required']
+                    "
+                  >
+                    This is required
+                  </p>
+                </div>
+              </div>
+              <button
+                class="btn btn-primary search-btn ms-2"
+                (click)="searchfun()"
+              >
+                <span
+                  ><i
+                    class="fa-solid fa-magnifying-glass form-control-feedback"
+                  ></i
+                ></span>
+              </button>
+              <button
+                class="btn btn-primary search-btn ms-2"
+                (click)="resetsearchbar()"
+                type="submit"
+                *ngIf="showreset == true"
+              >
+                <span
+                  ><i class="fa-solid fa-rotate-right form-control-feedback"></i
+                ></span>
+              </button>
+            </form>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-gray-200 text-left">
+                <th class="px-4 py-2 text-gray-500 font-medium">Test ID</th>
+                <th class="px-4 py-2 text-gray-500 font-medium">Name</th>
+                <th class="px-4 py-2 text-gray-500 font-medium">Date</th>
+                <th class="px-4 py-2 text-gray-500 font-medium">Operator</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let test of pendingTests
+                    | paginate
+                      : {
+                          itemsPerPage:
+                            tableSize != 'all' ? tableSize : totalRecords,
+                          currentPage: pendingTestsPage,
+                          totalItems: totalRecords
+                        };
+                  index as i
+                "
+                class="border-b hover:bg-gray-50"
+              >
+                <td class="px-4 py-2 font-mono text-gray-800">{{ test.id }}</td>
+                <td class="px-4 py-2 text-gray-900">{{ test.name }}</td>
+                <td class="px-4 py-2 text-gray-600">
+                  {{ test.date | date : "short" }}
+                </td>
+                <td class="px-4 py-2 text-gray-600">{{ test.operator }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div
+            class="d-md-flex justify-content-between bottom-0 end-0 py-2 align-items-center"
+          >
+            <span class="showalltext"
+              >Showing
+              {{
+                tableSize * (pendingTestsPage - 1) > 0
+                  ? tableSize * (pendingTestsPage - 1) + 1
+                  : 1
+              }}
+              to
+              {{
+                tableSize * pendingTestsPage <= totalRecords
+                  ? tableSize * pendingTestsPage
+                  : totalRecords
+              }}
+              of
+              {{ totalRecords != undefined ? totalRecords : "" }} entries</span
+            >
+            <pagination-controls
+              previousLabel="Prev"
+              nextLabel="Next"
+              [responsive]="true"
+              (pageChange)="onTableDataChange($event)"
+              target="_top"
+            ></pagination-controls>
+          </div>
+        </div>
+      </div>
+    </div>
     <!-- Recent Tests -->
     <div class="bg-white rounded-xl shadow p-6">
       <div class="flex justify-between items-center mb-4">
@@ -213,208 +504,4 @@
       </div>
     </div>
   </div>
-
-  <!-- Stats Grid -->
-  <!-- <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-    <div
-      class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow"
-    >
-      <div class="flex items-center space-x-4">
-        <div class="bg-blue-100 p-3 rounded-full">
-          <i class="fa-solid fa-users text-blue-600 text-xl"></i>
-        </div>
-        <div>
-          <p class="text-gray-600 text-sm font-medium">Total Users</p>
-          <h3 class="text-2xl font-bold text-gray-800">
-            {{ stats.totalUsers }}
-          </h3>
-        </div>
-      </div>
-    </div>
-
-   
-    <div
-      class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow"
-    >
-      <div class="flex items-center space-x-4">
-        <div class="bg-green-100 p-3 rounded-full">
-          <i class="fa-solid fa-prescription-bottle text-green-600 text-xl"></i>
-        </div>
-        <div>
-          <p class="text-gray-600 text-sm font-medium">Total Pharmacies</p>
-          <h3 class="text-2xl font-bold text-gray-800">
-            {{ stats.totalPharmacies }}
-          </h3>
-        </div>
-      </div>
-    </div>
-   
-    <div
-      class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow"
-    >
-      <div class="flex items-center space-x-4">
-        <div class="bg-purple-100 p-3 rounded-full">
-          <i class="fa-solid fa-truck text-purple-600 text-xl"></i>
-        </div>
-        <div>
-          <p class="text-gray-600 text-sm font-medium">Total Distributors</p>
-          <h3 class="text-2xl font-bold text-gray-800">
-            {{ stats.totalDistributors }}
-          </h3>
-        </div>
-      </div>
-    </div>
-  
-    <div
-      class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow"
-    >
-      <div class="flex items-center space-x-4">
-        <div class="bg-red-100 p-3 rounded-full">
-          <i class="fa-solid fa-user-slash text-red-600 text-xl"></i>
-        </div>
-        <div>
-          <p class="text-gray-600 text-sm font-medium">Silent Users</p>
-          <h3 class="text-2xl font-bold text-gray-800">
-            {{ stats.silentUsers }}
-          </h3>
-        </div>
-      </div>
-    </div>
-  </div> -->
-
-  <!-- Daily Active Users and New Registrations -->
-  <!-- <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-  
-    <div class="bg-white rounded-xl shadow-md p-6">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">
-        Daily Active Users
-      </h3>
-      <p class="text-3xl font-bold text-blue-600">
-        {{ stats.dailyActiveUsers }}
-      </p>
-      <p class="text-gray-500 text-sm mt-2">Users active today</p>
-    </div>
-
-   
-    <div class="bg-white rounded-xl shadow-md p-6">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">
-        Newly Registered Users
-      </h3>
-      <p class="text-3xl font-bold text-green-600">
-        {{ stats.newlyRegisteredUsers }}
-      </p>
-      <p class="text-gray-500 text-sm mt-2">Users registered this month</p>
-    </div>
-  </div> -->
-
-  <!-- Store Approvals and License Status -->
-  <!-- <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
- 
-    <div class="bg-white rounded-xl shadow-md p-6">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-lg font-semibold text-gray-800">
-          Stores Awaiting Approval
-        </h3>
-        <div class="bg-yellow-100 p-3 rounded-full">
-          <i class="fa-solid fa-hourglass-half text-yellow-600 text-xl"></i>
-        </div>
-      </div>
-      <div class="overflow-x-auto">
-        <table class="w-full text-left">
-          <thead>
-            <tr class="personally-identifiable-information bg-gray-50">
-              <th class="px-4 py-2 text-sm font-medium text-gray-600">
-                Store Name
-              </th>
-              <th class="px-4 py-2 text-sm font-medium text-gray-600">
-                Submission Date
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="border-t" *ngFor="let store of storesAwaitingApproval">
-              <td class="px-4 py-3 text-gray-700">{{ store.name }}</td>
-              <td class="px-4 py-3 text-yellow-600 font-semibold">
-                {{ store.submissionDate }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-  
-    <div class="bg-white rounded-xl shadow-md p-6">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-lg font-semibold text-gray-800">
-          License Expiry Alerts
-        </h3>
-        <div class="bg-red-100 p-3 rounded-full">
-          <i class="fa-solid fa-exclamation-triangle text-red-600 text-xl"></i>
-        </div>
-      </div>
-      <div class="overflow-x-auto">
-        <table class="w-full text-left">
-          <thead>
-            <tr class="bg-gray-50">
-              <th class="px-4 py-2 text-sm font-medium text-gray-600">
-                License ID
-              </th>
-              <th class="px-4 py-2 text-sm font-medium text-gray-600">
-                Pharmacy Name
-              </th>
-              <th class="px-4 py-2 text-sm font-medium text-gray-600">
-                Expiry Date
-              </th>
-              <th class="px-4 py-2 text-sm font-medium text-gray-600">
-                Status
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="border-t" *ngFor="let license of licenseExpiryAlerts">
-              <td class="px-4 py-3 text-gray-700">{{ license.id }}</td>
-              <td class="px-4 py-3 text-gray-700">
-                {{ license.pharmacyName }}
-              </td>
-              <td class="px-4 py-3 text-gray-700">{{ license.expiryDate }}</td>
-              <td
-                class="px-4 py-3 font-semibold"
-                [ngClass]="{
-                  'text-red-600': license.status === 'Expired',
-                  'text-orange-600': license.status === 'Expiring Soon'
-                }"
-              >
-                {{ license.status }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div> -->
 </div>
-<!-- Welcome Section -->
-<!-- <div
-  class="bg-white rounded-xl shadow-md p-8 flex flex-col md:flex-row items-center"
->
-  <div class="flex-1 p-4">
-    <img
-      src="./assets/logo.png"
-      alt="Subh Medi Logo"
-      class="w-full h-auto rounded-lg shadow-sm"
-    />
-  </div>
-  <div class="flex-1 p-4">
-    <h3 class="text-2xl font-bold text-gray-800 mb-3">
-      Welcome to Subh Medi
-    </h3>
-    <p class="text-gray-600 mb-2">
-      Your trusted partner in pharmaceutical distribution.
-    </p>
-    <p class="text-gray-600">
-      Effortlessly manage users, stores, documents, subscriptions, companies,
-      and license authorities—all in one place.
-    </p>
-  </div>
-</div> -->

@@ -37,6 +37,8 @@ import { TestResultsComponent } from './admin/test-results/test-results.componen
 import { EquipmentStatusComponent } from './admin/equipment-status/equipment-status.component';
 import { AccountManagementComponent } from './admin/account-management/account-management.component';
 import { NavbarComponent } from './website/navbar/navbar.component';
+import { MastersComponent } from './admin/masters/masters.component';
+import { MaterialComponent } from './admin/masters/material/material.component';
 
 @NgModule({
   declarations: [
@@ -61,6 +63,8 @@ import { NavbarComponent } from './website/navbar/navbar.component';
     AccountManagementComponent,
     HomeComponent,
     NavbarComponent,
+    MastersComponent,
+    MaterialComponent,
   ],
   imports: [
     BrowserModule,

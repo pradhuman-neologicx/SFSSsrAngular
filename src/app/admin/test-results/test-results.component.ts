@@ -8,7 +8,7 @@ interface TestResult {
   testName: string;
   testType: string;
   sampleId: string;
-  status: 'passed' | 'failed' | 'pending';
+  status: 'completed' | 'pending';
   completedDate: Date;
   operator: string;
   results: { [key: string]: any };
@@ -40,7 +40,7 @@ export class TestResultsComponent {
       testName: 'Steel Rod Tensile Test',
       testType: 'Tensile Strength',
       sampleId: 'ST-001-A',
-      status: 'passed',
+      status: 'completed',
       completedDate: new Date('2024-01-15T15:30:00'),
       operator: 'Dr. Sarah Johnson',
       results: {
@@ -56,7 +56,7 @@ export class TestResultsComponent {
       testName: 'Concrete Compression',
       testType: 'Compression Test',
       sampleId: 'CC-002-B',
-      status: 'passed',
+      status: 'completed',
       completedDate: new Date('2024-01-14T11:45:00'),
       operator: 'Mike Chen',
       results: {
@@ -70,7 +70,7 @@ export class TestResultsComponent {
       testName: 'Aluminum Hardness',
       testType: 'Hardness Test',
       sampleId: 'AL-003-C',
-      status: 'passed',
+      status: 'pending',
       completedDate: new Date('2024-01-13T14:20:00'),
       operator: 'Lisa Rodriguez',
       results: {
@@ -84,7 +84,7 @@ export class TestResultsComponent {
       testName: 'Polymer Impact Test',
       testType: 'Impact Test',
       sampleId: 'PL-004-D',
-      status: 'failed',
+      status: 'pending',
       completedDate: new Date('2024-01-12T16:10:00'),
       operator: 'Dr. Robert Kim',
       results: {

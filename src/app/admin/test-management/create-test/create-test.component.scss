@@ -3,7 +3,6 @@
     align-items: center;
     justify-content: center;
 
-
     .step {
         display: flex;
         flex-direction: column;
@@ -49,7 +48,7 @@
 
 .form-input-custom {
     border-radius: 5px;
-    padding: 10px;
+    padding: 7px;
 }
 
 .admin-form-lable {
@@ -95,62 +94,74 @@
     color: #28a745;
 }
 
-// Fix for ng-select dropdown not showing full height
 .table-responsive {
-    // Ensure the table-responsive doesn't clip the dropdown
     position: relative;
     overflow: visible !important;
+    /* Ensures dropdown isn't clipped by table */
+    z-index: 1;
+    /* Base z-index for the table container */
 
-    // Ensure the table cell containing the ng-select has proper positioning
     td {
         position: relative;
     }
 }
 
-ng-select {
+.custom-multiselect {
+    position: relative;
+    width: 100%;
 
-    // Ensure the ng-select container doesn't restrict the dropdown
-    &.form-input-custom {
-        min-height: 38px; // Match the height of other inputs for consistency
-    }
-
-    // Style the dropdown panel
-    .ng-dropdown-panel {
-        z-index: 1050 !important; // Ensure the dropdown appears above other elements
-        max-height: 200px !important; // Set a reasonable max height for the dropdown
-        overflow-y: auto !important; // Allow scrolling if there are many options
-        width: 100%; // Ensure the dropdown width matches the input
+    .dropdown-toggle {
+        cursor: pointer;
+        background: #fff;
+        min-height: 38px;
+        display: flex;
+        align-items: center;
         border: 1px solid #ced4da;
         border-radius: 4px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-        // Ensure the dropdown items are fully visible
-        .ng-option {
-            padding: 8px 12px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
     }
 
-    // Ensure the input inside ng-select doesn't restrict height
-    .ng-select-container {
-        min-height: 38px;
-        align-items: center;
+    .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        min-width: 220px;
+        background: #fff;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        z-index: 1000;
+        max-height: 220px;
+        overflow-y: auto;
+        margin-top: 2px;
+        display: none;
+    }
+
+    .dropdown-menu.show {
+        display: block;
+    }
+
+    .dropdown-item {
+        padding: 6px 12px;
+        cursor: pointer;
+        white-space: nowrap;
+        user-select: none;
     }
 }
 
-::ng-deep .ng-dropdown-panel {
-    z-index: 1050 !important;
-}
-
-.table-responsive {
+// Prevent table container from clipping dropdowns and causing scrollbars
+.table-responsive,
+.overflow-x-auto {
     overflow: visible !important;
 }
 
-ng-select {
-    position: relative;
-    z-index: 10;
-    padding: 4px !important;
+// Remove unwanted vertical scrollbar from table area
+.table-responsive::-webkit-scrollbar,
+.overflow-x-auto::-webkit-scrollbar {
+    width: 0 !important;
+    background: transparent !important;
+}
 
+table p {
+    margin-bottom: 0;
+    font-size: 15px;
 }

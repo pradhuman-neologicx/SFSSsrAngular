@@ -94,7 +94,7 @@ export class TestManagementComponent implements OnInit {
   // staffList: any[] = [];
 
   updateAssignModalOpen = false;
-  updateAssignForm: FormGroup;
+  updateAssignForm!: FormGroup;
   updateAssignTestId: number | null = null;
 
   constructor(
@@ -128,6 +128,11 @@ export class TestManagementComponent implements OnInit {
       completed_on: [''],
     });
     this.assignForm = this.formBuilder.group({
+      round_robin: [''],
+      staff_id: [null, [Validators.required]],
+    });
+    this.updateAssignForm = this.formBuilder.group({
+      round_robin: [''],
       staff_id: [null, [Validators.required]],
     });
 

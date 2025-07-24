@@ -18,6 +18,8 @@ import { ReportComponent } from './admin/report/report.component';
 import { TestResultsComponent } from './admin/test-results/test-results.component';
 import { EquipmentStatusComponent } from './admin/equipment-status/equipment-status.component';
 import { AccountManagementComponent } from './admin/account-management/account-management.component';
+import { MastersComponent } from './admin/masters/masters.component';
+import { MaterialComponent } from './admin/masters/material/material.component';
 
 const routes: Routes = [
   {
@@ -62,7 +64,7 @@ const routes: Routes = [
       },
 
       {
-        path: 'test-master',
+        path: 'test-configuration',
         component: TestMasterComponent,
       },
       {
@@ -88,6 +90,17 @@ const routes: Routes = [
       {
         path: 'accounts',
         component: AccountManagementComponent,
+      },
+      {
+        path: 'master',
+        component: MastersComponent,
+        children: [
+          { path: '', redirectTo: 'category', pathMatch: 'full' },
+          {
+            path: 'material',
+            component: MaterialComponent,
+          },
+        ],
       },
     ],
   },

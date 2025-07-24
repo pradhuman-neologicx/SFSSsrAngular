@@ -10,9 +10,12 @@ interface FinancialAccount {
   balance: number;
   creditLimit: number;
   paymentTerms: 'Net 30' | 'Net 60' | 'Prepaid';
-  status: 'Active' | 'Overdue' | 'Closed';
+  status: 'Paid' | 'Unpaid';
   lastInvoiceDate: Date | null;
   contactEmail: string;
+  testType?: string;
+  testDate?: Date | null;
+  testStatus?: 'Completed' | 'Pending' | 'Failed';
 }
 
 interface ReportData {
@@ -54,9 +57,12 @@ export class AccountManagementComponent {
       balance: 2500.75,
       creditLimit: 10000,
       paymentTerms: 'Net 30',
-      status: 'Active',
+      status: 'Paid',
       lastInvoiceDate: new Date('2025-06-15'),
       contactEmail: 'billing@acme.com',
+      testType: 'Material Test',
+      testDate: new Date('2025-06-10'),
+      testStatus: 'Completed',
     },
     {
       id: 'ACC-002',
@@ -64,9 +70,12 @@ export class AccountManagementComponent {
       balance: 7500.2,
       creditLimit: 5000,
       paymentTerms: 'Net 60',
-      status: 'Overdue',
+      status: 'Unpaid',
       lastInvoiceDate: new Date('2025-05-01'),
       contactEmail: 'finance@betalabs.com',
+      testType: 'Field Test',
+      testDate: new Date('2025-04-25'),
+      testStatus: 'Pending',
     },
     {
       id: 'ACC-003',
@@ -74,9 +83,12 @@ export class AccountManagementComponent {
       balance: 0,
       creditLimit: 2000,
       paymentTerms: 'Prepaid',
-      status: 'Active',
+      status: 'Paid',
       lastInvoiceDate: new Date('2025-05-15'),
       contactEmail: 'accounts@gammaresearch.com',
+      testType: 'Material Test',
+      testDate: new Date('2025-05-10'),
+      testStatus: 'Completed',
     },
     {
       id: 'ACC-004',
@@ -84,9 +96,12 @@ export class AccountManagementComponent {
       balance: 1200.5,
       creditLimit: 3000,
       paymentTerms: 'Net 30',
-      status: 'Closed',
+      status: 'Paid',
       lastInvoiceDate: new Date('2025-04-10'),
       contactEmail: 'payments@deltacorp.com',
+      testType: 'Field Test',
+      testDate: new Date('2025-04-05'),
+      testStatus: 'Pending',
     },
   ];
 
@@ -104,6 +119,7 @@ export class AccountManagementComponent {
   tableSizes: any = [10, 20, 50, 100, 'all'];
   totalRecords: any;
   page: number = 1;
+  user_id: any;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -116,6 +132,9 @@ export class AccountManagementComponent {
       paymentTerms: ['Net 30', Validators.required],
       status: ['Active', Validators.required],
       contactEmail: ['', [Validators.required, Validators.email]],
+      testType: ['', Validators.minLength(2)],
+      testDate: [null],
+      testStatus: [''],
     });
 
     this.searchbarform = this.formBuilder.group({
@@ -155,16 +174,18 @@ export class AccountManagementComponent {
     this.user_id = this.jwtService.getpanelUserId();
   }
 
-  user_id: any;
-
   searchfun(): void {
     if (this.searchbarform.valid) {
       this.showreset = true;
-      const searchText = this.searchbarform.get('searchbar')?.value;
+      const searchText = this.searchbarform
+        .get('searchbar')
+        ?.value.toLowerCase();
       this.filteredAccounts = this.accounts.filter(
         (account) =>
-          account.clientName.toLowerCase().includes(searchText.toLowerCase()) ||
-          account.id.toLowerCase().includes(searchText.toLowerCase())
+          account.clientName.toLowerCase().includes(searchText) ||
+          account.id.toLowerCase().includes(searchText) ||
+          account.testType?.toLowerCase().includes(searchText) ||
+          account.testStatus?.toLowerCase().includes(searchText)
       );
       this.totalRecords = this.filteredAccounts.length;
       this.page = 1;
@@ -198,6 +219,9 @@ export class AccountManagementComponent {
       creditLimit: 0,
       paymentTerms: 'Net 30',
       status: 'Active',
+      testType: '',
+      testDate: null,
+      testStatus: '',
     });
     this.showModal = true;
   }
@@ -256,6 +280,7 @@ export class AccountManagementComponent {
       `Sending invoice for account ${account.id} to ${account.contactEmail}`
     );
   }
+
   downloadReportAsPDF(): void {
     const element = document.getElementById('reportTable');
     if (element) {
@@ -263,18 +288,17 @@ export class AccountManagementComponent {
         .then((canvas) => {
           const imgData = canvas.toDataURL('image/png');
           const pdf = new jsPDF('p', 'mm', 'a4');
-          const imgWidth = 190; // Width in mm (A4 width is 210mm, leaving 10mm margins on each side)
-          const pageHeight = 297; // A4 height in mm
+          const imgWidth = 190;
+          const pageHeight = 297;
           const imgHeight = (canvas.height * imgWidth) / canvas.width;
           let heightLeft = imgHeight;
-          let position = 10; // Start 10mm from the top
+          let position = 10;
 
           pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-          heightLeft -= pageHeight - 20; // Account for margins
+          heightLeft -= pageHeight - 20;
 
-          // Add additional pages if the content exceeds one page
           while (heightLeft > 0) {
-            position = heightLeft - imgHeight + 10; // Adjust position for the next page
+            position = heightLeft - imgHeight + 10;
             pdf.addPage();
             pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
             heightLeft -= pageHeight - 20;
@@ -289,6 +313,7 @@ export class AccountManagementComponent {
       console.error('Report table element not found');
     }
   }
+
   openInvoiceModal(account: FinancialAccount): void {
     this.selectedAccount = account;
     this.showInvoiceModal = true;
@@ -298,8 +323,8 @@ export class AccountManagementComponent {
     this.showInvoiceModal = false;
     this.selectedAccount = null;
   }
+
   downloadInvoiceAsPDF(): void {
-    console.log('Download Invoice button clicked');
     const element = document.getElementById('invoiceTable');
     if (element) {
       setTimeout(() => {

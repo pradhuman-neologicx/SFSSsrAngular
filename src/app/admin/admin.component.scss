@@ -16,6 +16,10 @@ mat-sidenav-content {
     min-height: 100vh;
 }
 
+.screenResponsive {
+    overflow-x: hidden;
+}
+
 @media (max-width: 768px) {
     .admin-container {
         width: 100vw;
@@ -31,5 +35,7 @@ mat-sidenav-content {
 @media (min-width: 769px) {
     mat-sidenav-content {
         padding: 1.5rem 2rem;
+        overflow: scroll;
+        height: 100%;
     }
 }

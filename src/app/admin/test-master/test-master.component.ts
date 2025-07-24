@@ -94,22 +94,25 @@ export class TestMasterComponent implements OnInit {
 
   testList = [
     {
-      testName: 'C C Cubes',
+      testName: 'Test 1',
+      testMaterial: 'Iron',
       testType: 'Material Based Test',
       testMethod: 'IS:561-P1-2021',
-      inputFields: ['Field1', 'Field2'],
+      inputFields: ['Field1 (kg)', 'Field2 (N)'],
     },
     {
-      testName: 'Cement',
+      testName: 'Test 2',
+      testMaterial: 'Cement',
       testType: 'Material Based Test',
       testMethod: 'IS:4031(P-4)1988',
-      inputFields: ['Field3'],
+      inputFields: ['Field3 (MPa)'],
     },
     {
-      testName: 'Soil',
+      testName: 'Test 3',
+      testMaterial: 'Soil',
       testType: 'Field Based Test',
       testMethod: 'IS 2131',
-      inputFields: ['Field4', 'Field5'],
+      inputFields: ['Field4 (mm)', 'Field5 (kg)'],
     },
   ];
 
@@ -123,27 +126,55 @@ export class TestMasterComponent implements OnInit {
     this.testCreateForm = this.formBuilder.group({
       test_name: ['', [Validators.required]],
       test_type: ['Material Based Test', [Validators.required]],
+      material_type: ['CC Cubes', [Validators.required]],
       test_method: ['', [Validators.required]],
       input_fields: this.formBuilder.array([
         this.formBuilder.group({
           input_field: ['', [Validators.required]],
+          unit: ['UOM', [Validators.required]],
         }),
       ]),
     });
     this.testUpdateForm = this.formBuilder.group({
       test_name: ['', [Validators.required]],
       test_type: ['Material Based Test', [Validators.required]],
+      material_type: ['Iron', [Validators.required]],
       test_method: ['', [Validators.required]],
       input_fields: this.formBuilder.array([]),
     });
     this.testViewForm = this.formBuilder.group({
       test_name: [''],
       test_type: ['Material Based Test'],
+      material_type: ['Iron'],
       test_method: [''],
       input_fields: this.formBuilder.array([]),
     });
 
     this.getTests();
+    // Subscribe to test_type changes for Create form
+    this.testCreateForm.get('test_type')?.valueChanges.subscribe((value) => {
+      const materialTypeControl = this.testCreateForm.get('material_type');
+      if (value === 'Material Based Test') {
+        materialTypeControl?.setValidators([Validators.required]);
+        materialTypeControl?.updateValueAndValidity();
+      } else {
+        materialTypeControl?.clearValidators();
+        materialTypeControl?.updateValueAndValidity();
+        materialTypeControl?.setValue('');
+      }
+    });
+    // Subscribe to test_type changes for Update form
+    this.testUpdateForm.get('test_type')?.valueChanges.subscribe((value) => {
+      const materialTypeControl = this.testUpdateForm.get('material_type');
+      if (value === 'Material Based Test') {
+        materialTypeControl?.setValidators([Validators.required]);
+        materialTypeControl?.updateValueAndValidity();
+      } else {
+        materialTypeControl?.clearValidators();
+        materialTypeControl?.updateValueAndValidity();
+        materialTypeControl?.setValue('');
+      }
+    });
   }
 
   get inputFields() {
@@ -162,6 +193,7 @@ export class TestMasterComponent implements OnInit {
     this.inputFields.push(
       this.formBuilder.group({
         input_field: ['', [Validators.required]],
+        unit: ['UOM', [Validators.required]],
       })
     );
   }
@@ -174,6 +206,7 @@ export class TestMasterComponent implements OnInit {
     this.updateInputFields.push(
       this.formBuilder.group({
         input_field: ['', [Validators.required]],
+        unit: ['kg', [Validators.required]],
       })
     );
   }
@@ -193,7 +226,8 @@ export class TestMasterComponent implements OnInit {
       heading0: 'Sr No',
       heading1: 'Test Name',
       heading2: 'Test Type',
-      heading3: 'Test Method',
+      heading22: 'Material',
+      heading3: 'Test Method Name',
       heading6: 'Action',
     },
   ];
@@ -232,9 +266,10 @@ export class TestMasterComponent implements OnInit {
       this.testList.push({
         testName: formValue.test_name,
         testType: formValue.test_type,
+        testMaterial: formValue.testMaterial,
         testMethod: formValue.test_method,
         inputFields: formValue.input_fields.map(
-          (field: any) => field.input_field
+          (field: any) => `${field.input_field} (${field.unit})`
         ),
       });
       this.closeModal();
@@ -269,9 +304,12 @@ export class TestMasterComponent implements OnInit {
     });
     this.updateInputFields.clear();
     data.inputFields.forEach((field: string) => {
+      const [inputField, unit] = field.split(' (');
+      const cleanedUnit = unit ? unit.replace(')', '') : 'kg';
       this.updateInputFields.push(
         this.formBuilder.group({
-          input_field: [field, [Validators.required]],
+          input_field: [inputField || '', [Validators.required]],
+          unit: [cleanedUnit || 'kg', [Validators.required]],
         })
       );
     });
@@ -283,9 +321,10 @@ export class TestMasterComponent implements OnInit {
       this.testList[this.testId] = {
         testName: formValue.test_name,
         testType: formValue.test_type,
+        testMaterial: formValue.testMaterial,
         testMethod: formValue.test_method,
         inputFields: formValue.input_fields.map(
-          (field: any) => field.input_field
+          (field: any) => `${field.input_field} (${field.unit})`
         ),
       };
       this.closeModal();
@@ -318,9 +357,12 @@ export class TestMasterComponent implements OnInit {
     });
     this.viewInputFields.clear();
     data.inputFields.forEach((field: string) => {
+      const [inputField, unit] = field.split(' (');
+      const cleanedUnit = unit ? unit.replace(')', '') : '';
       this.viewInputFields.push(
         this.formBuilder.group({
-          input_field: [field],
+          input_field: [inputField || ''],
+          unit: [cleanedUnit || ''],
         })
       );
     });

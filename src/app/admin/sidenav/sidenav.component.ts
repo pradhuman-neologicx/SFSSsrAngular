@@ -84,13 +84,33 @@ export class SidenavComponent {
         index: 2,
         icon: 'supervisor_account',
         label: 'User Management',
-        route: 'user-management',
+        route: 'user-management/staff',
+        // subItems: [
+        //   {
+        //     index: 1,
+        //     icon: 'group',
+        //     label: 'Staff',
+        //     route: 'user-management/staff',
+        //   },
+        // ],
+      },
+      {
+        index: 4,
+        icon: 'widgets',
+        label: 'Master',
+        route: '/admin/master',
         subItems: [
           {
             index: 1,
-            icon: 'group',
-            label: 'Staff',
-            route: 'user-management/staff',
+            icon: 'inventory_2',
+            label: 'Material',
+            route: '/admin/master/material',
+          },
+          {
+            index: 2,
+            icon: 'import_contacts',
+            label: 'Test Configuration',
+            route: 'test-configuration',
           },
         ],
       },
@@ -106,24 +126,19 @@ export class SidenavComponent {
       //   label: 'Equipment Management',
       //   route: 'equipment',
       // },
-      {
-        index: 5,
-        icon: 'import_contacts',
-        label: 'Test Master',
-        route: 'test-master',
-      },
+
       {
         index: 6,
         icon: 'insights',
         label: 'Test Results',
         route: 'test-result',
       },
-      {
-        index: 7,
-        icon: 'ads_click',
-        label: 'Report',
-        route: 'report',
-      },
+      // {
+      //   index: 7,
+      //   icon: 'ads_click',
+      //   label: 'Report',
+      //   route: 'report',
+      // },
       {
         index: 8,
         icon: 'account_balance_wallet	',

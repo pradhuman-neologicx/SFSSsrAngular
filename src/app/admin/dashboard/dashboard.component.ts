@@ -6,6 +6,7 @@ import {
   animate,
 } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { JwtService } from 'src/app/core/services/jwt.service';
 
@@ -155,7 +156,23 @@ export class DashboardComponent implements OnInit {
     },
   ];
 
-  constructor(private route: ActivatedRoute, private jwtService: JwtService) {
+  completedTests: any[] = [];
+  pendingTests: any[] = [];
+  completedTestsPage: number = 1;
+  pendingTestsPage: number = 1;
+  showreset: boolean = false;
+  searchText: string | undefined;
+  tableSize: any = 10;
+  tableSizes: any = [10, 20, 50, 100, 'all'];
+  totalRecords: any;
+  page: number = 1;
+  searchbarform!: FormGroup;
+
+  constructor(
+    private route: ActivatedRoute,
+    private jwtService: JwtService,
+    private formBuilder: FormBuilder
+  ) {
     this.route.queryParams.subscribe((params) => {
       this.firstlogin = this.jwtService.getfirstLoggedIn();
       console.log(this.firstlogin);
@@ -173,18 +190,48 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.name = this.jwtService.getName();
+    this.searchbarform = this.formBuilder.group({
+      searchbar: ['', [Validators.required]],
+    });
     this.firstlogin = this.jwtService.getfirstLoggedIn();
     console.log(this.firstlogin);
     // TODO: Fetch real stats from a service
     // this.fetchDashboardStats();
+
+    // Example: Assign sample data for completed and pending tests
+    this.completedTests = [
+      { id: 'T101', name: 'CC Cube Test', date: new Date(), operator: 'Ravi' },
+      { id: 'T102', name: 'Steel Test', date: new Date(), operator: 'Aarti' },
+      // ...add more items for pagination demo if needed...
+    ];
+    this.pendingTests = [
+      { id: 'T201', name: 'Bricks Test', date: new Date(), operator: 'Suresh' },
+      { id: 'T202', name: 'Cement Test', date: new Date(), operator: 'Mehta' },
+      // ...add more items for pagination demo if needed...
+    ];
+  }
+  searchfun() {
+    if (this.searchbarform.valid) {
+      this.showreset = true;
+      this.searchText = this.searchbarform.get('searchbar')?.value;
+      // this.getTests();
+    } else {
+      this.searchbarform.markAllAsTouched();
+    }
   }
 
-  // Optional: Method to fetch stats from a service
-  /*
-  private fetchDashboardStats(): void {
-    this.someService.getDashboardStats().subscribe((data) => {
-      this.stats = data;
-    });
+  resetsearchbar() {
+    window.location.reload();
   }
-  */
+
+  onTableSizeChange(event: any): void {
+    this.tableSize = event.target.value;
+    this.page = 1;
+    // this.getTests();
+  }
+
+  onTableDataChange(event: any) {
+    this.page = event;
+    // this.getTests();
+  }
 }

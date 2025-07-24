@@ -5,7 +5,7 @@ import {
   transition,
   animate,
 } from '@angular/animations';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -32,7 +32,7 @@ import { Router } from '@angular/router';
       ),
       transition(':enter', [
         animate(
-          '0.5s ease-out',
+          '0.7s ease-out',
           style({
             transform: 'translateX(0)',
             opacity: 1,
@@ -51,6 +51,7 @@ export class CreateTestComponent implements OnInit {
   errorMessage?: string;
   testId: any = null;
   today: any;
+  dropdownOpen: boolean[] = [];
 
   materials = [
     { value: 'Mild Steel', label: 'Mild Steel' },
@@ -122,9 +123,12 @@ export class CreateTestComponent implements OnInit {
       tests_per_nabl_scope: ['', Validators.required],
       tests_witnessed_by_customer: ['', Validators.required],
       decision_rule_required: ['', Validators.required],
+      staff_id: ['Select Staff'],
+      round_robin: [''],
     });
 
     this.filteredTestDescriptions = [];
+    this.dropdownOpen = [];
     this.addTest('material');
     this.addTest('field');
   }
@@ -151,12 +155,14 @@ export class CreateTestComponent implements OnInit {
     if (type === 'material') {
       this.materialTests.push(testGroup);
       this.filteredTestDescriptions.push([]);
+      this.dropdownOpen.push(false);
       this.onTestMaterialChange(this.materialTests.length - 1);
     } else {
       this.fieldTests.push(testGroup);
       this.filteredTestDescriptions.push(
         this.testDescriptions.filter((desc) => desc.material === null)
       );
+      this.dropdownOpen.push(false);
     }
   }
 
@@ -166,6 +172,7 @@ export class CreateTestComponent implements OnInit {
     if (formArray.length > 1) {
       formArray.removeAt(index);
       this.filteredTestDescriptions.splice(index, 1);
+      this.dropdownOpen.splice(index, 1);
     }
   }
 
@@ -176,6 +183,78 @@ export class CreateTestComponent implements OnInit {
       (desc) => desc.material === selectedMaterial
     );
     this.materialTests.controls[index].get('test_description')?.setValue([]);
+    this.dropdownOpen[index] = false;
+  }
+
+  // Add this HostListener to close dropdowns on outside click
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    // Only close if the click is outside any .custom-multiselect
+    if (!target.closest('.custom-multiselect')) {
+      this.dropdownOpen = this.dropdownOpen.map(() => false);
+    }
+  }
+
+  toggleDropdown(index: number): void {
+    // Close all others, toggle current
+    this.dropdownOpen = this.dropdownOpen.map((_, i) =>
+      i === index ? !this.dropdownOpen[i] : false
+    );
+  }
+
+  isTestSelected(index: number, testValue: string): boolean {
+    const formArray =
+      index < this.materialTests.length ? this.materialTests : this.fieldTests;
+    const formGroupIndex =
+      index < this.materialTests.length
+        ? index
+        : index - this.materialTests.length;
+    const selectedTests =
+      formArray.controls[formGroupIndex].get('test_description')?.value || [];
+    return selectedTests.includes(testValue);
+  }
+
+  toggleTestSelection(index: number, testValue: string): void {
+    const formArray =
+      index < this.materialTests.length ? this.materialTests : this.fieldTests;
+    const formGroupIndex =
+      index < this.materialTests.length
+        ? index
+        : index - this.materialTests.length;
+    const testDescriptionControl =
+      formArray.controls[formGroupIndex].get('test_description');
+    let selectedTests = testDescriptionControl?.value || [];
+
+    if (selectedTests.includes(testValue)) {
+      selectedTests = selectedTests.filter(
+        (value: string) => value !== testValue
+      );
+    } else {
+      selectedTests.push(testValue);
+    }
+
+    testDescriptionControl?.setValue(selectedTests);
+    testDescriptionControl?.markAsTouched();
+    testDescriptionControl?.markAsDirty();
+  }
+
+  getSelectedTestsLabel(index: number): string {
+    const formArray =
+      index < this.materialTests.length ? this.materialTests : this.fieldTests;
+    const formGroupIndex =
+      index < this.materialTests.length
+        ? index
+        : index - this.materialTests.length;
+    const selectedTests =
+      formArray.controls[formGroupIndex].get('test_description')?.value || [];
+    return selectedTests
+      .map(
+        (value: string) =>
+          this.testDescriptions.find((desc) => desc.value === value)?.label
+      )
+      .filter((label: string | undefined) => label)
+      .join(', ');
   }
 
   onSampleConditionChange(): void {
@@ -222,11 +301,13 @@ export class CreateTestComponent implements OnInit {
     this.materialTests.clear();
     this.fieldTests.clear();
     this.filteredTestDescriptions = [];
+    this.dropdownOpen = [];
     this.addTest('material');
     this.addTest('field');
     this.testId = null;
     this.router.navigate(['/admin/test-management']);
   }
+
   minDateValidator() {
     return (control: AbstractControl): ValidationErrors | null => {
       if (!control.value) return null; // Skip if no value (required validator will handle this)
@@ -236,4 +317,12 @@ export class CreateTestComponent implements OnInit {
       return selectedDate < today ? { minDate: true } : null;
     };
   }
+
+  staffList: any = [
+    { id: '1', name: 'Dr. John Smith', is_active: 1 },
+    { id: '2', name: 'Nurse Jane Doe', is_active: 1 },
+    { id: '3', name: 'Technician Bob Johnson', is_active: 1 },
+    { id: '4', name: 'Dr. Emily Brown', is_active: 1 },
+    { id: '5', name: 'Nurse Mike Wilson', is_active: 0 },
+  ];
 }
