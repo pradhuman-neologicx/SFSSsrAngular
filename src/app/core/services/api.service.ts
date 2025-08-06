@@ -144,6 +144,18 @@ export class ApiService {
         catchError(this.handleError)
       );
   }
+  deleteFun(
+    path: string,
+    options: { headers?: HttpHeaders } = {}
+  ): Observable<any> {
+    return this.http.delete(`${environment.api_url}${path}`, options).pipe(
+      retry(1), // Optional: Retry once if the request fails (consider removing if not needed)
+      catchError((error) => {
+        console.error('Delete request failed:', error);
+        return this.handleError(error); // Use your custom error handler
+      })
+    );
+  }
   patch(path: string, body: any): Observable<any> {
     return this.http
       .patch(`${environment.api_url}${path}`, body)

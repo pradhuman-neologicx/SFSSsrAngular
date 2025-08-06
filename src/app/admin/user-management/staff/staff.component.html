@@ -12,7 +12,7 @@
         (click)="openUploadModal()"
         class="btn btn-custom-primary px-4 py-2 mb-md-0 mb-2"
       >
-        Upload
+        Bulk Upload
       </button>
     </div>
   </div>
@@ -85,107 +85,109 @@
       </div>
     </div>
     <div class="table-responsive-sm">
-      <table class="table table-bordered table-hover table-striped mb-0">
-        <thead class="table-header">
-          <tr *ngFor="let detail of table_heading">
-            <th>
-              <p class="table-heading">{{ detail.heading0 }}</p>
-            </th>
-            <th>
-              <p class="table-heading">{{ detail.heading1 }}</p>
-            </th>
-            <th>
-              <p class="table-heading">{{ detail.heading2 }}</p>
-            </th>
-            <th>
-              <p class="table-heading">{{ detail.heading3 }}</p>
-            </th>
-            <th>
-              <p class="table-heading">{{ detail.headin04 }}</p>
-            </th>
-            <th>
-              <p class="table-heading">{{ detail.heading4 }}</p>
-            </th>
-            <th>
-              <p class="table-heading">{{ detail.heading5 }}</p>
-            </th>
-            <th>
-              <p class="table-heading">{{ detail.heading6 }}</p>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            *ngFor="
-              let staff of staffTable
-                | paginate
-                  : {
-                      itemsPerPage:
-                        tableSize != 'all' ? tableSize : totalRecords,
-                      currentPage: page,
-                      totalItems: totalRecords
-                    };
-              index as i
-            "
-          >
-            <td>{{ i + 1 }}</td>
-            <td>
-              <p>{{ staff.name }}</p>
-            </td>
-            <td>
-              <p>{{ staff.email }}</p>
-            </td>
-            <td>
-              <p>{{ staff.mobile }}</p>
-            </td>
-            <td>
-              <p>{{ staff.department }}</p>
-            </td>
-            <td>
-              <p>{{ staff.role }}</p>
-            </td>
-            <td>
-              <p
-                [ngClass]="{
-                  'active-status': staff.is_active == 1,
-                  'deactive-status': staff.is_active == 0
-                }"
-              >
-                {{ staff.is_active == 1 ? "Active" : "Deactive" }}
-              </p>
-            </td>
-            <td>
-              <p>
-                <button mat-icon-button [matMenuTriggerFor]="menu">
-                  <mat-icon>more_vert</mat-icon>
-                </button>
-                <mat-menu #menu="matMenu">
-                  <button mat-menu-item (click)="OpenEditModal(staff)">
-                    Edit
+      <div class="table-responsive-inner">
+        <table class="table table-bordered table-hover table-striped mb-0">
+          <thead class="table-header">
+            <tr *ngFor="let detail of table_heading">
+              <th>
+                <p class="table-heading">{{ detail.heading0 }}</p>
+              </th>
+              <th>
+                <p class="table-heading">{{ detail.heading1 }}</p>
+              </th>
+              <th>
+                <p class="table-heading">{{ detail.heading2 }}</p>
+              </th>
+              <th>
+                <p class="table-heading">{{ detail.heading3 }}</p>
+              </th>
+              <th>
+                <p class="table-heading">{{ detail.headin04 }}</p>
+              </th>
+              <th>
+                <p class="table-heading">{{ detail.heading4 }}</p>
+              </th>
+              <th>
+                <p class="table-heading">{{ detail.heading5 }}</p>
+              </th>
+              <th>
+                <p class="table-heading">{{ detail.heading6 }}</p>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="
+                let staff of staffTable
+                  | paginate
+                    : {
+                        itemsPerPage:
+                          tableSize != 'all' ? tableSize : totalRecords,
+                        currentPage: page,
+                        totalItems: totalRecords
+                      };
+                index as i
+              "
+            >
+              <td>{{ i + 1 }}</td>
+              <td>
+                <p>{{ staff.name }}</p>
+              </td>
+              <td>
+                <p>{{ staff.email }}</p>
+              </td>
+              <td>
+                <p>{{ staff.mobile }}</p>
+              </td>
+              <td>
+                <p>{{ staff.department.name }}</p>
+              </td>
+              <td>
+                <p>{{ staff.role.name }}</p>
+              </td>
+              <td>
+                <p
+                  [ngClass]="{
+                    'active-status': staff.is_active == 1,
+                    'deactive-status': staff.is_active == 0
+                  }"
+                >
+                  {{ staff.is_active == 1 ? "Active" : "Deactive" }}
+                </p>
+              </td>
+              <td>
+                <p>
+                  <button mat-icon-button [matMenuTriggerFor]="menu">
+                    <mat-icon>more_vert</mat-icon>
                   </button>
-                  <button mat-menu-item (click)="OpenviewModal(staff)">
-                    View Details
-                  </button>
-                  <button
-                    mat-menu-item
-                    *ngIf="staff.is_active == 1"
-                    (click)="Status(staff.id, 0)"
-                  >
-                    Deactivate
-                  </button>
-                  <button
-                    mat-menu-item
-                    *ngIf="staff.is_active == 0"
-                    (click)="Status(staff.id, 1)"
-                  >
-                    Activate
-                  </button>
-                </mat-menu>
-              </p>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+                  <mat-menu #menu="matMenu">
+                    <button mat-menu-item (click)="OpenEditModal(staff)">
+                      Edit
+                    </button>
+                    <button mat-menu-item (click)="OpenviewModal(staff)">
+                      View Details
+                    </button>
+                    <button
+                      mat-menu-item
+                      *ngIf="staff.is_active == 1"
+                      (click)="Status(staff.id, 0)"
+                    >
+                      Deactivate
+                    </button>
+                    <button
+                      mat-menu-item
+                      *ngIf="staff.is_active == 0"
+                      (click)="Status(staff.id, 1)"
+                    >
+                      Activate
+                    </button>
+                  </mat-menu>
+                </p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <div
         class="d-md-flex justify-content-between bottom-0 end-0 py-2 align-items-center"
       >
@@ -235,7 +237,7 @@
           </div>
           <div class="modal-content-width card-body mb-0 pb-0">
             <div class="row">
-              <div class="col-lg-12 col-md-12 mb-3">
+              <!-- <div class="col-lg-12 col-md-12 mb-3">
                 <div class="files-add text-center">
                   <div class="d-block border-2 py-3">
                     <label
@@ -304,8 +306,8 @@
                     {{ fileSizeError }}
                   </p>
                 </div>
-              </div>
-              <div class="col-lg-12 col-md-12 mb-3">
+              </div> -->
+              <div class="col-12 col-md-16 mb-3">
                 <label
                   class="d-block text-capitalize form-label admin-form-lable"
                   for="name"
@@ -338,7 +340,7 @@
                   </p>
                 </div>
               </div>
-              <div class="col-lg-12 col-md-12 mb-3">
+              <div class="col-12 col-md-6 mb-3">
                 <label
                   class="d-block text-capitalize form-label admin-form-lable"
                   for="email"
@@ -377,7 +379,7 @@
                   </p>
                 </div>
               </div>
-              <div class="col-lg-12 col-md-12 mb-3">
+              <div class="col-12 col-md-6 mb-3">
                 <label
                   class="d-block text-capitalize form-label admin-form-lable"
                   for="mobile"
@@ -417,13 +419,13 @@
                   </p>
                 </div>
               </div>
-              <div class="col-lg-12 col-md-12 mb-3">
+              <div class="col-12 col-md-6 mb-3">
                 <label
                   class="d-block text-capitalize form-label admin-form-lable"
                   for="department"
                   >Department</label
                 >
-                <select
+                <!-- <select
                   class="d-block form-select form-control form-input-custom"
                   formControlName="department"
                   [ngClass]="{
@@ -436,6 +438,26 @@
                   <option value="Reception">Reception</option>
                   <option value="Engineering">Engineering</option>
                   <option value="Accounts">Accounts</option>
+                </select> -->
+                <select
+                  class="form-control form-input-custom form-select"
+                  #City
+                  formControlName="department"
+                  (change)="onDepartmentChange($event)"
+                  [ngClass]="{
+                    'is-invalid':
+                      staffcreate.controls['department'].errors &&
+                      (staffcreate.controls['department'].touched ||
+                        staffcreate.controls['department'].dirty)
+                  }"
+                >
+                  <option
+                    *ngFor="let department of departmentTable"
+                    [value]="department.id"
+                  >
+                    <!-- Bind to citiesList and use city.name -->
+                    {{ department.name }}
+                  </option>
                 </select>
                 <div
                   class="text-danger error-message"
@@ -455,7 +477,7 @@
                   </p>
                 </div>
               </div>
-              <div class="col-lg-12 col-md-12 mb-3">
+              <div class="col-12 col-md-6 mb-3">
                 <label
                   class="d-block text-capitalize form-label admin-form-lable"
                   for="role"
@@ -471,9 +493,15 @@
                         staffcreate.controls['role'].dirty)
                   }"
                 >
-                  <option value="Admin">Admin</option>
+                  <!-- <option value="Admin">Admin</option>
                   <option value="Manager">Manager</option>
-                  <option value="Employee">Employee</option>
+                  <option value="Employee">Employee</option> -->
+                  <option [ngValue]="null" disabled selected>
+                    Select Role
+                  </option>
+                  <option *ngFor="let role of rolesList" [value]="role.id">
+                    {{ role.name }}
+                  </option>
                 </select>
                 <div
                   class="text-danger error-message"
@@ -541,7 +569,7 @@
           </div>
           <div class="modal-content-width card-body mb-0 pb-0">
             <div class="row">
-              <div class="col-lg-12 col-md-12 mb-3">
+              <!-- <div class="col-lg-12 col-md-12 mb-3">
                 <div class="files-add text-center">
                   <div class="d-inline-block">
                     <label
@@ -610,7 +638,7 @@
                     {{ fileSizeError }}
                   </p>
                 </div>
-              </div>
+              </div> -->
               <div class="col-lg-12 col-md-12 mb-3">
                 <label
                   class="d-block text-capitalize form-label admin-form-lable"
@@ -644,7 +672,7 @@
                   </p>
                 </div>
               </div>
-              <div class="col-lg-12 col-md-12 mb-3">
+              <div class="col-12 col-md-6 mb-3">
                 <label
                   class="d-block text-capitalize form-label admin-form-lable"
                   for="email"
@@ -683,7 +711,7 @@
                   </p>
                 </div>
               </div>
-              <div class="col-lg-12 col-md-12 mb-3">
+              <div class="col-12 col-md-6 mb-3">
                 <label
                   class="d-block text-capitalize form-label admin-form-lable"
                   for="mobile"
@@ -722,7 +750,7 @@
                   </p>
                 </div>
               </div>
-              <div class="col-lg-12 col-md-12 mb-3">
+              <div class="col-12 col-md-6 mb-3">
                 <label
                   class="d-block text-capitalize form-label admin-form-lable"
                   for="department"
@@ -731,6 +759,7 @@
                 <select
                   class="d-block form-select form-control form-input-custom"
                   formControlName="department"
+                  (change)="onDepartmentChange($event)"
                   [ngClass]="{
                     'is-invalid':
                       staffupdate.controls['department'].errors &&
@@ -738,9 +767,13 @@
                         staffupdate.controls['department'].dirty)
                   }"
                 >
-                  <option value="Male">Department 1</option>
-                  <option value="Female">Department 2</option>
-                  <option value="Other">Department 3</option>
+                  <option
+                    *ngFor="let department of departmentTable"
+                    [value]="department.id"
+                  >
+                    <!-- Bind to citiesList and use city.name -->
+                    {{ department.name }}
+                  </option>
                 </select>
                 <div
                   class="text-danger error-message"
@@ -760,7 +793,7 @@
                   </p>
                 </div>
               </div>
-              <div class="col-lg-12 col-md-12 mb-3">
+              <div class="col-12 col-md-6 mb-3">
                 <label
                   class="d-block text-capitalize form-label admin-form-lable"
                   for="role"
@@ -776,9 +809,12 @@
                         staffupdate.controls['role'].dirty)
                   }"
                 >
-                  <option value="Admin">Admin</option>
-                  <option value="Manager">Manager</option>
-                  <option value="Employee">Employee</option>
+                  <option [ngValue]="null" disabled selected>
+                    Select Role
+                  </option>
+                  <option *ngFor="let role of rolesList" [value]="role.id">
+                    {{ role.name }}
+                  </option>
                 </select>
                 <div
                   class="text-danger error-message"
@@ -846,7 +882,7 @@
           </div>
           <div class="modal-content-width card-body mb-0 pb-0">
             <div class="row">
-              <div class="col-lg-12 col-md-12 mb-3">
+              <!-- <div class="col-lg-12 col-md-12 mb-3">
                 <div class="files-add text-center">
                   <div class="d-inline-block">
                     <label
@@ -882,7 +918,7 @@
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> -->
               <div class="col-lg-12 col-md-12 mb-3">
                 <label
                   class="d-block text-capitalize form-label admin-form-lable"
@@ -896,7 +932,7 @@
                   [readOnly]="true"
                 />
               </div>
-              <div class="col-lg-12 col-md-12 mb-3">
+              <div class="col-12 col-md-6 mb-3">
                 <label
                   class="d-block text-capitalize form-label admin-form-lable"
                   for="email"
@@ -909,7 +945,7 @@
                   [readOnly]="true"
                 />
               </div>
-              <div class="col-lg-12 col-md-12 mb-3">
+              <div class="col-12 col-md-6 mb-3">
                 <label
                   class="d-block text-capitalize form-label admin-form-lable"
                   for="mobile"
@@ -922,7 +958,7 @@
                   [readOnly]="true"
                 />
               </div>
-              <div class="col-lg-12 col-md-12 mb-3">
+              <div class="col-12 col-md-6 mb-3">
                 <label
                   class="d-block text-capitalize form-label admin-form-lable"
                   for="department"
@@ -935,7 +971,7 @@
                   [readOnly]="true"
                 />
               </div>
-              <div class="col-lg-12 col-md-12 mb-3">
+              <div class="col-12 col-md-6 mb-3">
                 <label
                   class="d-block text-capitalize form-label admin-form-lable"
                   for="role"
@@ -973,7 +1009,7 @@
   role="dialog"
   aria-modal="true"
 >
-  <div class="modal-content modal-content-50" [@fadeIn]>
+  <div class="modal-content modal-content-50 max-w-sm" [@fadeIn]>
     <div (click)="ClickexamModalconent($event)">
       <form [formGroup]="uploadForm">
         <div class="card">

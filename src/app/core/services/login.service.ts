@@ -1,89 +1,76 @@
-import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { ApiService } from "./api.service";
-import { JwtService } from "./jwt.service";
-import { BehaviorSubject, Observable, tap } from "rxjs";
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { ApiService } from './api.service';
+import { JwtService } from './jwt.service';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class LoginService {
-  private approvalStageMessage = new BehaviorSubject("");
+  private approvalStageMessage = new BehaviorSubject('');
   currentApprovalStageMessage = this.approvalStageMessage.asObservable();
 
   constructor(
     private http: HttpClient,
     private apiservice: ApiService,
     private jwtService: JwtService
-  ) { }
+  ) {}
 
-  
   AdminLoginapi(body: any): Observable<any> {
-    return this.apiservice.postWithoutHeader(`user/login`, body,)
+    return this.apiservice.postWithoutHeader(`login`, body);
   }
 
-  
   AdminForgetPasswordApi(body: any): Observable<any> {
-    return this.apiservice.postWithoutHeader(`forget-password`, body)
-      .pipe(
-        tap((error: any) => {
-          console.log('Response received:', error);
-          this.erromessagefunction(error)
-        })
-
-      );
-  }
-
-
-  AdminResetPassword(body: any,headers:any): Observable<any> {
-    return this.apiservice.post(`reset-password`, body,headers)
-    .pipe(
+    return this.apiservice.postWithoutHeader(`forget-password`, body).pipe(
       tap((error: any) => {
         console.log('Response received:', error);
-        this.erromessagefunction(error)
-
+        this.erromessagefunction(error);
       })
-
     );
   }
 
+  AdminResetPassword(body: any, headers: any): Observable<any> {
+    return this.apiservice.post(`reset-password`, body, headers).pipe(
+      tap((error: any) => {
+        console.log('Response received:', error);
+        this.erromessagefunction(error);
+      })
+    );
+  }
 
   Adminlogout(): Observable<any> {
     // const user = this.jwtService.getpanelUserId();
     const token = this.jwtService.getToken();
     // const fcmtoken = this.jwtService.getadminnotficationToken();
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
     });
-    
-   
 
-
-
-    return this.apiservice.post(`user/logout`,{},headers)
-      .pipe(
-        tap((error: any) => {
-          console.log('Response received:', error);
-          this.erromessagefunction(error)
-
-        })
-
-      );
+    return this.apiservice.post(`logout`, {}, headers).pipe(
+      tap((error: any) => {
+        console.log('Response received:', error);
+        this.erromessagefunction(error);
+      })
+    );
   }
-Emailverify(formData: any, headers: any) {
-    return this.apiservice.post("login", formData,headers);
+  Emailverify(formData: any, headers: any) {
+    return this.apiservice.post('login', formData, headers);
   }
 
   VerifyOTP(formData: any, headers: any) {
-    return this.apiservice.post("verifyOtp", formData, headers);
+    return this.apiservice.post('verifyOtp', formData, headers);
   }
-
 
   erromessagefunction(error: any) {
     console.log('Response received:', error);
-    var response = error
-    var errorMessage
-    if (typeof response.message === 'object' && response.message !== null && !Array.isArray(response.message)) {
+    var response = error;
+    var errorMessage;
+    if (
+      typeof response.message === 'object' &&
+      response.message !== null &&
+      !Array.isArray(response.message)
+    ) {
       errorMessage = JSON.stringify(response.message);
     } else {
       errorMessage = response.message;
@@ -92,22 +79,23 @@ Emailverify(formData: any, headers: any) {
     if (
       error.status === 422 &&
       error.message &&
-      (
-        errorMessage.includes('The selected user id is invalid') ||
+      (errorMessage.includes('The selected user id is invalid') ||
         errorMessage.includes('Your account has been deactivated') ||
         errorMessage.includes('Your token has been expired') ||
-        errorMessage.includes('Your token has been expired. Please login again.')
-      )
+        errorMessage.includes(
+          'Your token has been expired. Please login again.'
+        ))
     ) {
       // Log the user out and navigate to sign-in page
       this.jwtService.clearStorage(); // Clear token (implement this method in your JwtService)
       // this.router.navigate(['/sign_in']); // Navigate to home route
       alert(errorMessage); // Show alert with error message
-    } else if (
-      error.status === 422 &&
-      error.errors 
-    ) {
-      if (typeof response.errors === 'object' && response.errors !== null && !Array.isArray(response.errors)) {
+    } else if (error.status === 422 && error.errors) {
+      if (
+        typeof response.errors === 'object' &&
+        response.errors !== null &&
+        !Array.isArray(response.errors)
+      ) {
         errorMessage = JSON.stringify(response.errors);
       } else {
         errorMessage = response.errors;
@@ -115,9 +103,7 @@ Emailverify(formData: any, headers: any) {
       alert(errorMessage); // Show alert with error message
     } else if (error && error.message) {
       // Display error message
-      if (!errorMessage.includes('success'))
-        alert(errorMessage);
+      if (!errorMessage.includes('success')) alert(errorMessage);
     }
   }
-
 }

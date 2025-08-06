@@ -13,6 +13,7 @@ import {
   Validators,
   FormArray,
 } from '@angular/forms';
+import { EmployeeService } from 'src/app/core/services/Employee.service';
 import { JwtService } from 'src/app/core/services/jwt.service';
 
 @Component({
@@ -89,32 +90,9 @@ export class TestMasterComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private jwtService: JwtService
+    private jwtService: JwtService,
+    private employeeService: EmployeeService
   ) {}
-
-  testList = [
-    {
-      testName: 'Test 1',
-      testMaterial: 'Iron',
-      testType: 'Material Based Test',
-      testMethod: 'IS:561-P1-2021',
-      inputFields: ['Field1 (kg)', 'Field2 (N)'],
-    },
-    {
-      testName: 'Test 2',
-      testMaterial: 'Cement',
-      testType: 'Material Based Test',
-      testMethod: 'IS:4031(P-4)1988',
-      inputFields: ['Field3 (MPa)'],
-    },
-    {
-      testName: 'Test 3',
-      testMaterial: 'Soil',
-      testType: 'Field Based Test',
-      testMethod: 'IS 2131',
-      inputFields: ['Field4 (mm)', 'Field5 (kg)'],
-    },
-  ];
 
   user_id: any;
 
@@ -151,6 +129,9 @@ export class TestMasterComponent implements OnInit {
     });
 
     this.getTests();
+    this.GetConfigureMaterialFun();
+    this.GetTestTypeFun();
+    this.GetUOMListFun();
     // Subscribe to test_type changes for Create form
     this.testCreateForm.get('test_type')?.valueChanges.subscribe((value) => {
       const materialTypeControl = this.testCreateForm.get('material_type');
@@ -173,6 +154,32 @@ export class TestMasterComponent implements OnInit {
         materialTypeControl?.clearValidators();
         materialTypeControl?.updateValueAndValidity();
         materialTypeControl?.setValue('');
+      }
+    });
+  }
+  materialsList: any[] = [];
+  GetConfigureMaterialFun() {
+    this.employeeService
+      .GetConfigureMaterialAPi()
+      .subscribe((response: any) => {
+        if (response.status === 200) {
+          this.materialsList = response.data;
+        }
+      });
+  }
+  testTypeList: any[] = [];
+  GetTestTypeFun() {
+    this.employeeService.GetTestTypeAPi().subscribe((response: any) => {
+      if (response.status === 200) {
+        this.testTypeList = response.data;
+      }
+    });
+  }
+  umoList: any[] = [];
+  GetUOMListFun() {
+    this.employeeService.GetUOMAPi().subscribe((response: any) => {
+      if (response.status === 200) {
+        this.umoList = response.data;
       }
     });
   }
@@ -216,11 +223,17 @@ export class TestMasterComponent implements OnInit {
   }
 
   testTable: any[] = [];
+  staffTable: any;
   getTests() {
-    this.testTable = this.testList;
-    this.totalRecords = this.testList.length;
+    this.employeeService
+      .GetConfigureTestAPi(this.tableSize, this.page, this.searchText)
+      .subscribe((response: any) => {
+        if (response.status === 200 || response.status === 201) {
+          this.testTable = response.data.records;
+          this.totalRecords = response.data.total;
+        }
+      });
   }
-
   table_heading = [
     {
       heading0: 'Sr No',
@@ -263,24 +276,44 @@ export class TestMasterComponent implements OnInit {
   createTest() {
     if (this.testCreateForm.valid) {
       const formValue = this.testCreateForm.value;
-      this.testList.push({
-        testName: formValue.test_name,
-        testType: formValue.test_type,
-        testMaterial: formValue.testMaterial,
-        testMethod: formValue.test_method,
-        inputFields: formValue.input_fields.map(
-          (field: any) => `${field.input_field} (${field.unit})`
-        ),
+      const formData: FormData = new FormData();
+      formData.append('test_name', formValue.test_name);
+      formData.append('test_type_id', formValue.test_type);
+      if (formValue.test_type == 1) {
+        formData.append('material_id', formValue.material_type);
+      }
+      formData.append('test_method_name', formValue.test_method);
+      formValue.input_fields.forEach((field: any, index: number) => {
+        formData.append(`input_fields[${index}][name]`, field.input_field);
+        formData.append(`input_fields[${index}][uom_id]`, field.unit);
       });
-      this.closeModal();
-      this.successMessage = 'Test Created';
-      this.getTests();
-      setTimeout(() => {
-        this.openSuccessMessage = true;
-        setTimeout(() => {
-          this.openSuccessMessage = false;
-        }, 1800);
-      }, 200);
+
+      this.employeeService.createConfigureTest(formData).subscribe(
+        (response: any) => {
+          if (response.status === 200 || response.status === 201) {
+            this.closeModal();
+            this.successMessage = 'Test Created Successfully';
+            this.ngOnInit();
+            setTimeout(() => {
+              this.openSuccessMessage = true;
+              setTimeout(() => {
+                this.openSuccessMessage = false;
+              }, 1800);
+            }, 200);
+          } else {
+            this.submitted = false;
+            this.errorMessage =
+              response.errors || response.message || 'Failed to create test';
+            alert(this.errorMessage);
+          }
+        },
+        (error: any) => {
+          this.submitted = false;
+          this.errorMessage =
+            error.message || 'An error occurred while creating the test';
+          alert(this.errorMessage);
+        }
+      );
     } else {
       this.submitted = false;
       this.errorMessage = 'Please enter all the details';
@@ -292,24 +325,33 @@ export class TestMasterComponent implements OnInit {
   testId: any;
   openEditModal(test: any) {
     this.testUpdateOpen = true;
-    this.testId = this.testList.indexOf(test);
-    this.fillUpdateForm(test);
+    this.testId = test.id;
+    this.getTestConfigurebyID(this.testId);
+  }
+  getTestConfigurebyID(configureTestId: any) {
+    this.employeeService
+      .getTestConfigureByID(configureTestId)
+      .subscribe((response: any) => {
+        if (response.status === 200 || response.status === 201) {
+          this.fillUpdateForm(response.data);
+          this.fillViewForm(response.data);
+        }
+      });
   }
 
   fillUpdateForm(data: any) {
     this.testUpdateForm.patchValue({
-      test_name: data.testName,
-      test_type: data.testType,
-      test_method: data.testMethod,
+      test_name: data.test_name,
+      test_type: data.test_type_id,
+      material_type: data.material_id || null,
+      test_method: data.test_method_name,
     });
     this.updateInputFields.clear();
-    data.inputFields.forEach((field: string) => {
-      const [inputField, unit] = field.split(' (');
-      const cleanedUnit = unit ? unit.replace(')', '') : 'kg';
+    data.input_fields.forEach((field: any) => {
       this.updateInputFields.push(
         this.formBuilder.group({
-          input_field: [inputField || '', [Validators.required]],
-          unit: [cleanedUnit || 'kg', [Validators.required]],
+          input_field: [field.input_field_name || '', [Validators.required]],
+          unit: [field.uom_id || null, [Validators.required]],
         })
       );
     });
@@ -318,24 +360,45 @@ export class TestMasterComponent implements OnInit {
   updateTest() {
     if (this.testUpdateForm.valid) {
       const formValue = this.testUpdateForm.value;
-      this.testList[this.testId] = {
-        testName: formValue.test_name,
-        testType: formValue.test_type,
-        testMaterial: formValue.testMaterial,
-        testMethod: formValue.test_method,
-        inputFields: formValue.input_fields.map(
-          (field: any) => `${field.input_field} (${field.unit})`
-        ),
-      };
-      this.closeModal();
-      this.successMessage = 'Test Updated';
-      this.getTests();
-      setTimeout(() => {
-        this.openSuccessMessage = true;
-        setTimeout(() => {
-          this.openSuccessMessage = false;
-        }, 1800);
-      }, 200);
+      const formData: FormData = new FormData();
+      formData.append('test_name', formValue.test_name);
+      formData.append('test_type_id', formValue.test_type);
+      if (formValue.test_type == 1) {
+        formData.append('material_id', formValue.material_type);
+      }
+      formData.append('test_method_name', formValue.test_method);
+      formValue.input_fields.forEach((field: any, index: number) => {
+        formData.append(`input_fields[${index}][name]`, field.input_field);
+        formData.append(`input_fields[${index}][uom_id]`, field.unit);
+      });
+      formData.append('_method', 'PUT');
+
+      this.employeeService.updateConfigureTest(formData, this.testId).subscribe(
+        (response: any) => {
+          if (response.status === 200 || response.status === 201) {
+            this.closeModal();
+            this.successMessage = 'Test Updated Successfully';
+            this.getTests();
+            setTimeout(() => {
+              this.openSuccessMessage = true;
+              setTimeout(() => {
+                this.openSuccessMessage = false;
+              }, 1800);
+            }, 200);
+          } else {
+            this.submitted = false;
+            this.errorMessage =
+              response.errors || response.message || 'Failed to update test';
+            alert(this.errorMessage);
+          }
+        },
+        (error: any) => {
+          this.submitted = false;
+          this.errorMessage =
+            error.message || 'An error occurred while updating the test';
+          alert(this.errorMessage);
+        }
+      );
     } else {
       this.submitted = false;
       this.errorMessage = 'Please enter all the details';
@@ -346,23 +409,28 @@ export class TestMasterComponent implements OnInit {
 
   openViewModal(test: any) {
     this.testViewOpen = true;
-    this.fillViewForm(test);
+    this.testId = test.id;
+    this.getTestConfigurebyID(this.testId);
   }
 
   fillViewForm(data: any) {
+    const testType =
+      this.testTypeList.find((t) => t.id == data.test_type_id)?.name || '';
+    const material =
+      this.materialsList.find((m) => m.id == data.material_id)?.name || '';
     this.testViewForm.patchValue({
-      test_name: data.testName,
-      test_type: data.testType,
-      test_method: data.testMethod,
+      test_name: data.test_name,
+      test_type: testType,
+      material_type: material,
+      test_method: data.test_method_name,
     });
     this.viewInputFields.clear();
-    data.inputFields.forEach((field: string) => {
-      const [inputField, unit] = field.split(' (');
-      const cleanedUnit = unit ? unit.replace(')', '') : '';
+    data.input_fields.forEach((field: any) => {
+      const unit = this.umoList.find((u) => u.id == field.uom_id)?.name || '';
       this.viewInputFields.push(
         this.formBuilder.group({
-          input_field: [inputField || ''],
-          unit: [cleanedUnit || ''],
+          input_field: [field.input_field_name || ''],
+          unit: [unit || ''],
         })
       );
     });

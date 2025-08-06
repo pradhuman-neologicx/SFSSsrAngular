@@ -175,7 +175,7 @@ export class DashboardComponent implements OnInit {
   ) {
     this.route.queryParams.subscribe((params) => {
       this.firstlogin = this.jwtService.getfirstLoggedIn();
-      console.log(this.firstlogin);
+      // console.log(this.firstlogin);
       if (this.firstlogin === false || this.firstlogin === undefined) {
         if (params['success'] === 'true') {
           this.openSecondsuccess = true;
@@ -188,13 +188,15 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  userRole: any;
   ngOnInit(): void {
     this.name = this.jwtService.getName();
+    this.userRole = localStorage.getItem('Role');
     this.searchbarform = this.formBuilder.group({
       searchbar: ['', [Validators.required]],
     });
     this.firstlogin = this.jwtService.getfirstLoggedIn();
-    console.log(this.firstlogin);
+    // console.log(this.firstlogin);
     // TODO: Fetch real stats from a service
     // this.fetchDashboardStats();
 

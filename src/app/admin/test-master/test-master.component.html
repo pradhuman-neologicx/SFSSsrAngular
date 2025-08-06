@@ -106,7 +106,7 @@
         <tbody>
           <tr
             *ngFor="
-              let test of testList
+              let test of testTable
                 | paginate
                   : {
                       itemsPerPage:
@@ -119,17 +119,23 @@
           >
             <td>{{ i + 1 }}</td>
             <td>
-              <p>{{ test.testName }}</p>
+              <p>{{ test.test_name }}</p>
             </td>
             <!-- <td>
               <p>{{ test.testMaterial }}</p>
             </td> -->
             <td>
-              <p>{{ test.testType }}</p>
+              <p>
+                {{
+                  test.test_type_id == 1
+                    ? "Material Based Test"
+                    : "Field Based Test"
+                }}
+              </p>
             </td>
 
             <td>
-              <p>{{ test.testMethod }}</p>
+              <p>{{ test.test_method_name }}</p>
             </td>
             <td>
               <p>
@@ -214,13 +220,12 @@
                         testCreateForm.controls['test_type'].dirty)
                   }"
                 >
-                  <option value="Material Based Test" selected disabled>
-                    Material Based Test
+                  <option [ngValue]="null" disabled selected>
+                    -- Select Test Type --
                   </option>
-                  <option value="Material Based Test">
-                    Material Based Test
+                  <option *ngFor="let test of testTypeList" [value]="test.id">
+                    {{ test.name }}
                   </option>
-                  <option value="Field Based Test">Field Based Test</option>
                 </select>
                 <div
                   class="text-danger error-message"
@@ -242,10 +247,7 @@
               </div>
               <div
                 class="col-lg-6 col-md-12 mb-3"
-                *ngIf="
-                  testCreateForm.get('test_type')?.value ===
-                  'Material Based Test'
-                "
+                *ngIf="testCreateForm.get('test_type')?.value == 1"
               >
                 <label
                   class="d-block text-capitalize form-label admin-form-lable"
@@ -262,15 +264,15 @@
                         testCreateForm.controls['material_type'].dirty)
                   }"
                 >
-                  <option value="CC Cubes" disabled selected>
-                    Select Material
+                  <option [ngValue]="null" disabled selected>
+                    -- Select Material --
                   </option>
-                  <option value="CC Cubes">CC Cubes</option>
-                  <option value="Cement">Cement</option>
-                  <option value="Coarse Aggregate">Coarse Aggregate</option>
-                  <option value="Fine Aggregate">Fine Aggregate</option>
-                  <option value="Bricks">Bricks</option>
-                  <option value="Steel">Steel</option>
+                  <option
+                    *ngFor="let materials of materialsList"
+                    [value]="materials.id"
+                  >
+                    {{ materials.name }}
+                  </option>
                 </select>
                 <div
                   class="text-danger error-message"
@@ -302,7 +304,7 @@
                   type="text"
                   class="d-block form-control form-input-custom"
                   formControlName="test_name"
-                  placeholder="C C Cubes"
+                  placeholder="Enter Test Name"
                   [ngClass]="{
                     'is-invalid':
                       testCreateForm.controls['test_name'].errors &&
@@ -414,11 +416,12 @@
                             field.get('unit')?.dirty)
                       }"
                     >
-                      <option value="UOM" selected disabled>UOM</option>
-                      <option value="kg">kg</option>
-                      <option value="N">N</option>
-                      <option value="MPa">MPa</option>
-                      <option value="mm">mm</option>
+                      <option [ngValue]="null" disabled selected>
+                        -- Select UOM --
+                      </option>
+                      <option *ngFor="let uom of umoList" [value]="uom.id">
+                        {{ uom.name }}
+                      </option>
                     </select>
                     <div
                       class="text-danger error-message"
@@ -501,7 +504,97 @@
           </div>
           <div class="modal-content-width card-body mb-0 pb-0">
             <div class="row">
-              <div class="col-lg-12 col-md-12 mb-3">
+              <div class="col-lg-6 col-md-12 mb-3">
+                <label
+                  class="d-block text-capitalize form-label admin-form-lable"
+                  for="test_type"
+                  >Test Type</label
+                >
+                <select
+                  class="d-block form-select form-control form-input-custom"
+                  formControlName="test_type"
+                  [ngClass]="{
+                    'is-invalid':
+                      testUpdateForm.controls['test_type'].errors &&
+                      (testUpdateForm.controls['test_type'].touched ||
+                        testUpdateForm.controls['test_type'].dirty)
+                  }"
+                >
+                  <option [ngValue]="null" disabled selected>
+                    -- Select Test Type --
+                  </option>
+                  <option *ngFor="let test of testTypeList" [value]="test.id">
+                    {{ test.name }}
+                  </option>
+                </select>
+                <div
+                  class="text-danger error-message"
+                  *ngIf="
+                    testUpdateForm.controls['test_type'].errors &&
+                    (testUpdateForm.controls['test_type'].touched ||
+                      testUpdateForm.controls['test_type'].dirty)
+                  "
+                >
+                  <p
+                    class="fw-light text-danger"
+                    *ngIf="
+                      testUpdateForm.controls['test_type'].errors['required']
+                    "
+                  >
+                    Test type is required
+                  </p>
+                </div>
+              </div>
+              <div
+                class="col-lg-6 col-md-12 mb-3"
+                *ngIf="testUpdateForm.get('test_type')?.value == 1"
+              >
+                <label
+                  class="d-block text-capitalize form-label admin-form-lable"
+                  for="material_type"
+                  >Select Material</label
+                >
+                <select
+                  class="d-block form-select form-control form-input-custom"
+                  formControlName="material_type"
+                  [ngClass]="{
+                    'is-invalid':
+                      testUpdateForm.controls['material_type'].errors &&
+                      (testUpdateForm.controls['material_type'].touched ||
+                        testUpdateForm.controls['material_type'].dirty)
+                  }"
+                >
+                  <option [ngValue]="null" disabled selected>
+                    -- Select Material --
+                  </option>
+                  <option
+                    *ngFor="let materials of materialsList"
+                    [value]="materials.id"
+                  >
+                    {{ materials.name }}
+                  </option>
+                </select>
+                <div
+                  class="text-danger error-message"
+                  *ngIf="
+                    testUpdateForm.controls['material_type'].errors &&
+                    (testUpdateForm.controls['material_type'].touched ||
+                      testUpdateForm.controls['material_type'].dirty)
+                  "
+                >
+                  <p
+                    class="fw-light text-danger"
+                    *ngIf="
+                      testUpdateForm.controls['material_type'].errors[
+                        'required'
+                      ]
+                    "
+                  >
+                    Material is required
+                  </p>
+                </div>
+              </div>
+              <div class="col-lg-6 col-md-12 mb-3">
                 <label
                   class="d-block text-capitalize form-label admin-form-lable"
                   for="test_name"
@@ -511,6 +604,7 @@
                   type="text"
                   class="d-block form-control form-input-custom"
                   formControlName="test_name"
+                  placeholder="Enter Test Name"
                   [ngClass]="{
                     'is-invalid':
                       testUpdateForm.controls['test_name'].errors &&
@@ -536,101 +630,7 @@
                   </p>
                 </div>
               </div>
-              <div class="col-lg-12 col-md-12 mb-3">
-                <label
-                  class="d-block text-capitalize form-label admin-form-lable"
-                  for="test_type"
-                  >Test Type</label
-                >
-                <select
-                  class="d-block form-select form-control form-input-custom"
-                  formControlName="test_type"
-                  [ngClass]="{
-                    'is-invalid':
-                      testUpdateForm.controls['test_type'].errors &&
-                      (testUpdateForm.controls['test_type'].touched ||
-                        testUpdateForm.controls['test_type'].dirty)
-                  }"
-                >
-                  <option value="Material Based Test" selected disabled>
-                    Material Based Test
-                  </option>
-                  <option value="Material Based Test">
-                    Material Based Test
-                  </option>
-                  <option value="Field Based Test">Field Based Test</option>
-                </select>
-                <div
-                  class="text-danger error-message"
-                  *ngIf="
-                    testUpdateForm.controls['test_type'].errors &&
-                    (testUpdateForm.controls['test_type'].touched ||
-                      testUpdateForm.controls['test_type'].dirty)
-                  "
-                >
-                  <p
-                    class="fw-light text-danger"
-                    *ngIf="
-                      testUpdateForm.controls['test_type'].errors['required']
-                    "
-                  >
-                    Test type is required
-                  </p>
-                </div>
-              </div>
-              <div
-                class="col-lg-12 col-md-12 mb-3"
-                *ngIf="
-                  testUpdateForm.get('test_type')?.value ===
-                  'Material Based Test'
-                "
-              >
-                <label
-                  class="d-block text-capitalize form-label admin-form-lable"
-                  for="test_type"
-                  >Select Material</label
-                >
-                <select
-                  class="d-block form-select form-control form-input-custom"
-                  formControlName="material_type"
-                  [ngClass]="{
-                    'is-invalid':
-                      testUpdateForm.controls['material_type'].errors &&
-                      (testUpdateForm.controls['material_type'].touched ||
-                        testUpdateForm.controls['material_type'].dirty)
-                  }"
-                >
-                  <option value="CC Cubes" disabled selected>
-                    Select Material
-                  </option>
-                  <option value="CC Cubes">CC Cubes</option>
-                  <option value="Cement">Cement</option>
-                  <option value="Coarse Aggregate">Coarse Aggregate</option>
-                  <option value="Fine Aggregate">Fine Aggregate</option>
-                  <option value="Bricks">Bricks</option>
-                  <option value="Steel">Steel</option>
-                </select>
-                <div
-                  class="text-danger error-message"
-                  *ngIf="
-                    testUpdateForm.controls['material_type'].errors &&
-                    (testUpdateForm.controls['material_type'].touched ||
-                      testUpdateForm.controls['material_type'].dirty)
-                  "
-                >
-                  <p
-                    class="fw-light text-danger"
-                    *ngIf="
-                      testUpdateForm.controls['material_type'].errors[
-                        'required'
-                      ]
-                    "
-                  >
-                    Material is required
-                  </p>
-                </div>
-              </div>
-              <div class="col-lg-12 col-md-12 mb-3">
+              <div class="col-lg-6 col-md-12 mb-3">
                 <label
                   class="d-block text-capitalize form-label admin-form-lable"
                   for="test_method"
@@ -640,6 +640,7 @@
                   type="text"
                   class="d-block form-control form-input-custom"
                   formControlName="test_method"
+                  placeholder="IS:561-P1-2021"
                   [ngClass]="{
                     'is-invalid':
                       testUpdateForm.controls['test_method'].errors &&
@@ -683,7 +684,7 @@
                       type="text"
                       class="form-control form-input-custom me-2"
                       formControlName="input_field"
-                      placeholder="Input Field"
+                      placeholder="Input field name"
                       [ngClass]="{
                         'is-invalid':
                           field.get('input_field')?.errors &&
@@ -707,7 +708,8 @@
                       </p>
                     </div>
                     <select
-                      class="form-control form-input-custom me-2"
+                      id="unit"
+                      class="d-block form-select form-control form-input-custom me-1"
                       formControlName="unit"
                       [ngClass]="{
                         'is-invalid':
@@ -716,10 +718,12 @@
                             field.get('unit')?.dirty)
                       }"
                     >
-                      <option value="kg" selected>kg</option>
-                      <option value="N">N</option>
-                      <option value="MPa">MPa</option>
-                      <option value="mm">mm</option>
+                      <option [ngValue]="null" disabled selected>
+                        -- Select UOM --
+                      </option>
+                      <option *ngFor="let uom of umoList" [value]="uom.id">
+                        {{ uom.name }}
+                      </option>
                     </select>
                     <div
                       class="text-danger error-message"
@@ -802,20 +806,7 @@
           </div>
           <div class="modal-content-width card-body mb-0 pb-0">
             <div class="row">
-              <div class="col-lg-12 col-md-12 mb-3">
-                <label
-                  class="d-block text-capitalize form-label admin-form-lable"
-                  for="test_name"
-                  >Test Name</label
-                >
-                <input
-                  type="text"
-                  class="d-block form-control form-input-custom"
-                  formControlName="test_name"
-                  [readOnly]="true"
-                />
-              </div>
-              <div class="col-lg-12 col-md-12 mb-3">
+              <div class="col-lg-6 col-md-12 mb-3">
                 <label
                   class="d-block text-capitalize form-label admin-form-lable"
                   for="test_type"
@@ -829,15 +820,15 @@
                 />
               </div>
               <div
-                class="col-lg-12 col-md-12 mb-3"
+                class="col-lg-6 col-md-12 mb-3"
                 *ngIf="
-                  testViewForm.get('test_type')?.value === 'Material Based Test'
+                  testViewForm.get('test_type')?.value == 'Material Based Test'
                 "
               >
                 <label
                   class="d-block text-capitalize form-label admin-form-lable"
                   for="material_type"
-                  >Select Material</label
+                  >Material</label
                 >
                 <input
                   type="text"
@@ -846,7 +837,20 @@
                   [readOnly]="true"
                 />
               </div>
-              <div class="col-lg-12 col-md-12 mb-3">
+              <div class="col-lg-6 col-md-12 mb-3">
+                <label
+                  class="d-block text-capitalize form-label admin-form-lable"
+                  for="test_name"
+                  >Test Name</label
+                >
+                <input
+                  type="text"
+                  class="d-block form-control form-input-custom"
+                  formControlName="test_name"
+                  [readOnly]="true"
+                />
+              </div>
+              <div class="col-lg-6 col-md-12 mb-3">
                 <label
                   class="d-block text-capitalize form-label admin-form-lable"
                   for="test_method"
@@ -871,17 +875,17 @@
                       let i = index
                     "
                     [formGroupName]="i"
-                    class="mb-2"
+                    class="d-flex align-items-center mb-2"
                   >
                     <input
                       type="text"
-                      class="form-control form-input-custom"
+                      class="form-control form-input-custom me-2"
                       formControlName="input_field"
                       [readOnly]="true"
                     />
                     <input
                       type="text"
-                      class="form-control form-input-custom"
+                      class="form-control form-input-custom me-1"
                       formControlName="unit"
                       [readOnly]="true"
                     />

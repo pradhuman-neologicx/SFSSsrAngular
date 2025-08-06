@@ -696,19 +696,733 @@ export class EmployeeService {
     );
   }
 
-  GetStaff() {
+  GetDepartment() {
     const token = this.jwtService.getToken();
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     });
-    return this.apiservice.get('staffs', headers).pipe(
+    return this.apiservice.get('departments', headers).pipe(
       tap((error: any) => {
         console.log('Response received:', error);
         this.erromessagefunction(error);
       })
     );
   }
+  GetRoles(departmentId: any): Observable<any> {
+    const token = this.jwtService.getToken(); // Get the token for authorization
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
+
+    // Make the POST request to the server
+    return this.apiservice.get(`roles/` + departmentId, headers).pipe(
+      tap((error: any) => {
+        console.log('Response received:', error);
+        this.erromessagefunction(error);
+      })
+    );
+  }
+
+  // USer management APIs start
+  GetStaff(tableSize: any, page: any, search: any) {
+    const token = this.jwtService.getToken();
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
+
+    var url = '';
+    if (tableSize != 'all') {
+      url = `users?limit=${tableSize}&page=${page}`;
+      if (search != undefined) {
+        if (search.length > 0) {
+          url = url + '&search=' + search;
+        }
+      }
+    } else {
+      url = `users`;
+      if (search != undefined) {
+        if (search.length > 0) {
+          url = url + '&search=' + search;
+        }
+      }
+    }
+
+    return this.apiservice.get(url, headers).pipe(
+      tap((error: any) => {
+        console.log('Response received:', error);
+        this.erromessagefunction(error);
+      })
+    );
+  }
+  getStaffById(user_id: any) {
+    const token = this.jwtService.getToken();
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
+
+    // var url = `app-users?user_id=${user_id}`;
+    const url = `users/${user_id}`;
+    return this.apiservice.get(url, headers).pipe(
+      tap((error: any) => {
+        console.log('Response received:', error);
+        this.erromessagefunction(error);
+      })
+    );
+  }
+
+  createStaff(requestbody: any): Observable<any> {
+    const token = this.jwtService.getToken();
+    let headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      // 'Content-Type': 'application/json',
+    });
+    if (!(requestbody instanceof FormData)) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
+    // Make the POST request to the server
+    return this.apiservice.post(`users`, requestbody, headers).pipe(
+      tap((error: any) => {
+        console.log('Response received:', error);
+        this.erromessagefunction(error);
+      })
+    );
+  }
+
+  updateStaff(body: any, userId: any): Observable<any> {
+    // const user = this.jwtService.getpanelUserId();
+    const token = this.jwtService.getToken();
+    let headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    // Only set Content-Type if body is NOT FormData
+    if (!(body instanceof FormData)) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
+
+    return this.apiservice.post(`users/` + userId, body, headers).pipe(
+      tap((error: any) => {
+        console.log('Response received:', error);
+        this.erromessagefunction(error);
+      })
+    );
+  }
+
+  // USer management APIs end
+
+  // Material APIs start
+  GetMaterialAPi(tableSize: any, page: any, search: any) {
+    const token = this.jwtService.getToken();
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
+
+    var url = '';
+    if (tableSize != 'all') {
+      url = `materials?limit=${tableSize}&page=${page}`;
+      if (search != undefined) {
+        if (search.length > 0) {
+          url = url + '&search=' + search;
+        }
+      }
+    } else {
+      url = `materials`;
+      if (search != undefined) {
+        if (search.length > 0) {
+          url = url + '&search=' + search;
+        }
+      }
+    }
+
+    return this.apiservice.get(url, headers).pipe(
+      tap((error: any) => {
+        console.log('Response received:', error);
+        this.erromessagefunction(error);
+      })
+    );
+  }
+
+  createMaterial(requestbody: any): Observable<any> {
+    const token = this.jwtService.getToken();
+    let headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      // 'Content-Type': 'application/json',
+    });
+    if (!(requestbody instanceof FormData)) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
+    // Make the POST request to the server
+    return this.apiservice.post(`materials`, requestbody, headers).pipe(
+      tap((error: any) => {
+        console.log('Response received:', error);
+        this.erromessagefunction(error);
+      })
+    );
+  }
+  getMaterialbyID(user_id: any) {
+    const token = this.jwtService.getToken();
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
+
+    // var url = `app-users?user_id=${user_id}`;
+    const url = `materials/${user_id}`;
+    return this.apiservice.get(url, headers).pipe(
+      tap((error: any) => {
+        console.log('Response received:', error);
+        this.erromessagefunction(error);
+      })
+    );
+  }
+
+  updateMaterial(body: any, userId: any): Observable<any> {
+    // const user = this.jwtService.getpanelUserId();
+    const token = this.jwtService.getToken();
+    let headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    // Only set Content-Type if body is NOT FormData
+    if (!(body instanceof FormData)) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
+
+    return this.apiservice.post(`materials/` + userId, body, headers).pipe(
+      tap((error: any) => {
+        console.log('Response received:', error);
+        this.erromessagefunction(error);
+      })
+    );
+  }
+  // Material APIs end
+
+  // Configure Tests APIs start
+  GetConfigureMaterialAPi() {
+    const token = this.jwtService.getToken();
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
+
+    var url = 'get-materials';
+
+    return this.apiservice.get(url, headers).pipe(
+      tap((error: any) => {
+        console.log('Response received:', error);
+        this.erromessagefunction(error);
+      })
+    );
+  }
+  GetTestTypeAPi() {
+    const token = this.jwtService.getToken();
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
+
+    var url = 'test-types';
+
+    return this.apiservice.get(url, headers).pipe(
+      tap((error: any) => {
+        console.log('Response received:', error);
+        this.erromessagefunction(error);
+      })
+    );
+  }
+  GetUOMAPi() {
+    const token = this.jwtService.getToken();
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
+
+    var url = 'uoms';
+
+    return this.apiservice.get(url, headers).pipe(
+      tap((error: any) => {
+        console.log('Response received:', error);
+        this.erromessagefunction(error);
+      })
+    );
+  }
+  GetConfigureTestAPi(tableSize: any, page: any, search: any) {
+    const token = this.jwtService.getToken();
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
+
+    var url = '';
+    if (tableSize != 'all') {
+      url = `test-configuration?limit=${tableSize}&page=${page}`;
+      if (search != undefined) {
+        if (search.length > 0) {
+          url = url + '&search=' + search;
+        }
+      }
+    } else {
+      url = `test-configuration`;
+      if (search != undefined) {
+        if (search.length > 0) {
+          url = url + '&search=' + search;
+        }
+      }
+    }
+
+    return this.apiservice.get(url, headers).pipe(
+      tap((error: any) => {
+        console.log('Response received:', error);
+        this.erromessagefunction(error);
+      })
+    );
+  }
+
+  createConfigureTest(requestbody: any): Observable<any> {
+    const token = this.jwtService.getToken();
+    let headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      // 'Content-Type': 'application/json',
+    });
+    if (!(requestbody instanceof FormData)) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
+    // Make the POST request to the server
+    return this.apiservice
+      .post(`test-configuration`, requestbody, headers)
+      .pipe(
+        tap((error: any) => {
+          console.log('Response received:', error);
+          this.erromessagefunction(error);
+        })
+      );
+  }
+  getTestConfigureByID(user_id: any) {
+    const token = this.jwtService.getToken();
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
+
+    // var url = `app-users?user_id=${user_id}`;
+    const url = `test-configuration/${user_id}`;
+    return this.apiservice.get(url, headers).pipe(
+      tap((error: any) => {
+        console.log('Response received:', error);
+        this.erromessagefunction(error);
+      })
+    );
+  }
+
+  updateConfigureTest(body: any, userId: any): Observable<any> {
+    // const user = this.jwtService.getpanelUserId();
+    const token = this.jwtService.getToken();
+    let headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    // Only set Content-Type if body is NOT FormData
+    if (!(body instanceof FormData)) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
+
+    return this.apiservice
+      .post(`test-configuration/` + userId, body, headers)
+      .pipe(
+        tap((error: any) => {
+          console.log('Response received:', error);
+          this.erromessagefunction(error);
+        })
+      );
+  }
+  // Configure Tests APIs end
+
+  // Test Management APIs start
+  GetEngineersAPI() {
+    const token = this.jwtService.getToken();
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
+
+    var url = 'engineers';
+
+    return this.apiservice.get(url, headers).pipe(
+      tap((error: any) => {
+        console.log('Response received:', error);
+        this.erromessagefunction(error);
+      })
+    );
+  }
+
+  getTestsByStatus(
+    status: string,
+    tableSize: any,
+    page: any,
+    search: any,
+    user_id: any
+  ) {
+    const token = this.jwtService.getToken();
+    const role = localStorage.getItem('Role');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
+
+    let params: string[] = [];
+
+    // Add pagination if not set to 'all'
+    if (tableSize !== 'all') {
+      params.push(`limit=${tableSize}`);
+      params.push(`page=${page}`);
+    }
+
+    // Add search if provided
+    if (search && search.trim().length > 0) {
+      params.push(`search=${encodeURIComponent(search.trim())}`);
+    }
+
+    // Add status filter
+    if (status) {
+      params.push(`type=${status}`);
+    }
+    if (user_id) {
+      if (role == 'Accountant') {
+        params.push(`accountant_id=${user_id}`);
+      } else {
+        params.push(`user_id=${user_id}`);
+      }
+    }
+    const queryString = params.length ? `?${params.join('&')}` : '';
+    const url = `test-requests${queryString}`;
+
+    return this.apiservice.get(url, headers).pipe(
+      tap({
+        next: (res) => console.log('Response received:', res),
+        error: (err) => {
+          console.error('API Error:', err);
+          this.erromessagefunction(err);
+        },
+      })
+    );
+  }
+  getTestsByStatusEngg(
+    status: string,
+    tableSize: any,
+    page: any,
+    search: any,
+    engineer_id: any
+  ) {
+    const token = this.jwtService.getToken();
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
+
+    let params: string[] = [];
+
+    // Add pagination if not set to 'all'
+    if (tableSize !== 'all') {
+      params.push(`limit=${tableSize}`);
+      params.push(`page=${page}`);
+    }
+
+    // Add search if provided
+    if (search && search.trim().length > 0) {
+      params.push(`search=${encodeURIComponent(search.trim())}`);
+    }
+
+    // Add status filter
+    if (status) {
+      params.push(`type=${status}`);
+    }
+    if (engineer_id) {
+      params.push(`engineer_id=${engineer_id}`);
+    }
+    const queryString = params.length ? `?${params.join('&')}` : '';
+    const url = `test-requests${queryString}`;
+
+    return this.apiservice.get(url, headers).pipe(
+      tap({
+        next: (res) => console.log('Response received:', res),
+        error: (err) => {
+          console.error('API Error:', err);
+          this.erromessagefunction(err);
+        },
+      })
+    );
+  }
+
+  GetCustomersList() {
+    const token = this.jwtService.getToken();
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
+
+    var url = 'customers';
+
+    return this.apiservice.get(url, headers).pipe(
+      tap((error: any) => {
+        console.log('Response received:', error);
+        this.erromessagefunction(error);
+      })
+    );
+  }
+  GetFieldsList() {
+    const token = this.jwtService.getToken();
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
+
+    var url = 'field-tests';
+
+    return this.apiservice.get(url, headers).pipe(
+      tap((error: any) => {
+        console.log('Response received:', error);
+        this.erromessagefunction(error);
+      })
+    );
+  }
+  GetMaterialList() {
+    const token = this.jwtService.getToken();
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
+
+    var url = 'materials';
+
+    return this.apiservice.get(url, headers).pipe(
+      tap((error: any) => {
+        console.log('Response received:', error);
+        this.erromessagefunction(error);
+      })
+    );
+  }
+  GetTestDescription(departmentId: any): Observable<any> {
+    const token = this.jwtService.getToken(); // Get the token for authorization
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
+
+    // Make the POST request to the server
+    return this.apiservice.get(`tests/` + departmentId, headers).pipe(
+      tap((error: any) => {
+        console.log('Response received:', error);
+        this.erromessagefunction(error);
+      })
+    );
+  }
+  createTestRequest(requestbody: any): Observable<any> {
+    const token = this.jwtService.getToken();
+    let headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      // 'Content-Type': 'application/json',
+    });
+    if (!(requestbody instanceof FormData)) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
+    // Make the POST request to the server
+    return this.apiservice.post(`test-requests`, requestbody, headers).pipe(
+      tap((error: any) => {
+        console.log('Response received:', error);
+        this.erromessagefunction(error);
+      })
+    );
+  }
+  createTestRequestStep2(requestbody: any): Observable<any> {
+    const token = this.jwtService.getToken();
+    let headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      // 'Content-Type': 'application/json',
+    });
+    if (!(requestbody instanceof FormData)) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
+    // Make the POST request to the server
+    return this.apiservice
+      .post(`testRequests/checklist`, requestbody, headers)
+      .pipe(
+        tap((error: any) => {
+          console.log('Response received:', error);
+          this.erromessagefunction(error);
+        })
+      );
+  }
+  assignTestRequest(requestbody: any): Observable<any> {
+    const token = this.jwtService.getToken();
+    let headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      // 'Content-Type': 'application/json',
+    });
+    if (!(requestbody instanceof FormData)) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
+    // Make the POST request to the server
+    return this.apiservice
+      .post(`test-requests/assign-bulk`, requestbody, headers)
+      .pipe(
+        tap((error: any) => {
+          console.log('Response received:', error);
+          this.erromessagefunction(error);
+        })
+      );
+  }
+  submitPayment(requestbody: any): Observable<any> {
+    const token = this.jwtService.getToken();
+    let headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      // 'Content-Type': 'application/json',
+    });
+    if (!(requestbody instanceof FormData)) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
+    // Make the POST request to the server
+    return this.apiservice.post(`payment`, requestbody, headers).pipe(
+      tap((error: any) => {
+        console.log('Response received:', error);
+        this.erromessagefunction(error);
+      })
+    );
+  }
+  uploadStaffFile(requestbody: any): Observable<any> {
+    const token = this.jwtService.getToken();
+    let headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      // 'Content-Type': 'application/json',
+    });
+    if (!(requestbody instanceof FormData)) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
+    // Make the POST request to the server
+    return this.apiservice.post(`users-bulk-upload`, requestbody, headers).pipe(
+      tap((error: any) => {
+        console.log('Response received:', error);
+        this.erromessagefunction(error);
+      })
+    );
+  }
+  getUpdateTestByID(test_id: any) {
+    const token = this.jwtService.getToken();
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
+
+    // var url = `app-users?user_id=${user_id}`;
+    const url = `test-requests/${test_id}`;
+    return this.apiservice.get(url, headers).pipe(
+      tap((error: any) => {
+        console.log('Response received:', error);
+        this.erromessagefunction(error);
+      })
+    );
+  }
+  getTestReuestByID(test_id: any) {
+    const token = this.jwtService.getToken();
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
+
+    // var url = `app-users?user_id=${user_id}`;
+    const url = `test-requests/${test_id}/readings`;
+    return this.apiservice.get(url, headers).pipe(
+      tap((error: any) => {
+        console.log('Response received:', error);
+        this.erromessagefunction(error);
+      })
+    );
+  }
+  updateTestRequest(body: any, userId: any): Observable<any> {
+    // const user = this.jwtService.getpanelUserId();
+    const token = this.jwtService.getToken();
+    let headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    // Only set Content-Type if body is NOT FormData
+    if (!(body instanceof FormData)) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
+
+    return this.apiservice.post(`test-requests/` + userId, body, headers).pipe(
+      tap((error: any) => {
+        console.log('Response received:', error);
+        this.erromessagefunction(error);
+      })
+    );
+  }
+  completeTestRequest(userId: any): Observable<any> {
+    // const user = this.jwtService.getpanelUserId();
+    const token = this.jwtService.getToken();
+    let headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    return this.apiservice
+      .post(`test-requests/` + userId + '/complete', null, headers)
+      .pipe(
+        tap((error: any) => {
+          console.log('Response received:', error);
+          this.erromessagefunction(error);
+        })
+      );
+  }
+
+  deleteTestRequest(testId: any): Observable<any> {
+    const token = this.jwtService.getToken();
+    if (!token) {
+      console.error('No token found');
+      return throwError(() => new Error('No token available'));
+    }
+    console.log('Token:', token);
+
+    let headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+    console.log('Headers:', headers.get('Authorization'));
+
+    return this.apiservice
+      .deleteFun(`test-requests/${testId}`, { headers })
+      .pipe(
+        catchError((error: any) => {
+          console.error('Delete request failed:', error);
+          this.erromessagefunction(error);
+          return throwError(() => error);
+        })
+      );
+  }
+
+  // saveTestDetails
+  saveTestDetails(requestbody: any, test_id: any): Observable<any> {
+    const token = this.jwtService.getToken();
+    let headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      // 'Content-Type': 'application/json',
+    });
+    if (!(requestbody instanceof FormData)) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
+    // Make the POST request to the server
+    return this.apiservice
+      .post(`test-request-form/${test_id}`, requestbody, headers)
+      .pipe(
+        tap((error: any) => {
+          console.log('Response received:', error);
+          this.erromessagefunction(error);
+        })
+      );
+  }
+  // Test Management APIs end
 
   getClientParties(): Observable<any> {
     const user = this.jwtService.getpanelUserId(); // Replace with your actual method to get the user ID
@@ -792,22 +1506,7 @@ export class EmployeeService {
       })
     );
   }
-  GetAppUserIdApi(user_id: any) {
-    const token = this.jwtService.getToken();
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    });
 
-    // var url = `app-users?user_id=${user_id}`;
-    const url = `app-users/${user_id}`;
-    return this.apiservice.get(url, headers).pipe(
-      tap((error: any) => {
-        console.log('Response received:', error);
-        this.erromessagefunction(error);
-      })
-    );
-  }
   GetSilentUserApi(user_id: any, tableSize: any, page: any, search: any) {
     const token = this.jwtService.getToken();
     const headers = new HttpHeaders({
@@ -1195,25 +1894,7 @@ export class EmployeeService {
       })
     );
   }
-  updateSubscription(body: any, userId: any): Observable<any> {
-    // const user = this.jwtService.getpanelUserId();
-    const token = this.jwtService.getToken();
-    let headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-    });
 
-    // Only set Content-Type if body is NOT FormData
-    if (!(body instanceof FormData)) {
-      headers = headers.set('Content-Type', 'application/json');
-    }
-
-    return this.apiservice.post(`subscription/` + userId, body, headers).pipe(
-      tap((error: any) => {
-        console.log('Response received:', error);
-        this.erromessagefunction(error);
-      })
-    );
-  }
   updatematerials(body: any): Observable<any> {
     const user = this.jwtService.getpanelUserId();
     const token = this.jwtService.getToken();

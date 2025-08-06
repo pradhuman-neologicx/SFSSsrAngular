@@ -39,6 +39,8 @@ import { AccountManagementComponent } from './admin/account-management/account-m
 import { NavbarComponent } from './website/navbar/navbar.component';
 import { MastersComponent } from './admin/masters/masters.component';
 import { MaterialComponent } from './admin/masters/material/material.component';
+import { EngineerTestManagementComponent } from './admin/engineer-test-management/engineer-test-management.component';
+import { UpdateTestComponent } from './admin/test-management/update-test/update-test.component';
 
 @NgModule({
   declarations: [
@@ -65,6 +67,8 @@ import { MaterialComponent } from './admin/masters/material/material.component';
     NavbarComponent,
     MastersComponent,
     MaterialComponent,
+    EngineerTestManagementComponent,
+    UpdateTestComponent,
   ],
   imports: [
     BrowserModule,

@@ -20,6 +20,8 @@ import { EquipmentStatusComponent } from './admin/equipment-status/equipment-sta
 import { AccountManagementComponent } from './admin/account-management/account-management.component';
 import { MastersComponent } from './admin/masters/masters.component';
 import { MaterialComponent } from './admin/masters/material/material.component';
+import { EngineerTestManagementComponent } from './admin/engineer-test-management/engineer-test-management.component';
+import { UpdateTestComponent } from './admin/test-management/update-test/update-test.component';
 
 const routes: Routes = [
   {
@@ -46,14 +48,14 @@ const routes: Routes = [
       {
         path: 'dashboard',
         component: DashboardComponent,
-        // canActivate: [AuthGuard],
+        canActivate: [AuthGuard],
       },
 
       {
         path: 'user-management',
 
         component: UserManagementComponent,
-
+        canActivate: [AuthGuard],
         children: [
           { path: '', redirectTo: 'staff', pathMatch: 'full' },
           {
@@ -66,14 +68,25 @@ const routes: Routes = [
       {
         path: 'test-configuration',
         component: TestMasterComponent,
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'engineer',
+        component: EngineerTestManagementComponent,
+        canActivate: [AuthGuard],
       },
       {
         path: 'test-management',
         component: TestManagementComponent,
+        canActivate: [AuthGuard],
       },
       {
         path: 'create-test',
         component: CreateTestComponent,
+      },
+      {
+        path: 'update-test/:id',
+        component: UpdateTestComponent,
       },
       {
         path: 'report',
@@ -82,6 +95,7 @@ const routes: Routes = [
       {
         path: 'test-result',
         component: TestResultsComponent,
+        canActivate: [AuthGuard],
       },
       {
         path: 'equipment',
@@ -90,10 +104,12 @@ const routes: Routes = [
       {
         path: 'accounts',
         component: AccountManagementComponent,
+        canActivate: [AuthGuard],
       },
       {
         path: 'master',
         component: MastersComponent,
+        canActivate: [AuthGuard],
         children: [
           { path: '', redirectTo: 'category', pathMatch: 'full' },
           {

@@ -16,6 +16,7 @@ import {
 } from '@angular/forms';
 import { EmployeeService } from 'src/app/core/services/Employee.service';
 import { JwtService } from 'src/app/core/services/jwt.service';
+import { NotificationService } from 'src/app/core/services/notificationnew.service';
 
 interface Staff {
   id: number;
@@ -105,7 +106,8 @@ export class StaffComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private employeeService: EmployeeService,
-    private jwtService: JwtService
+    private jwtService: JwtService,
+    private notificationService: NotificationService
   ) {}
 
   user_id: any;
@@ -115,7 +117,7 @@ export class StaffComponent implements OnInit {
       searchbar: ['', [Validators.required]],
     });
     this.staffcreate = this.formBuilder.group({
-      image: ['', [Validators.required]],
+      // image: ['', [Validators.required]],
       name: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       mobile: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
@@ -123,7 +125,7 @@ export class StaffComponent implements OnInit {
       role: ['', [Validators.required]],
     });
     this.staffupdate = this.formBuilder.group({
-      image: ['', [Validators.required]],
+      // image: ['', [Validators.required]],
       name: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       mobile: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
@@ -131,7 +133,7 @@ export class StaffComponent implements OnInit {
       role: ['', [Validators.required]],
     });
     this.staffview = this.formBuilder.group({
-      image: [''],
+      // image: [''],
       name: [''],
       email: [''],
       mobile: [''],
@@ -143,49 +145,53 @@ export class StaffComponent implements OnInit {
     });
 
     this.GetStaff();
-    this.staffTable = this.getDummyStaff();
+    this.GetDepartment();
   }
-  getDummyStaff(): Staff[] {
-    return [
-      {
-        id: 1,
-        name: 'Ravi Kumar',
-        email: 'ravi.kumar@example.com',
-        mobile: '9876543210',
-        department: 'Administration',
-        role: 'Manager',
-        is_active: 1,
-      },
-      {
-        id: 2,
-        name: 'Aarti Mehta',
-        email: 'aarti.mehta@example.com',
-        mobile: '9123456789',
-        department: 'Accounts',
-        role: 'Account Executive',
-        is_active: 0,
-      },
-      {
-        id: 3,
-        name: 'Suresh Gupta',
-        email: 'suresh.gupta@example.com',
-        mobile: '9988776655',
-        department: 'Office',
-        role: 'Front Office',
-        is_active: 1,
-      },
-    ];
-  }
+
   staffTable: any;
   GetStaff() {
-    // this.employeeService
-    //   .GetStaff(this.tableSize, this.page, this.searchText, this.statusfilter)
-    //   .subscribe((response: any) => {
-    //     if (response.status === 200 || response.status === 201) {
-    //       this.staffTable = response.data.records;
-    //       this.totalRecords = response.data.total;
-    //     }
-    //   });
+    this.employeeService
+      .GetStaff(this.tableSize, this.page, this.searchText)
+      .subscribe((response: any) => {
+        if (response.status === 200 || response.status === 201) {
+          this.staffTable = response.data.records;
+          this.totalRecords = response.data.total;
+        }
+      });
+  }
+  departmentTable: any;
+  rolesList: any;
+  GetDepartment() {
+    this.employeeService.GetDepartment().subscribe((response: any) => {
+      if (response.status === 200 || response.status === 201) {
+        this.departmentTable = response.data;
+        // this.totalRecords = response.data.total;
+      }
+    });
+  }
+  onDepartmentChange(event: Event) {
+    const selectedStateId = (event.target as HTMLSelectElement).value;
+
+    if (selectedStateId) {
+      console.log('Selected State ID:', selectedStateId);
+      this.getRoles(selectedStateId);
+    } else {
+      this.rolesList = [];
+    }
+  }
+  getRoles(departmentId: any, selectedRoleId?: any) {
+    this.employeeService.GetRoles(departmentId).subscribe((response: any) => {
+      if (response.status === 200 || response.status === 201) {
+        this.rolesList = response.data;
+        // If a role should be prefilled, set it after roles are loaded
+        if (selectedRoleId) {
+          this.staffupdate.get('role')?.setValue(selectedRoleId);
+        } else {
+          this.staffupdate.get('role')?.setValue(null);
+        }
+        this.staffupdate.get('role')?.markAsUntouched();
+      }
+    });
   }
 
   table_heading = [
@@ -315,95 +321,103 @@ export class StaffComponent implements OnInit {
   submitted!: boolean;
 
   Createstaff() {
-    // if (this.staffcreate.valid) {
-    //   const formData: FormData = new FormData();
-    //   formData.append('name', this.staffcreate.get('name')?.value);
-    //   formData.append('email', this.staffcreate.get('email')?.value);
-    //   formData.append('mobile', this.staffcreate.get('mobile')?.value);
-    //   formData.append('gender', this.staffcreate.get('gender')?.value);
-    //   formData.append('role', this.staffcreate.get('role')?.value);
-    //   if (this.selectedFiles.length > 0) {
-    //     const file = this.selectedFiles[0];
-    //     formData.append('image', file, file.name);
-    //   }
-    //   if (
-    //     this.selectedFileNames.toString().includes('jpeg') ||
-    //     this.selectedFileNames.toString().includes('jpg') ||
-    //     this.selectedFileNames.toString().includes('png')
-    //   ) {
-    //     this.employeeService.createStaff(formData).subscribe((response: any) => {
-    //       if (response.status === 200 || response.status === 201) {
-    //         this.closeModal();
-    //         this.successName = 'Staff Created';
-    //         this.ngOnInit();
-    //         this.GetStaff();
-    //         setTimeout(() => {
-    //           this.openSecondsuccess = true;
-    //           setTimeout(() => {
-    //             this.openSecondsuccess = false;
-    //           }, 1800);
-    //         }, 200);
-    //       } else {
-    //         this.submitted = false;
-    //         this.errorMessage = response.errors || response.message;
-    //         alert(this.errorMessage);
-    //       }
-    //     });
-    //   }
-    // } else {
-    //   this.submitted = false;
-    //   this.errorMessage = 'Please enter all the details';
-    //   this.staffcreate.markAllAsTouched();
-    //   console.log(this.findInvalidControls(this.staffcreate));
-    // }
+    if (this.staffcreate.valid) {
+      const formData: FormData = new FormData();
+      formData.append('name', this.staffcreate.get('name')?.value);
+      formData.append('email', this.staffcreate.get('email')?.value);
+      formData.append('mobile', this.staffcreate.get('mobile')?.value);
+      formData.append(
+        'department_id',
+        this.staffcreate.get('department')?.value
+      );
+      formData.append('role_id', this.staffcreate.get('role')?.value);
+      // if (this.selectedFiles.length > 0) {
+      //   const file = this.selectedFiles[0];
+      //   formData.append('image', file, file.name);
+      // }
+      // if (
+      //   this.selectedFileNames.toString().includes('jpeg') ||
+      //   this.selectedFileNames.toString().includes('jpg') ||
+      //   this.selectedFileNames.toString().includes('png')
+      // ) {
+      this.employeeService.createStaff(formData).subscribe((response: any) => {
+        if (response.status === 200 || response.status === 201) {
+          this.closeModal();
+          this.successName = 'Employee Created';
+          // this.ngOnInit();
+          this.GetStaff();
+          setTimeout(() => {
+            this.openSecondsuccess = true;
+            setTimeout(() => {
+              this.openSecondsuccess = false;
+            }, 1800);
+          }, 200);
+        } else {
+          this.submitted = false;
+          this.errorMessage = response.errors || response.message;
+          alert(this.errorMessage);
+        }
+      });
+    } else {
+      this.submitted = false;
+      this.errorMessage = 'Please enter all the details';
+      this.staffcreate.markAllAsTouched();
+      console.log(this.findInvalidControls(this.staffcreate));
+    }
   }
 
   Updatestaff() {
-    // if (this.staffupdate.valid) {
-    //   const formData: FormData = new FormData();
-    //   formData.append('name', this.staffupdate.get('name')?.value);
-    //   formData.append('email', this.staffupdate.get('email')?.value);
-    //   formData.append('mobile', this.staffupdate.get('mobile')?.value);
-    //   formData.append('gender', this.staffupdate.get('gender')?.value);
-    //   formData.append('role', this.staffupdate.get('role')?.value);
-    //   formData.append('_method', 'put');
-    //   if (this.selectedFiles.length > 0) {
-    //     const file = this.selectedFiles[0];
-    //     formData.append('image', file, file.name);
-    //   } else {
-    //     this.submitted = false;
-    //     this.errorMessage = 'Please select a file';
-    //     return;
-    //   }
-    //   if (
-    //     this.selectedFileNames.toString().includes('jpeg') ||
-    //     this.selectedFileNames.toString().includes('jpg') ||
-    //     this.selectedFileNames.toString().includes('png')
-    //   ) {
-    //     this.employeeService.updateStaff(formData, this.staffId).subscribe((response: any) => {
-    //       if (response.status === 200 || response.status === 201) {
-    //         this.closeModal();
-    //         this.successName = 'Staff Updated';
-    //         this.ngOnInit();
-    //         this.GetStaff();
-    //         setTimeout(() => {
-    //           this.openSecondsuccess = true;
-    //           setTimeout(() => {
-    //             this.openSecondsuccess = false;
-    //           }, 1800);
-    //         }, 200);
-    //       } else {
-    //         this.submitted = false;
-    //         this.errorMessage = response.errors || response.message;
-    //         alert(this.errorMessage);
-    //       }
-    //     });
-    //   } else {
-    //     this.submitted = false;
-    //     this.errorMessage = 'Please select a correct file';
-    //     this.staffupdate.markAllAsTouched();
-    //   }
-    // } else {
+    if (this.staffupdate.valid) {
+      const formData: FormData = new FormData();
+      formData.append('name', this.staffupdate.get('name')?.value);
+      formData.append('email', this.staffupdate.get('email')?.value);
+      formData.append('mobile', this.staffupdate.get('mobile')?.value);
+      formData.append(
+        'department_id',
+        this.staffupdate.get('department')?.value
+      );
+      formData.append('role_id', this.staffupdate.get('role')?.value);
+      formData.append('_method', 'put');
+      // if (this.selectedFiles.length > 0) {
+      //   const file = this.selectedFiles[0];
+      //   formData.append('image', file, file.name);
+      // } else {
+      //   this.submitted = false;
+      //   this.errorMessage = 'Please select a file';
+      //   return;
+      // }
+      // if (
+      //   this.selectedFileNames.toString().includes('jpeg') ||
+      //   this.selectedFileNames.toString().includes('jpg') ||
+      //   this.selectedFileNames.toString().includes('png')
+      // ) {
+      this.employeeService
+        .updateStaff(formData, this.staffId)
+        .subscribe((response: any) => {
+          if (response.status === 200 || response.status === 201) {
+            this.closeModal();
+            this.successName = 'Staff Updated';
+            this.ngOnInit();
+            // this.GetStaff();
+            setTimeout(() => {
+              this.openSecondsuccess = true;
+              setTimeout(() => {
+                this.openSecondsuccess = false;
+              }, 1800);
+            }, 200);
+          } else {
+            this.submitted = false;
+            this.errorMessage = response.errors || response.message;
+            alert(this.errorMessage);
+          }
+        });
+    } else {
+      this.submitted = false;
+      this.errorMessage = 'Please enter all the details';
+      this.staffupdate.markAllAsTouched();
+    }
+    // }
+    // else {
     //   this.submitted = false;
     //   this.errorMessage = 'Please enter all the details';
     //   this.staffupdate.markAllAsTouched();
@@ -426,30 +440,36 @@ export class StaffComponent implements OnInit {
   staffId: any;
   async OpenEditModal(staff: any) {
     this.staffupdateopen = true;
-    // this.selectedImages = [];
-    // this.selectedFileNames = [];
-    // this.selectedFiles = [];
-    // this.staffId = staff.id;
-    // this.employeeService.getStaffById(this.staffId).subscribe((response: any) => {
-    //   if (response.status === 200 || response.status === 201) {
-    //     this.fillUpdateForm(response.data);
-    //   }
-    // });
+    this.staffId = staff.id;
+    // Set department and fetch roles for that department
+    this.staffupdate.patchValue({
+      department: staff.department.id,
+    });
+    // Fetch roles for the department, then set the role
+    this.getRoles(staff.department.id, staff.role.id);
+    // Set other fields
+    this.staffupdate.patchValue({
+      name: staff.name,
+      email: staff.email,
+      mobile: staff.mobile,
+      // department is already set above
+      // role will be set after roles are loaded
+    });
   }
 
   async OpenviewModal(staff: any) {
     this.staffviewopen = true;
-    // this.selectedImages = [];
-    // this.selectedFileNames = [];
-    // this.selectedFiles = [];
-    // this.staffId = staff.id;
-    // this.employeeService
-    //   .getStaffById(this.staffId)
-    //   .subscribe((response: any) => {
-    //     if (response.status === 200 || response.status === 201) {
-    //       this.fillViewForm(response.data);
-    //     }
-    //   });
+    this.selectedImages = [];
+    this.selectedFileNames = [];
+    this.selectedFiles = [];
+    this.staffId = staff.id;
+    this.employeeService
+      .getStaffById(this.staffId)
+      .subscribe((response: any) => {
+        if (response.status === 200 || response.status === 201) {
+          this.fillViewForm(response.data);
+        }
+      });
   }
 
   async fillUpdateForm(response: any) {
@@ -461,126 +481,126 @@ export class StaffComponent implements OnInit {
         response.mobile,
         [Validators.required, Validators.pattern('^[0-9]{10}$')],
       ],
-      gender: [response.gender, [Validators.required]],
-      role: [response.role, [Validators.required]],
+      department: [response.department.id, [Validators.required]],
+      role: [response.role.id, [Validators.required]],
     });
 
-    const file = await this.createFile(response.image);
-    if (file) {
-      const maxSizeBytes = 5000000;
-      const maxHeight = 700;
-      const fileType = file.type;
-      const validImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    // const file = await this.createFile(response.image);
+    // if (file) {
+    //   const maxSizeBytes = 5000000;
+    //   const maxHeight = 700;
+    //   const fileType = file.type;
+    //   const validImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
 
-      if (!validImageTypes.includes(fileType)) {
-        this.fileSizeError = 'Only PNG, JPEG, and JPG formats are allowed.';
-        this.selectedImages = [];
-        this.selectedFileNames = [];
-        this.selectedFiles = [];
-        return;
-      }
+    //   if (!validImageTypes.includes(fileType)) {
+    //     this.fileSizeError = 'Only PNG, JPEG, and JPG formats are allowed.';
+    //     this.selectedImages = [];
+    //     this.selectedFileNames = [];
+    //     this.selectedFiles = [];
+    //     return;
+    //   }
 
-      if (file.size > maxSizeBytes) {
-        this.selectedImages = [];
-        this.selectedFileNames = [];
-        this.selectedFiles = [];
-        this.fileSizeError =
-          'The selected file exceeds the maximum allowed size (5MB).';
-        return;
-      }
+    //   if (file.size > maxSizeBytes) {
+    //     this.selectedImages = [];
+    //     this.selectedFileNames = [];
+    //     this.selectedFiles = [];
+    //     this.fileSizeError =
+    //       'The selected file exceeds the maximum allowed size (5MB).';
+    //     return;
+    //   }
 
-      const reader = new FileReader();
-      this.selectedFileNames = [file.name];
-      this.selectedFiles = [file];
+    //   const reader = new FileReader();
+    //   this.selectedFileNames = [file.name];
+    //   this.selectedFiles = [file];
 
-      reader.onload = () => {
-        if (typeof reader.result === 'string' || reader.result === null) {
-          const id = this.generateUniqueId();
-          const imageSrc = reader.result as string;
-          const image = new Image();
-          image.src = imageSrc;
+    //   reader.onload = () => {
+    //     if (typeof reader.result === 'string' || reader.result === null) {
+    //       const id = this.generateUniqueId();
+    //       const imageSrc = reader.result as string;
+    //       const image = new Image();
+    //       image.src = imageSrc;
 
-          image.onload = () => {
-            if (image.height > maxHeight) {
-              this.selectedImages = [];
-              this.selectedFileNames = [];
-              this.selectedFiles = [];
-              this.fileSizeError =
-                'The selected image dimensions exceed the maximum allowed size';
-            } else {
-              this.selectedImages = [{ imageSrc, id }];
-              this.fileSizeError = '';
-            }
-          };
-        }
-      };
+    //       image.onload = () => {
+    //         if (image.height > maxHeight) {
+    //           this.selectedImages = [];
+    //           this.selectedFileNames = [];
+    //           this.selectedFiles = [];
+    //           this.fileSizeError =
+    //             'The selected image dimensions exceed the maximum allowed size';
+    //         } else {
+    //           this.selectedImages = [{ imageSrc, id }];
+    //           this.fileSizeError = '';
+    //         }
+    //       };
+    //     }
+    //   };
 
-      reader.readAsDataURL(file);
-    }
+    //   reader.readAsDataURL(file);
+    // }
   }
 
   async fillViewForm(response: any) {
     this.staffview = this.formBuilder.group({
-      image: [response.image],
+      // image: [response.image],
       name: [response.name],
       email: [response.email],
       mobile: [response.mobile],
-      gender: [response.gender],
-      role: [response.role],
+      department: [response.department.name],
+      role: [response.role.name],
     });
 
-    const file = await this.createFile(response.image);
-    if (file) {
-      const maxSizeBytes = 5000000;
-      const maxHeight = 700;
-      const fileType = file.type;
-      const validImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    // const file = await this.createFile(response.image);
+    // if (file) {
+    //   const maxSizeBytes = 5000000;
+    //   const maxHeight = 700;
+    //   const fileType = file.type;
+    //   const validImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
 
-      if (!validImageTypes.includes(fileType)) {
-        this.fileSizeError = 'Only PNG, JPEG, and JPG formats are allowed.';
-        this.selectedImages = [];
-        this.selectedFileNames = [];
-        this.selectedFiles = [];
-        return;
-      }
+    //   if (!validImageTypes.includes(fileType)) {
+    //     this.fileSizeError = 'Only PNG, JPEG, and JPG formats are allowed.';
+    //     this.selectedImages = [];
+    //     this.selectedFileNames = [];
+    //     this.selectedFiles = [];
+    //     return;
+    //   }
 
-      if (file.size > maxSizeBytes) {
-        this.selectedImages = [];
-        this.selectedFileNames = [];
-        this.selectedFiles = [];
-        this.fileSizeError =
-          'The selected file exceeds the maximum allowed size (5MB).';
-        return;
-      }
+    //   if (file.size > maxSizeBytes) {
+    //     this.selectedImages = [];
+    //     this.selectedFileNames = [];
+    //     this.selectedFiles = [];
+    //     this.fileSizeError =
+    //       'The selected file exceeds the maximum allowed size (5MB).';
+    //     return;
+    //   }
 
-      const reader = new FileReader();
-      this.selectedFileNames = [file.name];
-      this.selectedFiles = [file];
+    //   const reader = new FileReader();
+    //   this.selectedFileNames = [file.name];
+    //   this.selectedFiles = [file];
 
-      reader.onload = () => {
-        if (typeof reader.result === 'string' || reader.result === null) {
-          const id = this.generateUniqueId();
-          const imageSrc = reader.result as string;
-          const image = new Image();
-          image.src = imageSrc;
+    //   reader.onload = () => {
+    //     if (typeof reader.result === 'string' || reader.result === null) {
+    //       const id = this.generateUniqueId();
+    //       const imageSrc = reader.result as string;
+    //       const image = new Image();
+    //       image.src = imageSrc;
 
-          image.onload = () => {
-            if (image.height > maxHeight) {
-              this.selectedImages = [];
-              this.selectedFileNames = [];
-              this.selectedFiles = [];
-              this.fileSizeError =
-                'The selected image dimensions exceed the maximum allowed size';
-            } else {
-              this.selectedImages = [{ imageSrc, id }];
-              this.fileSizeError = '';
-            }
-          };
-        }
-      };
+    //       image.onload = () => {
+    //         if (image.height > maxHeight) {
+    //           this.selectedImages = [];
+    //           this.selectedFileNames = [];
+    //           this.selectedFiles = [];
+    //           this.fileSizeError =
+    //             'The selected image dimensions exceed the maximum allowed size';
+    //         } else {
+    //           this.selectedImages = [{ imageSrc, id }];
+    //           this.fileSizeError = '';
+    //         }
+    //       };
+    //     }
+    //   };
 
-      reader.readAsDataURL(file);
-    }
+    //   reader.readAsDataURL(file);
+    // }
   }
 
   async createFile(url: string) {
@@ -601,6 +621,7 @@ export class StaffComponent implements OnInit {
 
   closeModal() {
     this.staffcreateopen = false;
+    this.staffcreate.reset();
     this.staffupdateopen = false;
     this.staffviewopen = false;
   }
@@ -610,21 +631,22 @@ export class StaffComponent implements OnInit {
   }
 
   async Status(id: string, status: any) {
-    // const actionMessage = status ? 'activated' : 'deactivated';
-    // this.employeeService
-    //   .changeStatus(id, status, 'Staff')
-    //   .subscribe((response: any) => {
-    //     if (response.status === 200) {
-    //       this.successName = actionMessage;
-    //       this.GetStaff();
-    //       setTimeout(() => {
-    //         this.openSecondsuccess = true;
-    //         setTimeout(() => {
-    //           this.openSecondsuccess = false;
-    //         }, 1800);
-    //       }, 200);
-    //     }
-    //   });
+    const actionMessage = status ? 'activated' : 'deactivated';
+    let type = 'User';
+    this.employeeService
+      .changestatuss(id, status, type)
+      .subscribe((response: any) => {
+        if (response.status === 200) {
+          this.successName = actionMessage;
+          this.ngOnInit();
+          setTimeout(() => {
+            this.openSecondsuccess = true;
+            setTimeout(() => {
+              this.openSecondsuccess = false;
+            }, 1800);
+          }, 200);
+        }
+      });
   }
 
   openUploadModal() {
@@ -645,7 +667,7 @@ export class StaffComponent implements OnInit {
     if (file) {
       this.selectedUploadFile = file;
       this.selectedUploadFileName = file.name;
-      this.uploadForm.patchValue({ file: file });
+      this.uploadForm.get('file')?.markAsTouched();
       this.uploadForm.get('file')?.updateValueAndValidity();
     }
   }
@@ -655,15 +677,24 @@ export class StaffComponent implements OnInit {
       this.uploadForm.markAllAsTouched();
       return;
     }
-    // Example upload logic:
-    // const formData = new FormData();
-    // formData.append('file', this.selectedUploadFile, this.selectedUploadFile.name);
-    // this.employeeService.uploadStaffFile(formData).subscribe(res => {
-    //   // handle response
-    //   this.closeUploadModal();
-    //   this.GetStaff();
-    // });
-    this.closeUploadModal();
-    // Optionally show a success message
+
+    const formData = new FormData();
+    formData.append(
+      'file',
+      this.selectedUploadFile,
+      this.selectedUploadFile.name
+    );
+
+    this.employeeService.uploadStaffFile(formData).subscribe({
+      next: (res) => {
+        this.closeUploadModal();
+        this.uploadForm.get('file')?.reset();
+        this.notificationService.show(res.message, 'success', 3000);
+        this.GetStaff();
+      },
+      error: () => {
+        this.notificationService.show('File upload failed', 'error', 3000);
+      },
+    });
   }
 }

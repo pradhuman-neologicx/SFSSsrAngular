@@ -151,7 +151,7 @@
                     View Details
                   </button>
 
-                  <!-- <button
+                  <button
                     mat-menu-item
                     *ngIf="user.is_active; else inactiveButton"
                     (click)="Status(user.id, 0)"
@@ -159,11 +159,10 @@
                     Deactivate
                   </button>
                   <ng-template #inactiveButton>
-                   
                     <button mat-menu-item (click)="Status(user.id, 1)">
                       Activate
                     </button>
-                  </ng-template> -->
+                  </ng-template>
                 </mat-menu>
               </p>
             </td>

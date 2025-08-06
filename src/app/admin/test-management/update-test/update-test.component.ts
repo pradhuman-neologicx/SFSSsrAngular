@@ -15,13 +15,13 @@ import {
   ValidationErrors,
 } from '@angular/forms';
 import { EmployeeService } from 'src/app/core/services/Employee.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from 'src/app/core/services/notificationnew.service';
 
 @Component({
-  selector: 'app-create-test',
-  templateUrl: './create-test.component.html',
-  styleUrls: ['./create-test.component.scss'],
+  selector: 'app-update-test',
+  templateUrl: './update-test.component.html',
+  styleUrls: ['./update-test.component.scss'],
   animations: [
     trigger('slideIn', [
       state(
@@ -43,7 +43,7 @@ import { NotificationService } from 'src/app/core/services/notificationnew.servi
     ]),
   ],
 })
-export class CreateTestComponent implements OnInit {
+export class UpdateTestComponent implements OnInit {
   currentStep: number = 1;
   step1Form!: FormGroup;
   step2Form!: FormGroup;
@@ -65,12 +65,15 @@ export class CreateTestComponent implements OnInit {
     private formBuilder: FormBuilder,
     private employeeService: EmployeeService,
     private router: Router,
+    private route: ActivatedRoute,
     private notificationService: NotificationService
   ) {
     this.today = new Date().toISOString().split('T')[0];
   }
-
+  test_id!: string;
   ngOnInit(): void {
+    this.test_id = this.route.snapshot.paramMap.get('id')!;
+    console.log('Extracted ID:', this.test_id);
     const defaultDate = '2025-05-30';
     this.step1Form = this.formBuilder.group(
       {
@@ -87,7 +90,10 @@ export class CreateTestComponent implements OnInit {
           '',
           [Validators.required, this.minDateValidator()],
         ],
-        materialTests: this.formBuilder.array([]), // Remove duplicateMaterialValidator here
+        materialTests: this.formBuilder.array(
+          [],
+          this.duplicateMaterialValidator()
+        ),
         fieldTests: this.formBuilder.array([]),
       },
       { validators: this.atLeastOneTestValidator() }
@@ -109,82 +115,37 @@ export class CreateTestComponent implements OnInit {
 
     this.filteredTestDescriptions = [];
     this.dropdownOpen = [];
-    // Do NOT add a material test row by default
-    // this.addTest('material');
+    this.addTest('material');
     this.addTest('field');
     this.GetMaterialFun();
     this.GetFieldsFun();
     this.GetCustomersFun();
     this.onCustomerTypeChange();
+    this.GetUpdateTestbyid();
   }
-  materialTestValidator() {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const material = control.get('material')?.value;
-      const testDescriptions = control.get('test_description')?.value || [];
-
-      // Only validate if material is selected
-      if (material && testDescriptions.length === 0) {
-        return { requiredTestDescription: true };
-      }
-      return null;
-    };
-  }
-  // atLeastOneTestValidator() {
-  //   return (formGroup: FormGroup): ValidationErrors | null => {
-  //     const materialTests = formGroup.get('materialTests') as FormArray;
-  //     const fieldTests = formGroup.get('fieldTests') as FormArray;
-
-  //     const hasValidMaterialTest = materialTests.controls.some(
-  //       (control) =>
-  //         control.get('material')?.valid &&
-  //         control.get('test_description')?.valid &&
-  //         control.get('sample_id')?.valid
-  //     );
-
-  //     const hasValidFieldTest = fieldTests.controls.some(
-  //       (control) =>
-  //         control.get('test_description')?.valid &&
-  //         control.get('sample_id')?.valid
-  //     );
-
-  //     return hasValidMaterialTest || hasValidFieldTest
-  //       ? null
-  //       : { noValidTests: true };
-  //   };
-  // }
   atLeastOneTestValidator() {
     return (formGroup: FormGroup): ValidationErrors | null => {
       const materialTests = formGroup.get('materialTests') as FormArray;
       const fieldTests = formGroup.get('fieldTests') as FormArray;
 
-      // Check if there are valid material tests
       const hasValidMaterialTest = materialTests.controls.some(
         (control) =>
-          control.get('material')?.value &&
-          control.get('test_description')?.value?.length > 0 &&
-          control.get('sample_id')?.value
+          control.get('material')?.valid &&
+          control.get('test_description')?.valid &&
+          control.get('sample_id')?.valid
       );
 
-      // Check if there are valid field tests
       const hasValidFieldTest = fieldTests.controls.some(
         (control) =>
-          control.get('test_description')?.value &&
-          control.get('sample_id')?.value
+          control.get('test_description')?.valid &&
+          control.get('sample_id')?.valid
       );
 
-      // If neither material nor field tests are present, or no valid tests exist
-      if (materialTests.length === 0 && fieldTests.length === 0) {
-        return { noTestsAdded: true };
-      }
-
-      if (!hasValidMaterialTest && !hasValidFieldTest) {
-        return { noValidTests: true };
-      }
-
-      return null;
+      return hasValidMaterialTest || hasValidFieldTest
+        ? null
+        : { noValidTests: true };
     };
   }
-
   get materialTests(): FormArray {
     return this.step1Form.get('materialTests') as FormArray;
   }
@@ -199,16 +160,12 @@ export class CreateTestComponent implements OnInit {
         type === 'material' ? '' : null,
         type === 'material' ? Validators.required : [],
       ],
-      test_description: [
-        type === 'material' ? [] : '',
-        Validators.required,
-      ],
-      sample_id: ['', Validators.required],
+      test_description: [[]],
+      sample_id: [''],
       remark: [''],
     });
 
     if (type === 'material') {
-      testGroup.setValidators(this.materialTestValidator());
       this.materialTests.push(testGroup);
       this.filteredTestDescriptions.push([]);
       this.dropdownOpen.push(false);
@@ -412,11 +369,6 @@ export class CreateTestComponent implements OnInit {
       const materials = (formArray as FormArray).controls
         .map((control) => control.get('material')?.value)
         .filter((value) => value);
-
-      if (materials.length === 0) {
-        return null;
-      }
-
       const uniqueMaterials = new Set(materials);
       return materials.length !== uniqueMaterials.size
         ? { duplicateMaterials: true }
@@ -429,35 +381,27 @@ export class CreateTestComponent implements OnInit {
   saveStep1(): void {
     this.checkForDuplicateMaterials();
     this.step1Form.markAllAsTouched();
-
     if (this.step1Form.valid && !this.hasDuplicateMaterials) {
       const formValue = this.step1Form.value;
       const formData: FormData = new FormData();
 
       // Append customer-related fields
-      const customerType = formValue.customer_type;
-      if (customerType === 'existing') {
-        formData.append(
-          'customer_id',
-          formValue.name_of_existing_customer || ''
-        );
-      } else if (customerType === 'new') {
-        formData.append('customer[name]', formValue.name_of_customer || '');
-        formData.append('customer[mobile]', formValue.mobile_no || '');
-        formData.append('customer[email]', formValue.email || '');
-        formData.append('customer[address]', formValue.address || '');
-      }
+      // const customerType = formValue.customer_type;
+
+      formData.append('customer_id', formValue.name_of_existing_customer || '');
+
       formData.append('work_name', formValue.name_of_work_project || '');
+      formData.append('_method', 'put');
       formData.append(
         'expected_delivery_date',
         formValue.expected_date_of_delivery || ''
       );
 
-      // Process materialTests (only include valid rows)
+      // Process materialTests
       formValue.materialTests.forEach((materialTest: any, index: number) => {
         if (
           materialTest.material &&
-          materialTest.test_description.length > 0 &&
+          materialTest.test_description.length &&
           materialTest.sample_id
         ) {
           formData.append(
@@ -481,9 +425,9 @@ export class CreateTestComponent implements OnInit {
         }
       });
 
-      // Process fieldTests (only include valid rows)
+      // Process fieldTests
       formValue.fieldTests.forEach((fieldTest: any, index: number) => {
-        if (fieldTest.test_description && fieldTest.sample_id) {
+        if (fieldTest.test_description.length && fieldTest.sample_id) {
           formData.append(
             `fields[${index}][test_configuration_id]`,
             fieldTest.test_description || ''
@@ -496,7 +440,7 @@ export class CreateTestComponent implements OnInit {
         }
       });
 
-      this.employeeService.createTestRequest(formData).subscribe(
+      this.employeeService.updateTestRequest(formData, this.test_id).subscribe(
         (response: any) => {
           if (response.status === 200 || response.status === 201) {
             this.successMessage = 'Test Created Successfully';
@@ -507,31 +451,24 @@ export class CreateTestComponent implements OnInit {
             this.submitted = false;
             this.errorMessage =
               response.errors || response.message || 'Failed to create test';
-            this.notificationService.show(response.message, 'error', 3000);
+            alert(this.errorMessage);
           }
         },
         (error: any) => {
           this.submitted = false;
           this.errorMessage =
             error.message || 'An error occurred while creating the test';
-          this.notificationService.show(error.message, 'error', 3000);
+          alert(this.errorMessage);
         }
       );
     } else {
-      // Provide specific error messages based on validation failures
-      if (this.hasDuplicateMaterials) {
-        this.errorMessage =
-          'Duplicate materials detected. Please ensure each material is unique.';
-      } else if (this.step1Form.hasError('noTestsAdded')) {
-        this.errorMessage =
-          'At least one Material or Field test must be added.';
-      } else if (this.step1Form.hasError('noValidTests')) {
-        this.errorMessage =
-          'At least one valid test (Material or Field) with all required fields is required.';
-      } else {
-        this.errorMessage = 'Please fill all required fields in Step 1.';
-      }
-      this.notificationService.show(this.errorMessage, 'error', 3000);
+      this.step1Form.markAllAsTouched();
+      this.errorMessage = this.hasDuplicateMaterials
+        ? 'Duplicate materials detected. Please ensure each material is unique.'
+        : this.step1Form.hasError('noValidTests')
+        ? 'At least one valid test (Material or Field) is required.'
+        : 'Please fill all required fields in Step 1';
+      alert(this.errorMessage);
     }
   }
 
@@ -577,7 +514,7 @@ export class CreateTestComponent implements OnInit {
         'decision_rule_required',
         formValue.decision_rule_required || ''
       );
-      formData.append('test_request_id', this.test_request_id || '');
+      formData.append('test_request_id', this.test_id || '');
 
       this.employeeService.createTestRequestStep2(formData).subscribe(
         (response: any) => {
@@ -661,5 +598,136 @@ export class CreateTestComponent implements OnInit {
         this.existingCustomers = [];
       }
     });
+  }
+  testDetails: any;
+  GetUpdateTestbyid() {
+    this.employeeService.getUpdateTestByID(this.test_id).subscribe(
+      (response: any) => {
+        if (response.status === 200) {
+          this.testDetails = response.data;
+
+          // Step 1: Set customer type and related fields
+          const customerType = this.testDetails.customer_id
+            ? 'existing'
+            : 'new';
+          this.step1Form.patchValue({
+            test_request_no: this.testDetails.test_number || '',
+            customer_type: customerType,
+            name_of_existing_customer: this.testDetails.customer_id || '',
+            name_of_customer: this.testDetails.customer?.name || '',
+            address: this.testDetails.customer?.address || '',
+            email: this.testDetails.customer?.email || '',
+            mobile_no: this.testDetails.customer?.mobile || '',
+            name_of_work_project: this.testDetails.work_name || '',
+            expected_date_of_delivery:
+              this.testDetails.expected_delivery_date || '',
+          });
+
+          // Step 2: Clear existing material and field tests
+          this.materialTests.clear();
+          this.fieldTests.clear();
+          this.filteredTestDescriptions = [];
+          this.dropdownOpen = [];
+
+          // Step 3: Populate materialTests FormArray
+          this.testDetails.materials.forEach((material: any, index: number) => {
+            const testGroup = this.formBuilder.group({
+              material: [material.material_id || '', Validators.required],
+              test_description: [
+                material.tests.map((test: any) =>
+                  test.test_configuration_id.toString()
+                ) || [],
+                Validators.required,
+              ],
+              sample_id: [material.sample_id || ''],
+              remark: [material.remark || ''],
+            });
+            this.materialTests.push(testGroup);
+            this.filteredTestDescriptions.push([]);
+            this.dropdownOpen.push(false);
+            this.getMaterialDescription(index, material.material_id); // Fetch test descriptions for this material
+          });
+
+          // Step 4: Populate fieldTests FormArray
+          this.testDetails.fields.forEach((field: any) => {
+            const testGroup = this.formBuilder.group({
+              test_description: [
+                field.test_configuration_id.toString() || '',
+                Validators.required,
+              ],
+              sample_id: [field.sample_id || ''],
+              remark: [field.remark || ''],
+            });
+            this.fieldTests.push(testGroup);
+            this.filteredTestDescriptions.push(
+              this.testDescriptions.filter((desc) => desc.material === null)
+            );
+            this.dropdownOpen.push(false);
+          });
+
+          // Step 5: Populate step2Form (Checklist)
+          this.step2Form.patchValue({
+            sample_proper_label:
+              this.testDetails.checklist?.label_present ||
+              this.testDetails.checklist?.label_present?.toString() ||
+              '',
+            sample_appropriate_quantity:
+              this.testDetails.checklist?.has_quantity ||
+              this.testDetails.checklist?.has_quantity?.toString() ||
+              '',
+            sample_packed_sealed_properly:
+              this.testDetails.checklist?.is_sealed ||
+              this.testDetails.checklist?.is_sealed?.toString() ||
+              '',
+            sample_condition: this.testDetails.checklist?.condition || '',
+            sample_condition_reason:
+              this.testDetails.checklist?.sample_condition_reason || '',
+            requirements_defined_documented:
+              this.testDetails.checklist?.requirements_defined ||
+              this.testDetails.checklist?.requirements_defined?.toString() ||
+              '',
+            requirements_adequate:
+              this.testDetails.checklist?.mcs_can_meet ||
+              this.testDetails.checklist?.mcs_can_meet?.toString() ||
+              '',
+            test_method_capability:
+              this.testDetails.checklist?.method_appropriate ||
+              this.testDetails.checklist?.method_appropriate?.toString() ||
+              '',
+            tests_per_nabl_scope:
+              this.testDetails.checklist?.under_nabl_scope ||
+              this.testDetails.checklist?.under_nabl_scope?.toString() ||
+              '',
+            tests_witnessed_by_customer:
+              this.testDetails.checklist?.customer_witnessed ||
+              this.testDetails.checklist?.customer_witnessed?.toString() ||
+              '',
+            decision_rule_required:
+              this.testDetails.checklist?.decision_rule_required ||
+              this.testDetails.checklist?.decision_rule_required?.toString() ||
+              '',
+          });
+
+          // Step 6: Trigger customer type change to update validators
+          this.onCustomerTypeChange();
+
+          // Step 7: Check for duplicate materials
+          this.checkForDuplicateMaterials();
+        } else {
+          this.notificationService.show(
+            'Failed to fetch test details',
+            'error',
+            3000
+          );
+        }
+      },
+      (error: any) => {
+        this.notificationService.show(
+          'Error fetching test details',
+          'error',
+          3000
+        );
+      }
+    );
   }
 }

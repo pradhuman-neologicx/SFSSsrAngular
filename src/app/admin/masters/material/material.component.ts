@@ -145,7 +145,8 @@ export class MaterialComponent {
   OpenEditModal(user: any): void {
     this.currrentClubId = user.id;
     this.updateclubopen = true;
-    this.GetupdateMaterialbyid();
+    // this.updateclubform.patchValue({ Name: user.name });
+    this.GetupdateMaterialbyid(this.currrentClubId);
   }
 
   currrentClubId: any;
@@ -155,15 +156,12 @@ export class MaterialComponent {
     this.Viewclubform.patchValue({ Name: user.name });
   }
 
-  GetupdateMaterialbyid() {
-    // this.uuserId = Student.id;
-    // this.employeeService
-    //   .getMaterialbyID(this.currrentClubId)
-    //   .subscribe((response: any) => {
-    //     if (response.status === 200) {
-    //       this.fillformdate(response.data);
-    //     }
-    //   });
+  GetupdateMaterialbyid(userId: any) {
+    this.employeeService.getMaterialbyID(userId).subscribe((response: any) => {
+      if (response.status === 200) {
+        this.fillformdate(response.data);
+      }
+    });
   }
 
   async fillformdate(response: any) {
@@ -177,24 +175,24 @@ export class MaterialComponent {
 
       formData.append('name', this.updateclubform.get('Name')?.value);
       formData.append('_method', 'put');
-      formData.append('user_id', this.uuserId);
+      // formData.append('user_id', this.uuserId);
 
-      // this.employeeService
-      //   .updateMaterial(formData, this.currrentClubId)
-      //   .subscribe({
-      //     next: (response: any) => {
-      //       if (response.status === 200 || response.status === 201) {
-      //         this.closeModal();
-      //         this.notificationService.show(response.message, 'success', 3000);
-      //         this.ngOnInit();
-      //       } else {
-      //         this.notificationService.show(response.error, 'error', 3000);
-      //       }
-      //     },
-      //     error: (error:any) => {
-      //       console.error('Update failed', error);
-      //     },
-      //   });
+      this.employeeService
+        .updateMaterial(formData, this.currrentClubId)
+        .subscribe({
+          next: (response: any) => {
+            if (response.status === 200 || response.status === 201) {
+              this.closeModal();
+              this.notificationService.show(response.message, 'success', 3000);
+              this.ngOnInit();
+            } else {
+              this.notificationService.show(response.error, 'error', 3000);
+            }
+          },
+          error: (error: any) => {
+            console.error('Update failed', error);
+          },
+        });
     } else {
       this.updateclubform.markAllAsTouched();
     }
@@ -209,6 +207,7 @@ export class MaterialComponent {
     this.updateclubopen = false;
     this.creatclubopen = false;
     this.viewclubopen = false;
+    this.creatclubform.reset();
   }
 
   clubmodal() {
@@ -219,48 +218,47 @@ export class MaterialComponent {
     if (this.creatclubform.valid) {
       const formData = new FormData();
       formData.append('name', this.creatclubform.get('Name')?.value);
-      formData.append('user_id', '1');
+      // formData.append('user_id', '1');
 
-      // this.employeeService
-      //   .createMaterial(formData)
-      //   .subscribe((response: any) => {
-      //     if (response.status === 200 || response.status === 201) {
-      //       this.closeModal();
-      //       this.notificationService.show(response.message, 'success', 3000);
-      //       this.ngOnInit();
-      //       this.GetCategoryFun();
-      //     } else {
-      //       this.notificationService.show(response.error, 'error', 3000);
-      //     }
-      //   });
+      this.employeeService
+        .createMaterial(formData)
+        .subscribe((response: any) => {
+          if (response.status === 200 || response.status === 201) {
+            this.closeModal();
+            this.notificationService.show(response.message, 'success', 3000);
+            this.ngOnInit();
+          } else {
+            this.notificationService.show(response.error, 'error', 3000);
+          }
+        });
     } else {
       this.creatclubform.markAllAsTouched();
     }
   }
 
   GetMaterialFun() {
-    // this.employeeService
-    //   .GetMaterialAPi(
-    //     this.tableSize,
-    //     this.page,
-    //     this.searchbarform.get('searchbar')?.value
-    //   )
-    //   .subscribe((response: any) => {
-    //     if (response.status === 200) {
-    //       this.examCategory = response.data.records;
-    //       this.totalRecords = response.data.total;
-    //     }
-    //   });
+    this.employeeService
+      .GetMaterialAPi(
+        this.tableSize,
+        this.page,
+        this.searchbarform.get('searchbar')?.value
+      )
+      .subscribe((response: any) => {
+        if (response.status === 200) {
+          this.examCategory = response.data.records;
+          this.totalRecords = response.data.total;
+        }
+      });
   }
 
   async Status(id: string, status: any) {
     const actionMessage = status ? 'activated' : 'deactivated';
-    // this.employeeService
-    //   .changeMaterialstatus(id, status)
-    //   .subscribe((response: any) => {
-    //     if (response.status === 200) {
-    //       this.GetCategoryFun();
-    //     }
-    //   });
+    this.employeeService
+      .changestatuss(id, status, 'Material')
+      .subscribe((response: any) => {
+        if (response.status === 200) {
+          this.ngOnInit();
+        }
+      });
   }
 }

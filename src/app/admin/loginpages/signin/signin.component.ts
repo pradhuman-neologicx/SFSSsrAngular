@@ -22,10 +22,9 @@ import {
 import { Validations } from 'src/app/core/model-class/validations';
 import { JwtService } from 'src/app/core/services/jwt.service';
 import { LoginService } from 'src/app/core/services/login.service';
-// import { ApiService } from 'src/app/core/services/api.service';
-// import { DataService } from 'src/app/core/services/data.service';
-// import { JwtService } from 'src/app/core/services/jwt.service';
-// import { LoginService } from 'src/app/core/services/login.service';
+import { ApiService } from 'src/app/core/services/api.service';
+import { DataService } from 'src/app/core/services/data.service';
+import { NotificationService } from 'src/app/core/services/notificationnew.service';
 
 @Component({
   selector: 'app-signin',
@@ -79,10 +78,10 @@ export class SigninComponent {
     private formBuilder: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
-    // private apiservice: ApiService,
-    // private dataService: DataService,
+    private apiservice: ApiService,
+    private dataService: DataService,
     private jwtService: JwtService,
-
+    private notificationService: NotificationService,
     private loginService: LoginService
   ) {}
   // validation: Validations = new Validations();
@@ -130,44 +129,45 @@ export class SigninComponent {
   }
 
   AdminLoginfun() {
-    this.router.navigate(['admin/dashboard']);
+    // this.router.navigate(['admin/dashboard']);
     this.errorMessage = '';
-    // if (this.signIn.valid) {
-    //   const formData: FormData = new FormData();
-    //   formData.append('identifier', this.signIn.get('Email')?.value);
-    //   formData.append('password', this.signIn.get('Password')?.value);
-    //   formData.append('type', 'admin');
-    //   formData.forEach((value, key) => {
-    //     console.log(`${key}:`, value);
-    //   });
-    //   this.loginService.AdminLoginapi(formData).subscribe((response: any) => {
-    //     this.errorMessage = response.message;
-    //     if (response.status === 200) {
-    //       this.closeModal();
-    //       this.submitted = true;
-    //       this.successName = 'Login';
-    //       setTimeout(() => {
-    //         this.openSecondsuccess = true;
-    //         setTimeout(() => {
-    //           this.openSecondsuccess = false;
-    //           this.jwtService.savepanelUserId(response.user.id);
-    //           this.jwtService.saveadminame(response.user.name);
-    //           this.jwtService.saveAdminToken(response.token);
-    //           this.jwtService.isLoggedIn(true);
-    //           this.ngOnInit();
-    //           this.router.navigate(['/dashboard']); // Move the navigation here
-    //         }, 1800); // Wait for 1.8 seconds before navigating
-    //       }, 200); // Initial delay for showing the modal
-    //     } else {
-    //       this.submitted = false;
-    //     }
-    //   });
-    // } else {
-    //   this.submitted = false;
-    //   this.errorMessage = 'please select all fields';
-    //   this.signIn.markAllAsTouched();
-    //   console.log(this.findInvalidControls(this.signIn));
-    // }
+    if (this.signIn.valid) {
+      const formData: FormData = new FormData();
+      formData.append('email', this.signIn.get('Email')?.value);
+      formData.append('password', this.signIn.get('Password')?.value);
+      // formData.append('type', 'admin');
+      formData.forEach((value, key) => {
+        console.log(`${key}:`, value);
+      });
+      this.loginService.AdminLoginapi(formData).subscribe((response: any) => {
+        this.errorMessage = response.message;
+        if (response.status === 200) {
+          this.closeModal();
+          this.submitted = true;
+          this.successName = 'Login';
+          setTimeout(() => {
+            this.openSecondsuccess = true;
+            setTimeout(() => {
+              this.openSecondsuccess = false;
+              this.jwtService.savepanelUserId(response.data.id);
+              this.jwtService.saveadminame(response.data.name);
+              this.jwtService.saveAdminToken(response.token);
+              this.jwtService.saveAdminRole(response.data.role.name);
+              this.jwtService.isLoggedIn(true);
+              this.ngOnInit();
+              this.router.navigate(['admin/dashboard']); // Move the navigation here
+            }, 1800); // Wait for 1.8 seconds before navigating
+          }, 200); // Initial delay for showing the modal
+        } else {
+          this.submitted = false;
+        }
+      });
+    } else {
+      this.submitted = false;
+      this.errorMessage = 'please select all fields';
+      this.signIn.markAllAsTouched();
+      console.log(this.findInvalidControls(this.signIn));
+    }
   }
 
   findInvalidControls(formName: any) {

@@ -1,6 +1,6 @@
 <div *ngIf="true" class="overflow-hidden">
   <div [@slideIn] class="container mb-4">
-    <h1 class="text-primary table-heading-detail">Create Test</h1>
+    <h1 class="text-primary table-heading-detail">Update Test</h1>
 
     <!-- Step Indicator -->
     <div class="step-indicator mb-4">
@@ -21,58 +21,8 @@
     <!-- Step 1: Test Information -->
     <div *ngIf="currentStep === 1" class="card border-0 p-4">
       <form [formGroup]="step1Form">
-        <!-- Customer Type Selection -->
-        <div class="row mb-3">
-          <div class="col-12">
-            <label class="d-block text-capitalize form-label admin-form-lable"
-              >Customer Type</label
-            >
-            <div class="form-check form-check-inline">
-              <input
-                class="form-check-input"
-                type="radio"
-                name="customer_type"
-                id="existingCustomer"
-                value="existing"
-                formControlName="customer_type"
-                (change)="onCustomerTypeChange()"
-              />
-              <label class="form-check-label" for="existingCustomer"
-                >Existing Customer</label
-              >
-            </div>
-            <div class="form-check form-check-inline">
-              <input
-                class="form-check-input"
-                type="radio"
-                name="customer_type"
-                id="newCustomer"
-                value="new"
-                formControlName="customer_type"
-                (change)="onCustomerTypeChange()"
-              />
-              <label class="form-check-label" for="newCustomer"
-                >New Customer</label
-              >
-            </div>
-            <div
-              class="text-danger error-message"
-              *ngIf="
-                step1Form.get('customer_type')?.invalid &&
-                (step1Form.get('customer_type')?.touched ||
-                  step1Form.get('customer_type')?.dirty)
-              "
-            >
-              <p class="fw-light text-danger">Customer type is required</p>
-            </div>
-          </div>
-        </div>
-
         <!-- Existing Customer Fields -->
-        <div
-          *ngIf="step1Form.get('customer_type')?.value === 'existing'"
-          class="row"
-        >
+        <div class="row">
           <div class="col-lg-6 col-md-12 mb-3">
             <label
               class="d-block text-capitalize form-label admin-form-lable"
@@ -115,165 +65,6 @@
                 "
               >
                 Name of Existing Customer is required
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <!-- New Customer Fields -->
-        <div
-          *ngIf="step1Form.get('customer_type')?.value === 'new'"
-          class="row"
-        >
-          <div class="col-lg-6 col-md-12 mb-3">
-            <label
-              class="d-block text-capitalize form-label admin-form-lable"
-              for="name_of_customer"
-            >
-              Name of Customer
-            </label>
-            <input
-              type="text"
-              class="d-block form-control form-input-custom"
-              formControlName="name_of_customer"
-              placeholder="Enter customer name"
-              [ngClass]="{
-                'is-invalid':
-                  step1Form.get('name_of_customer')?.invalid &&
-                  (step1Form.get('name_of_customer')?.touched ||
-                    step1Form.get('name_of_customer')?.dirty)
-              }"
-            />
-            <div
-              class="text-danger error-message"
-              *ngIf="
-                step1Form.get('name_of_customer')?.invalid &&
-                (step1Form.get('name_of_customer')?.touched ||
-                  step1Form.get('name_of_customer')?.dirty)
-              "
-            >
-              <p
-                class="fw-light text-danger"
-                *ngIf="step1Form.get('name_of_customer')?.hasError('required')"
-              >
-                Name of Customer is required
-              </p>
-            </div>
-          </div>
-          <div class="col-lg-6 col-md-12 mb-3">
-            <label
-              class="d-block text-capitalize form-label admin-form-lable"
-              for="mobile_no"
-            >
-              Mobile No.
-            </label>
-            <input
-              type="text"
-              class="d-block form-control form-input-custom"
-              formControlName="mobile_no"
-              maxlength="10"
-              placeholder="Enter 10-digit mobile number"
-              [ngClass]="{
-                'is-invalid':
-                  step1Form.get('mobile_no')?.invalid &&
-                  (step1Form.get('mobile_no')?.touched ||
-                    step1Form.get('mobile_no')?.dirty)
-              }"
-            />
-            <div
-              class="text-danger error-message"
-              *ngIf="
-                step1Form.get('mobile_no')?.invalid &&
-                (step1Form.get('mobile_no')?.touched ||
-                  step1Form.get('mobile_no')?.dirty)
-              "
-            >
-              <p
-                class="fw-light text-danger"
-                *ngIf="step1Form.get('mobile_no')?.hasError('required')"
-              >
-                Mobile No. is required
-              </p>
-              <p
-                class="fw-light text-danger"
-                *ngIf="step1Form.get('mobile_no')?.hasError('pattern')"
-              >
-                Please enter a valid 10-digit mobile number
-              </p>
-            </div>
-          </div>
-          <div class="col-lg-6 col-md-12 mb-3">
-            <label
-              class="d-block text-capitalize form-label admin-form-lable"
-              for="email"
-            >
-              Email
-            </label>
-            <input
-              type="email"
-              class="d-block form-control form-input-custom"
-              formControlName="email"
-              placeholder="Enter email address"
-              [ngClass]="{
-                'is-invalid':
-                  step1Form.get('email')?.invalid &&
-                  (step1Form.get('email')?.touched ||
-                    step1Form.get('email')?.dirty)
-              }"
-            />
-            <div
-              class="text-danger error-message"
-              *ngIf="
-                step1Form.get('email')?.invalid &&
-                (step1Form.get('email')?.touched ||
-                  step1Form.get('email')?.dirty)
-              "
-            >
-              <p
-                class="fw-light text-danger"
-                *ngIf="step1Form.get('email')?.hasError('required')"
-              >
-                Email is required
-              </p>
-              <p
-                class="fw-light text-danger"
-                *ngIf="step1Form.get('email')?.hasError('email')"
-              >
-                Please enter a valid email address
-              </p>
-            </div>
-          </div>
-          <div class="col-lg-12 col-md-12 mb-3">
-            <label
-              class="d-block text-capitalize form-label admin-form-lable"
-              for="address"
-            >
-              Address
-            </label>
-            <textarea
-              class="d-block form-control form-input-custom"
-              formControlName="address"
-              rows="3"
-              [ngClass]="{
-                'is-invalid':
-                  step1Form.get('address')?.invalid &&
-                  (step1Form.get('address')?.touched ||
-                    step1Form.get('address')?.dirty)
-              }"
-            ></textarea>
-            <div
-              class="text-danger error-message"
-              *ngIf="
-                step1Form.get('address')?.invalid &&
-                (step1Form.get('address')?.touched ||
-                  step1Form.get('address')?.dirty)
-              "
-            >
-              <p
-                class="fw-light text-danger"
-                *ngIf="step1Form.get('address')?.hasError('required')"
-              >
-                Address is required
               </p>
             </div>
           </div>
@@ -484,7 +275,7 @@
                       type="button"
                       class="btn btn-danger btn-sm"
                       (click)="removeTest(i, 'material')"
-                      [disabled]="materialTests.controls.length <= 0"
+                      [disabled]="materialTests.controls.length <= 1"
                     >
                       Remove
                     </button>

@@ -5,52 +5,23 @@ import {
   transition,
   animate,
 } from '@angular/animations';
-import { ChangeDetectorRef, Component, input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
-  FormControl,
   FormGroup,
   Validators,
+  FormControl,
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { EmployeeService } from 'src/app/core/services/Employee.service';
 import { JwtService } from 'src/app/core/services/jwt.service';
+import { NotificationService } from 'src/app/core/services/notificationnew.service';
 
 @Component({
-  selector: 'app-test-management',
-  templateUrl: './test-management.component.html',
-  styleUrl: './test-management.component.scss',
+  selector: 'app-engineer-test-management',
+  templateUrl: './engineer-test-management.component.html',
+  styleUrl: './engineer-test-management.component.scss',
   animations: [
-    trigger('succesfullyMessage', [
-      state(
-        'void',
-        style({
-          transform: 'translateX(-30%)',
-          opacity: 0,
-        })
-      ),
-      transition(':enter, :leave', [
-        animate('0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55)'),
-      ]),
-    ]),
-    trigger('slideIn', [
-      state(
-        'void',
-        style({
-          transform: 'translateX(100%)',
-          opacity: 0,
-        })
-      ),
-      transition(':enter', [
-        animate(
-          '0.5s ease-out',
-          style({
-            transform: 'translateX(0)',
-            opacity: 1,
-          })
-        ),
-      ]),
-    ]),
     trigger('fadeIn', [
       state(
         'void',
@@ -71,8 +42,8 @@ import { JwtService } from 'src/app/core/services/jwt.service';
     ]),
   ],
 })
-export class TestManagementComponent implements OnInit {
-  activeTab: string = 'unassigned';
+export class EngineerTestManagementComponent implements OnInit {
+  activeTab: string = 'assigned';
   showreset: boolean = false;
   searchText: string | undefined;
   tableSize: any = 10;
@@ -164,32 +135,13 @@ export class TestManagementComponent implements OnInit {
   }
 
   loadTests() {
-    if (this.activeTab === 'unassigned') {
+    if (this.activeTab == 'assigned') {
       this.employeeService
-        .getTestsByStatus(
-          'unassigned',
-          this.tableSize,
-          this.pageUnassigned,
-          this.searchText,
-          this.user_id
-        )
-        .subscribe((response: any) => {
-          if (response.status === 200 || response.status === 201) {
-            this.unassignedTests = response.data.records.map((test: any) => ({
-              ...test,
-              isSelected: false,
-            }));
-            this.totalRecordsUnassigned = response.data.total;
-          }
-        });
-    } else if (this.activeTab === 'assigned') {
-      this.employeeService
-        .getTestsByStatus(
+        .getTestsByStatusEngg(
           'assigned',
           this.tableSize,
           this.pageAssigned,
           this.searchText,
-          
           this.user_id
         )
         .subscribe((response: any) => {
@@ -200,7 +152,7 @@ export class TestManagementComponent implements OnInit {
         });
     } else if (this.activeTab === 'completed') {
       this.employeeService
-        .getTestsByStatus(
+        .getTestsByStatusEngg(
           'completed',
           this.tableSize,
           this.pageCompleted,
@@ -1027,6 +979,4 @@ export class TestManagementComponent implements OnInit {
       .map((t: any) => t.input_fields?.length || 1)
       .reduce((sum: number, len: number) => sum + len, 0);
   }
-
-  // store fill form data
 }
