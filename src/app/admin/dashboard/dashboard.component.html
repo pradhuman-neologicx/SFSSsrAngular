@@ -81,7 +81,7 @@
         <div class="ml-4">
           <p class="text-sm text-gray-500">Total Tests</p>
           <p class="text-xl font-semibold text-gray-900">
-            {{ testStats.total }}
+            {{ dashboardStats?.total_tests }}
           </p>
         </div>
       </div>
@@ -106,7 +106,7 @@
         <div class="ml-4">
           <p class="text-sm text-gray-500">Completed</p>
           <p class="text-xl font-semibold text-gray-900">
-            {{ testStats.completed }}
+            {{ dashboardStats?.total_completed }}
           </p>
         </div>
       </div>
@@ -131,7 +131,7 @@
         <div class="ml-4">
           <p class="text-sm text-gray-500">In Progress</p>
           <p class="text-xl font-semibold text-gray-900">
-            {{ testStats.inProgress }}
+            {{ dashboardStats?.total_inprogress }}
           </p>
         </div>
       </div>
@@ -156,40 +156,67 @@
         <div class="ml-4">
           <p class="text-sm text-gray-500">Pending</p>
           <p class="text-xl font-semibold text-gray-900">
-            {{ testStats.pending }}
+            {{ dashboardStats?.total_pending }}
           </p>
         </div>
       </div>
     </div>
     <!-- Completed & Pending Tests Side-by-Side -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+    <div class="grid grid-cols-1 gap-6 mt-8">
       <!-- Completed Tests -->
       <div class="bg-white rounded-xl shadow p-6">
         <div class="flex justify-between items-center mb-4">
           <p class="text-lg font-semibold text-gray-900">Completed Tests</p>
-          <!-- <button class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+          <button class="text-blue-600 hover:text-blue-700 text-sm font-medium">
             View All
-          </button> -->
+          </button>
+        </div>
+        <div class="mb-4">
+          <form
+            [formGroup]="completedForm"
+            class="d-flex align-items-center gap-4 flex-wrap"
+          >
+            <div class="d-flex align-items-center">
+              <label class="me-2 w-36">Start Date:</label>
+              <input
+                type="date"
+                class="form-control"
+                formControlName="startDate"
+              />
+            </div>
+            <div class="d-flex align-items-center">
+              <label class="me-2 w-36">End Date:</label>
+              <input
+                type="date"
+                class="form-control"
+                formControlName="endDate"
+              />
+            </div>
+            <button
+              class="btn btn-primary"
+              (click)="filterCompletedTestsByDate()"
+            >
+              Filter
+            </button>
+          </form>
         </div>
         <div class="d-md-flex justify-content-between align-items-center my-3">
           <div class="d-flex align-items-center mb-md-0 mb-2">
             <span class="me-1 show-entery-text">Show</span>
             <select
               class="form-control form-select show-entries-select"
-              (change)="onTableSizeChange($event)"
+              (change)="onTableSizeChange($event, 'completed')"
             >
               <option *ngFor="let size of tableSizes" [ngValue]="size">
                 {{ size }}
               </option>
             </select>
-            <!-- <span class="ms-1 show-entery-text">entries</span> -->
           </div>
-
           <div class="d-flex align-items-center">
-            <form [formGroup]="searchbarform" class="d-flex align-items-center">
+            <form [formGroup]="completedForm" class="d-flex align-items-center">
               <span class="me-1">Search:</span>
               <div
-                [ngClass]="{'table-card table': searchbarform.controls['searchbar'].errors?.['required'] && (searchbarform.controls['searchbar'].touched || searchbarform.controls['searchbar'].dirty)}"
+                [ngClass]="{'table-card table': completedForm.controls['searchbar'].errors?.['required'] && (completedForm.controls['searchbar'].touched || completedForm.controls['searchbar'].dirty)}"
               >
                 <input
                   type="text"
@@ -198,23 +225,23 @@
                   formControlName="searchbar"
                   [ngClass]="{
                     'is-invalid':
-                      searchbarform.controls['searchbar'].errors &&
-                      (searchbarform.controls['searchbar'].touched ||
-                        searchbarform.controls['searchbar'].dirty)
+                      completedForm.controls['searchbar'].errors &&
+                      (completedForm.controls['searchbar'].touched ||
+                        completedForm.controls['searchbar'].dirty)
                   }"
                 />
                 <div
                   class="text-danger error-message d-block"
                   *ngIf="
-                    searchbarform.controls['searchbar'].errors &&
-                    (searchbarform.controls['searchbar'].touched ||
-                      searchbarform.controls['searchbar'].dirty)
+                    completedForm.controls['searchbar'].errors &&
+                    (completedForm.controls['searchbar'].touched ||
+                      completedForm.controls['searchbar'].dirty)
                   "
                 >
                   <p
                     class="fw-light text-danger search-required"
                     *ngIf="
-                      searchbarform.controls['searchbar'].errors['required']
+                      completedForm.controls['searchbar'].errors['required']
                     "
                   >
                     This is required
@@ -223,7 +250,7 @@
               </div>
               <button
                 class="btn btn-primary search-btn ms-2"
-                (click)="searchfun()"
+                (click)="searchfun('completed')"
               >
                 <span
                   ><i
@@ -233,9 +260,9 @@
               </button>
               <button
                 class="btn btn-primary search-btn ms-2"
-                (click)="resetsearchbar()"
+                (click)="resetsearchbar('completed')"
                 type="submit"
-                *ngIf="showreset == true"
+                *ngIf="completedShowReset"
               >
                 <span
                   ><i class="fa-solid fa-rotate-right form-control-feedback"></i
@@ -261,20 +288,26 @@
                     | paginate
                       : {
                           itemsPerPage:
-                            tableSize != 'all' ? tableSize : totalRecords,
+                            completedTableSize != 'all'
+                              ? completedTableSize
+                              : completedTotalRecords,
                           currentPage: completedTestsPage,
-                          totalItems: totalRecords
+                          totalItems: completedTotalRecords
                         };
                   index as i
                 "
                 class="border-b hover:bg-gray-50"
               >
-                <td class="px-4 py-2 font-mono text-gray-800">{{ test.id }}</td>
-                <td class="px-4 py-2 text-gray-900">{{ test.name }}</td>
-                <td class="px-4 py-2 text-gray-600">
-                  {{ test.date | date : "short" }}
+                <td class="px-4 py-2 font-mono text-gray-800">
+                  {{ test.test_number }}
                 </td>
-                <td class="px-4 py-2 text-gray-600">{{ test.operator }}</td>
+                <td class="px-4 py-2 text-gray-900">{{ test.work_name }}</td>
+                <td class="px-4 py-2 text-gray-600">
+                  {{ test.completed_at | date : "short" }}
+                </td>
+                <td class="px-4 py-2 text-gray-600">
+                  {{ test.assigned_user.name }}
+                </td>
               </tr>
             </tbody>
           </table>
@@ -284,24 +317,27 @@
             <span class="showalltext"
               >Showing
               {{
-                tableSize * (completedTestsPage - 1) > 0
-                  ? tableSize * (completedTestsPage - 1) + 1
+                completedTableSize * (completedTestsPage - 1) > 0
+                  ? completedTableSize * (completedTestsPage - 1) + 1
                   : 1
               }}
               to
               {{
-                tableSize * completedTestsPage <= totalRecords
-                  ? tableSize * completedTestsPage
-                  : totalRecords
+                completedTableSize * completedTestsPage <= completedTotalRecords
+                  ? completedTableSize * completedTestsPage
+                  : completedTotalRecords
               }}
               of
-              {{ totalRecords != undefined ? totalRecords : "" }} entries</span
+              {{
+                completedTotalRecords != undefined ? completedTotalRecords : ""
+              }}
+              entries</span
             >
             <pagination-controls
               previousLabel="Prev"
               nextLabel="Next"
               [responsive]="true"
-              (pageChange)="onTableDataChange($event)"
+              (pageChange)="onTableDataChange($event, 'completed')"
               target="_top"
             ></pagination-controls>
           </div>
@@ -315,25 +351,52 @@
             View All
           </button>
         </div>
+        <div class="mb-4">
+          <form
+            [formGroup]="pendingForm"
+            class="d-flex align-items-center gap-4 flex-wrap"
+          >
+            <div class="d-flex align-items-center">
+              <label class="me-2 w-36">Start Date:</label>
+              <input
+                type="date"
+                class="form-control"
+                formControlName="startDate"
+              />
+            </div>
+            <div class="d-flex align-items-center">
+              <label class="me-2 w-36">End Date:</label>
+              <input
+                type="date"
+                class="form-control"
+                formControlName="endDate"
+              />
+            </div>
+            <button
+              class="btn btn-primary"
+              (click)="filterPendingTestsByDate()"
+            >
+              Filter
+            </button>
+          </form>
+        </div>
         <div class="d-md-flex justify-content-between align-items-center my-3">
           <div class="d-flex align-items-center mb-md-0 mb-2">
             <span class="me-1 show-entery-text">Show</span>
             <select
               class="form-control form-select show-entries-select"
-              (change)="onTableSizeChange($event)"
+              (change)="onTableSizeChange($event, 'pending')"
             >
               <option *ngFor="let size of tableSizes" [ngValue]="size">
                 {{ size }}
               </option>
             </select>
-            <!-- <span class="ms-1 show-entery-text">entries</span> -->
           </div>
-
           <div class="d-flex align-items-center">
-            <form [formGroup]="searchbarform" class="d-flex align-items-center">
+            <form [formGroup]="pendingForm" class="d-flex align-items-center">
               <span class="me-1">Search:</span>
               <div
-                [ngClass]="{'table-card table': searchbarform.controls['searchbar'].errors?.['required'] && (searchbarform.controls['searchbar'].touched || searchbarform.controls['searchbar'].dirty)}"
+                [ngClass]="{'table-card table': pendingForm.controls['searchbar'].errors?.['required'] && (pendingForm.controls['searchbar'].touched || pendingForm.controls['searchbar'].dirty)}"
               >
                 <input
                   type="text"
@@ -342,24 +405,22 @@
                   formControlName="searchbar"
                   [ngClass]="{
                     'is-invalid':
-                      searchbarform.controls['searchbar'].errors &&
-                      (searchbarform.controls['searchbar'].touched ||
-                        searchbarform.controls['searchbar'].dirty)
+                      pendingForm.controls['searchbar'].errors &&
+                      (pendingForm.controls['searchbar'].touched ||
+                        pendingForm.controls['searchbar'].dirty)
                   }"
                 />
                 <div
                   class="text-danger error-message d-block"
                   *ngIf="
-                    searchbarform.controls['searchbar'].errors &&
-                    (searchbarform.controls['searchbar'].touched ||
-                      searchbarform.controls['searchbar'].dirty)
+                    pendingForm.controls['searchbar'].errors &&
+                    (pendingForm.controls['searchbar'].touched ||
+                      pendingForm.controls['searchbar'].dirty)
                   "
                 >
                   <p
                     class="fw-light text-danger search-required"
-                    *ngIf="
-                      searchbarform.controls['searchbar'].errors['required']
-                    "
+                    *ngIf="pendingForm.controls['searchbar'].errors['required']"
                   >
                     This is required
                   </p>
@@ -367,7 +428,7 @@
               </div>
               <button
                 class="btn btn-primary search-btn ms-2"
-                (click)="searchfun()"
+                (click)="searchfun('pending')"
               >
                 <span
                   ><i
@@ -377,9 +438,9 @@
               </button>
               <button
                 class="btn btn-primary search-btn ms-2"
-                (click)="resetsearchbar()"
+                (click)="resetsearchbar('pending')"
                 type="submit"
-                *ngIf="showreset == true"
+                *ngIf="pendingShowReset"
               >
                 <span
                   ><i class="fa-solid fa-rotate-right form-control-feedback"></i
@@ -395,7 +456,9 @@
                 <th class="px-4 py-2 text-gray-500 font-medium">Test ID</th>
                 <th class="px-4 py-2 text-gray-500 font-medium">Name</th>
                 <th class="px-4 py-2 text-gray-500 font-medium">Date</th>
-                <th class="px-4 py-2 text-gray-500 font-medium">Operator</th>
+                <th class="px-4 py-2 text-gray-500 font-medium">
+                  Delivery Date
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -405,20 +468,26 @@
                     | paginate
                       : {
                           itemsPerPage:
-                            tableSize != 'all' ? tableSize : totalRecords,
+                            pendingTableSize != 'all'
+                              ? pendingTableSize
+                              : pendingTotalRecords,
                           currentPage: pendingTestsPage,
-                          totalItems: totalRecords
+                          totalItems: pendingTotalRecords
                         };
                   index as i
                 "
                 class="border-b hover:bg-gray-50"
               >
-                <td class="px-4 py-2 font-mono text-gray-800">{{ test.id }}</td>
-                <td class="px-4 py-2 text-gray-900">{{ test.name }}</td>
-                <td class="px-4 py-2 text-gray-600">
-                  {{ test.date | date : "short" }}
+                <td class="px-4 py-2 font-mono text-gray-800">
+                  {{ test.test_number }}
                 </td>
-                <td class="px-4 py-2 text-gray-600">{{ test.operator }}</td>
+                <td class="px-4 py-2 text-gray-900">{{ test.work_name }}</td>
+                <td class="px-4 py-2 text-gray-600">
+                  {{ test.created_at | date : "short" }}
+                </td>
+                <td class="px-4 py-2 text-gray-600">
+                  {{ test.expected_delivery_date | date : "short" }}
+                </td>
               </tr>
             </tbody>
           </table>
@@ -428,80 +497,29 @@
             <span class="showalltext"
               >Showing
               {{
-                tableSize * (pendingTestsPage - 1) > 0
-                  ? tableSize * (pendingTestsPage - 1) + 1
+                pendingTableSize * (pendingTestsPage - 1) > 0
+                  ? pendingTableSize * (pendingTestsPage - 1) + 1
                   : 1
               }}
               to
               {{
-                tableSize * pendingTestsPage <= totalRecords
-                  ? tableSize * pendingTestsPage
-                  : totalRecords
+                pendingTableSize * pendingTestsPage <= pendingTotalRecords
+                  ? pendingTableSize * pendingTestsPage
+                  : pendingTotalRecords
               }}
               of
-              {{ totalRecords != undefined ? totalRecords : "" }} entries</span
+              {{ pendingTotalRecords != undefined ? pendingTotalRecords : "" }}
+              entries</span
             >
             <pagination-controls
               previousLabel="Prev"
               nextLabel="Next"
               [responsive]="true"
-              (pageChange)="onTableDataChange($event)"
+              (pageChange)="onTableDataChange($event, 'pending')"
               target="_top"
             ></pagination-controls>
           </div>
         </div>
-      </div>
-    </div>
-    <!-- Recent Tests -->
-    <div class="bg-white rounded-xl shadow p-6">
-      <div class="flex justify-between items-center mb-4">
-        <p class="text-lg font-semibold text-gray-900">Recent Tests</p>
-        <button class="text-blue-600 hover:text-blue-700 text-sm font-medium">
-          View All
-        </button>
-      </div>
-
-      <div class="overflow-x-auto">
-        <table class="w-full text-sm">
-          <thead>
-            <tr class="border-b border-gray-200 text-left">
-              <th class="px-4 py-2 text-gray-500 font-medium">Test ID</th>
-              <th class="px-4 py-2 text-gray-500 font-medium">Name</th>
-              <th class="px-4 py-2 text-gray-500 font-medium">Type</th>
-              <th class="px-4 py-2 text-gray-500 font-medium">Status</th>
-              <th class="px-4 py-2 text-gray-500 font-medium">Date</th>
-              <th class="px-4 py-2 text-gray-500 font-medium">Operator</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              *ngFor="let test of recentTests"
-              class="border-b hover:bg-gray-50"
-            >
-              <td class="px-4 py-2 font-mono text-gray-800">{{ test.id }}</td>
-              <td class="px-4 py-2 text-gray-900">{{ test.name }}</td>
-              <td class="px-4 py-2 text-gray-600">{{ test.type }}</td>
-              <td class="px-4 py-2">
-                <span
-                  class="inline-block px-2 py-1 rounded-full text-xs font-semibold"
-                  [ngClass]="{
-                    'bg-green-100 text-green-800': test.status === 'completed',
-                    'bg-yellow-100 text-yellow-800':
-                      test.status === 'in-progress',
-                    'bg-gray-100 text-gray-800': test.status === 'pending',
-                    'bg-red-100 text-red-800': test.status === 'failed'
-                  }"
-                >
-                  {{ test.status | titlecase }}
-                </span>
-              </td>
-              <td class="px-4 py-2 text-gray-600">
-                {{ test.date | date : "short" }}
-              </td>
-              <td class="px-4 py-2 text-gray-600">{{ test.operator }}</td>
-            </tr>
-          </tbody>
-        </table>
       </div>
     </div>
   </div>

@@ -15,6 +15,7 @@ import {
 import { Router } from '@angular/router';
 import { EmployeeService } from 'src/app/core/services/Employee.service';
 import { JwtService } from 'src/app/core/services/jwt.service';
+import { NotificationService } from 'src/app/core/services/notificationnew.service';
 
 @Component({
   selector: 'app-test-management',
@@ -112,6 +113,7 @@ export class TestManagementComponent implements OnInit {
     private employeeService: EmployeeService,
     private jwtService: JwtService,
     private cdr: ChangeDetectorRef,
+    private notificationService: NotificationService,
     private router: Router // private fb: FormBuilder
   ) {}
 
@@ -189,7 +191,7 @@ export class TestManagementComponent implements OnInit {
           this.tableSize,
           this.pageAssigned,
           this.searchText,
-          
+
           this.user_id
         )
         .subscribe((response: any) => {
@@ -398,6 +400,7 @@ export class TestManagementComponent implements OnInit {
 
     this.employeeService.assignTestRequest(body).subscribe({
       next: (response: any) => {
+        this.errorMessage = response.message;
         if (response.status === 200 || response.status === 201) {
           this.closeModal();
           this.successMessage = 'Tests Assigned';
@@ -412,12 +415,15 @@ export class TestManagementComponent implements OnInit {
           }, 200);
         } else {
           this.errorMessage = response.message || 'Failed to assign tests';
-          alert(this.errorMessage);
+          this.notificationService.show(response.message, 'success', 3000);
         }
       },
       error: (error: any) => {
-        this.errorMessage = error.message || 'An error occurred';
-        alert(this.errorMessage);
+        const errorMessage =
+          error.error?.message ||
+          'An error occurred while assigning tests, Test Requests have incomplete checklists, Please Checklist';
+        this.errorMessage = errorMessage;
+        this.notificationService.show(errorMessage, 'error', 3000);
       },
     });
   }

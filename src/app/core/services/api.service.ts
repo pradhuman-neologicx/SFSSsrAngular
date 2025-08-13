@@ -174,6 +174,17 @@ export class ApiService {
       // server-side error
       errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
     }
+    if (error.status === 422) {
+      const errorMessage =
+        error.errors?.name?.[0] ||
+        error.errors?.email?.[0] ||
+        error.errors?.mobile?.[0] ||
+        error.errors?.input_fields?.[0] ||
+        error.errors?.material_id?.[0];
+      console.error('Validation Error:', errorMessage);
+
+      return throwError(() => new Error(errorMessage));
+    }
     //console.log(errorMessage+"er");
     window.alert(errorMessage);
     return throwError(() => {

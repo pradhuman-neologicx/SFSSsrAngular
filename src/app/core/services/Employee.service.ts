@@ -757,6 +757,44 @@ export class EmployeeService {
       })
     );
   }
+  GetStaffByDepartment(
+    tableSize: any,
+    page: any,
+    search: any,
+    departmentId: any
+  ) {
+    const token = this.jwtService.getToken();
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
+
+    let url = '';
+
+    if (tableSize !== 'all') {
+      url = `users?limit=${tableSize}&page=${page}`;
+    } else {
+      url = `users?`;
+    }
+
+    // Add search if present
+    if (search && search.length > 0) {
+      url += `&search=${search}`;
+    }
+
+    // Add departmentId if present
+    if (departmentId) {
+      url += `&department_id=${departmentId}`;
+    }
+
+    return this.apiservice.get(url, headers).pipe(
+      tap((error: any) => {
+        console.log('Response received:', error);
+        this.erromessagefunction(error);
+      })
+    );
+  }
+
   getStaffById(user_id: any) {
     const token = this.jwtService.getToken();
     const headers = new HttpHeaders({
@@ -1424,6 +1462,97 @@ export class EmployeeService {
   }
   // Test Management APIs end
 
+  // Dashboard APIs start
+  GetDashboardData() {
+    const token = this.jwtService.getToken();
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
+
+    var url = 'dashboard/summary';
+
+    return this.apiservice.get(url, headers).pipe(
+      tap((error: any) => {
+        console.log('Response received:', error);
+        this.erromessagefunction(error);
+      })
+    );
+  }
+
+  getCompletedTests(
+    tableSize: any,
+    page: any,
+    search: any,
+    start_date?: string,
+    end_date?: string
+  ) {
+    const token = this.jwtService.getToken();
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
+
+    let url =
+      tableSize !== 'all'
+        ? `dashboard/completed-tests?limit=${tableSize}&page=${page}`
+        : `dashboard/completed-tests?`;
+
+    if (search && search.length > 0) {
+      url += `${url.includes('?') ? '&' : '?'}search=${search}`;
+    }
+    if (start_date) {
+      url += `${url.includes('?') ? '&' : '?'}start_date=${start_date}`;
+    }
+    if (end_date) {
+      url += `${url.includes('?') ? '&' : '?'}end_date=${end_date}`;
+    }
+
+    return this.apiservice.get(url, headers).pipe(
+      tap((error: any) => {
+        console.log('Response received:', error);
+        this.erromessagefunction(error);
+      })
+    );
+  }
+
+  getPendingTests(
+    tableSize: any,
+    page: any,
+    search: any,
+    start_date?: string,
+    end_date?: string
+  ) {
+    const token = this.jwtService.getToken();
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
+
+    let url =
+      tableSize !== 'all'
+        ? `dashboard/pending-tests?limit=${tableSize}&page=${page}`
+        : `dashboard/pending-tests?`;
+
+    if (search && search.length > 0) {
+      url += `${url.includes('?') ? '&' : '?'}search=${search}`;
+    }
+    if (start_date) {
+      url += `${url.includes('?') ? '&' : '?'}start_date=${start_date}`;
+    }
+    if (end_date) {
+      url += `${url.includes('?') ? '&' : '?'}end_date=${end_date}`;
+    }
+
+    return this.apiservice.get(url, headers).pipe(
+      tap((error: any) => {
+        console.log('Response received:', error);
+        this.erromessagefunction(error);
+      })
+    );
+  }
+
+  // Dashboard APIs end
   getClientParties(): Observable<any> {
     const user = this.jwtService.getpanelUserId(); // Replace with your actual method to get the user ID
     const token = this.jwtService.getToken(); // Get the token for authorization

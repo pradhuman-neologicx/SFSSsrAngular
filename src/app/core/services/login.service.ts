@@ -21,7 +21,7 @@ export class LoginService {
   }
 
   AdminForgetPasswordApi(body: any): Observable<any> {
-    return this.apiservice.postWithoutHeader(`forget-password`, body).pipe(
+    return this.apiservice.postWithoutHeader(`forgot-password`, body).pipe(
       tap((error: any) => {
         console.log('Response received:', error);
         this.erromessagefunction(error);

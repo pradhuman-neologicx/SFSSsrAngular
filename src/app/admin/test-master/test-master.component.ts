@@ -103,13 +103,13 @@ export class TestMasterComponent implements OnInit {
     });
     this.testCreateForm = this.formBuilder.group({
       test_name: ['', [Validators.required]],
-      test_type: ['Material Based Test', [Validators.required]],
-      material_type: ['CC Cubes', [Validators.required]],
+      test_type: ['', [Validators.required]],
+      material_type: ['', [Validators.required]],
       test_method: ['', [Validators.required]],
       input_fields: this.formBuilder.array([
         this.formBuilder.group({
           input_field: ['', [Validators.required]],
-          unit: ['UOM', [Validators.required]],
+          unit: ['', [Validators.required]],
         }),
       ]),
     });
@@ -200,7 +200,7 @@ export class TestMasterComponent implements OnInit {
     this.inputFields.push(
       this.formBuilder.group({
         input_field: ['', [Validators.required]],
-        unit: ['UOM', [Validators.required]],
+        unit: ['', [Validators.required]],
       })
     );
   }
@@ -317,6 +317,7 @@ export class TestMasterComponent implements OnInit {
     } else {
       this.submitted = false;
       this.errorMessage = 'Please enter all the details';
+      alert(this.errorMessage);
       this.testCreateForm.markAllAsTouched();
       console.log(this.findInvalidControls(this.testCreateForm));
     }
@@ -454,7 +455,7 @@ export class TestMasterComponent implements OnInit {
     this.inputFields.clear();
     this.addInputField();
     this.testCreateForm.patchValue({
-      test_type: 'Material Based Test',
+      test_type: '',
     });
   }
 

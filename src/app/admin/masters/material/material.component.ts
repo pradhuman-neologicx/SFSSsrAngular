@@ -213,24 +213,30 @@ export class MaterialComponent {
   clubmodal() {
     this.creatclubopen = true;
   }
-
+  errorMessage: any;
   creatclub() {
     if (this.creatclubform.valid) {
       const formData = new FormData();
       formData.append('name', this.creatclubform.get('Name')?.value);
-      // formData.append('user_id', '1');
-
-      this.employeeService
-        .createMaterial(formData)
-        .subscribe((response: any) => {
+      this.employeeService.createMaterial(formData).subscribe({
+        next: (response: any) => {
           if (response.status === 200 || response.status === 201) {
             this.closeModal();
             this.notificationService.show(response.message, 'success', 3000);
             this.ngOnInit();
           } else {
-            this.notificationService.show(response.error, 'error', 3000);
+            this.notificationService.show(
+              response.error || 'Something went wrong',
+              'error',
+              3000
+            );
           }
-        });
+        },
+        error: (error) => {
+          this.errorMessage = error.message; // Display error message
+          this.notificationService.show(this.errorMessage, 'error', 3000);
+        },
+      });
     } else {
       this.creatclubform.markAllAsTouched();
     }

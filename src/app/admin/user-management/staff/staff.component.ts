@@ -159,6 +159,21 @@ export class StaffComponent implements OnInit {
         }
       });
   }
+  GetStaffByDepartment() {
+    this.employeeService
+      .GetStaffByDepartment(
+        this.tableSize,
+        this.page,
+        this.searchText,
+        this.selectedDepartment
+      )
+      .subscribe((response: any) => {
+        if (response.status === 200 || response.status === 201) {
+          this.staffTable = response.data.records;
+          this.totalRecords = response.data.total;
+        }
+      });
+  }
   departmentTable: any;
   rolesList: any;
   GetDepartment() {
@@ -169,12 +184,24 @@ export class StaffComponent implements OnInit {
       }
     });
   }
+  selectedDepartment: string | undefined;
+  onDepartmentFilterChange(event: any): void {
+    this.selectedDepartment = event.target.value || undefined;
+    this.page = 1;
+    this.GetStaffByDepartment();
+  }
+
   onDepartmentChange(event: Event) {
     const selectedStateId = (event.target as HTMLSelectElement).value;
 
     if (selectedStateId) {
       console.log('Selected State ID:', selectedStateId);
       this.getRoles(selectedStateId);
+      if (this.staffcreateopen) {
+        this.staffcreate.get('role')?.setValue(null);
+      } else if (this.staffupdateopen) {
+        this.staffupdate.get('role')?.setValue(null);
+      }
     } else {
       this.rolesList = [];
     }
@@ -320,6 +347,43 @@ export class StaffComponent implements OnInit {
   errorMessage: any;
   submitted!: boolean;
 
+  // Createstaff() {
+  //   if (this.staffcreate.valid) {
+  //     const formData: FormData = new FormData();
+  //     formData.append('name', this.staffcreate.get('name')?.value);
+  //     formData.append('email', this.staffcreate.get('email')?.value);
+  //     formData.append('mobile', this.staffcreate.get('mobile')?.value);
+  //     formData.append(
+  //       'department_id',
+  //       this.staffcreate.get('department')?.value
+  //     );
+  //     formData.append('role_id', this.staffcreate.get('role')?.value);
+
+  //     this.employeeService.createStaff(formData).subscribe((response: any) => {
+  //       if (response.status === 200 || response.status === 201) {
+  //         this.closeModal();
+  //         this.successName = 'Employee Created';
+  //         // this.ngOnInit();
+  //         this.GetStaff();
+  //         setTimeout(() => {
+  //           this.openSecondsuccess = true;
+  //           setTimeout(() => {
+  //             this.openSecondsuccess = false;
+  //           }, 1800);
+  //         }, 200);
+  //       } else {
+  //         this.submitted = false;
+  //         this.errorMessage = response.errors || response.message;
+  //         alert(this.errorMessage);
+  //       }
+  //     });
+  //   } else {
+  //     this.submitted = false;
+  //     this.errorMessage = 'Please enter all the details';
+  //     this.staffcreate.markAllAsTouched();
+  //     console.log(this.findInvalidControls(this.staffcreate));
+  //   }
+  // }
   Createstaff() {
     if (this.staffcreate.valid) {
       const formData: FormData = new FormData();
@@ -331,32 +395,29 @@ export class StaffComponent implements OnInit {
         this.staffcreate.get('department')?.value
       );
       formData.append('role_id', this.staffcreate.get('role')?.value);
-      // if (this.selectedFiles.length > 0) {
-      //   const file = this.selectedFiles[0];
-      //   formData.append('image', file, file.name);
-      // }
-      // if (
-      //   this.selectedFileNames.toString().includes('jpeg') ||
-      //   this.selectedFileNames.toString().includes('jpg') ||
-      //   this.selectedFileNames.toString().includes('png')
-      // ) {
-      this.employeeService.createStaff(formData).subscribe((response: any) => {
-        if (response.status === 200 || response.status === 201) {
-          this.closeModal();
-          this.successName = 'Employee Created';
-          // this.ngOnInit();
-          this.GetStaff();
-          setTimeout(() => {
-            this.openSecondsuccess = true;
+
+      this.employeeService.createStaff(formData).subscribe({
+        next: (response: any) => {
+          if (response.status === 200 || response.status === 201) {
+            this.closeModal();
+            this.successName = 'Employee Created';
+            this.GetStaff();
             setTimeout(() => {
-              this.openSecondsuccess = false;
-            }, 1800);
-          }, 200);
-        } else {
-          this.submitted = false;
-          this.errorMessage = response.errors || response.message;
-          alert(this.errorMessage);
-        }
+              this.openSecondsuccess = true;
+              setTimeout(() => {
+                this.openSecondsuccess = false;
+              }, 1800);
+            }, 200);
+          } else {
+            this.submitted = false;
+            this.errorMessage = response.errors || response.message;
+            alert(this.errorMessage);
+          }
+        },
+        error: (error) => {
+          this.errorMessage = error.message;
+          this.notificationService.show(this.errorMessage, 'error', 3000);
+        },
       });
     } else {
       this.submitted = false;
@@ -378,27 +439,13 @@ export class StaffComponent implements OnInit {
       );
       formData.append('role_id', this.staffupdate.get('role')?.value);
       formData.append('_method', 'put');
-      // if (this.selectedFiles.length > 0) {
-      //   const file = this.selectedFiles[0];
-      //   formData.append('image', file, file.name);
-      // } else {
-      //   this.submitted = false;
-      //   this.errorMessage = 'Please select a file';
-      //   return;
-      // }
-      // if (
-      //   this.selectedFileNames.toString().includes('jpeg') ||
-      //   this.selectedFileNames.toString().includes('jpg') ||
-      //   this.selectedFileNames.toString().includes('png')
-      // ) {
-      this.employeeService
-        .updateStaff(formData, this.staffId)
-        .subscribe((response: any) => {
+
+      this.employeeService.updateStaff(formData, this.staffId).subscribe({
+        next: (response: any) => {
           if (response.status === 200 || response.status === 201) {
             this.closeModal();
             this.successName = 'Staff Updated';
             this.ngOnInit();
-            // this.GetStaff();
             setTimeout(() => {
               this.openSecondsuccess = true;
               setTimeout(() => {
@@ -408,21 +455,19 @@ export class StaffComponent implements OnInit {
           } else {
             this.submitted = false;
             this.errorMessage = response.errors || response.message;
-            alert(this.errorMessage);
+            this.notificationService.show(this.errorMessage, 'error', 3000);
           }
-        });
+        },
+        error: (error) => {
+          this.errorMessage = error.message;
+          this.notificationService.show(this.errorMessage, 'error', 3000);
+        },
+      });
     } else {
       this.submitted = false;
       this.errorMessage = 'Please enter all the details';
       this.staffupdate.markAllAsTouched();
     }
-    // }
-    // else {
-    //   this.submitted = false;
-    //   this.errorMessage = 'Please enter all the details';
-    //   this.staffupdate.markAllAsTouched();
-    //   console.log(this.findInvalidControls(this.staffupdate));
-    // }
   }
 
   findInvalidControls(formName: any) {

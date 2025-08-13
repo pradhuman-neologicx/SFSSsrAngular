@@ -31,7 +31,21 @@
         </select>
         <span class="ms-1 show-entery-text">entries</span>
       </div>
-
+      <div class="d-flex align-items-center me-3">
+        <span class="me-1 show-entery-text">Department</span>
+        <select
+          class="form-control form-select show-entries-select"
+          (change)="onDepartmentFilterChange($event)"
+        >
+          <option value="">All Departments</option>
+          <option
+            *ngFor="let department of departmentTable"
+            [value]="department.id"
+          >
+            {{ department.name }}
+          </option>
+        </select>
+      </div>
       <div class="d-flex align-items-center">
         <form [formGroup]="searchbarform" class="d-flex align-items-center">
           <span class="me-1">Search:</span>
@@ -425,20 +439,7 @@
                   for="department"
                   >Department</label
                 >
-                <!-- <select
-                  class="d-block form-select form-control form-input-custom"
-                  formControlName="department"
-                  [ngClass]="{
-                    'is-invalid':
-                      staffcreate.controls['department'].errors &&
-                      (staffcreate.controls['department'].touched ||
-                        staffcreate.controls['department'].dirty)
-                  }"
-                >
-                  <option value="Reception">Reception</option>
-                  <option value="Engineering">Engineering</option>
-                  <option value="Accounts">Accounts</option>
-                </select> -->
+
                 <select
                   class="form-control form-input-custom form-select"
                   #City

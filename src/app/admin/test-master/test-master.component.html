@@ -220,7 +220,7 @@
                         testCreateForm.controls['test_type'].dirty)
                   }"
                 >
-                  <option [ngValue]="null" disabled selected>
+                  <option [ngValue]="" disabled selected>
                     -- Select Test Type --
                   </option>
                   <option *ngFor="let test of testTypeList" [value]="test.id">
@@ -416,7 +416,7 @@
                             field.get('unit')?.dirty)
                       }"
                     >
-                      <option [ngValue]="null" disabled selected>
+                      <option [ngValue]="" disabled selected>
                         -- Select UOM --
                       </option>
                       <option *ngFor="let uom of umoList" [value]="uom.id">

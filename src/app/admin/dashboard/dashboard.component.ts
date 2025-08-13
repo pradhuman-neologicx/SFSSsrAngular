@@ -8,7 +8,9 @@ import {
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { EmployeeService } from 'src/app/core/services/Employee.service';
 import { JwtService } from 'src/app/core/services/jwt.service';
+import { NotificationService } from 'src/app/core/services/notificationnew.service';
 
 interface TestStats {
   total: number;
@@ -25,6 +27,7 @@ interface RecentTest {
   date: Date;
   operator: string;
 }
+
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -115,14 +118,7 @@ export class DashboardComponent implements OnInit {
   openSecondsuccess = false;
   name: string | null = '';
   firstlogin: boolean | undefined;
-  stats = {
-    totalUsers: 1250,
-    totalPharmacies: 320,
-    totalDistributors: 85,
-    silentUsers: 150,
-    dailyActiveUsers: 450,
-    newlyRegisteredUsers: 75,
-  };
+
   storesAwaitingApproval = [
     { name: 'HealthPlus Pharmacy', submissionDate: '2025-05-10' },
     { name: 'CareMed Store', submissionDate: '2025-05-12' },
@@ -160,22 +156,31 @@ export class DashboardComponent implements OnInit {
   pendingTests: any[] = [];
   completedTestsPage: number = 1;
   pendingTestsPage: number = 1;
-  showreset: boolean = false;
-  searchText: string | undefined;
-  tableSize: any = 10;
   tableSizes: any = [10, 20, 50, 100, 'all'];
-  totalRecords: any;
-  page: number = 1;
-  searchbarform!: FormGroup;
+  completedTableSize: any = 10;
+  pendingTableSize: any = 10;
+  completedTotalRecords: number = 0;
+  pendingTotalRecords: number = 0;
+  completedSearchText: string = '';
+  pendingSearchText: string = '';
+  completedStartDate: string = '';
+  completedEndDate: string = '';
+  pendingStartDate: string = '';
+  pendingEndDate: string = '';
+  completedShowReset: boolean = false;
+  pendingShowReset: boolean = false;
+  completedForm!: FormGroup;
+  pendingForm!: FormGroup;
 
   constructor(
     private route: ActivatedRoute,
     private jwtService: JwtService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private employeeService: EmployeeService,
+    private notificationService: NotificationService
   ) {
     this.route.queryParams.subscribe((params) => {
       this.firstlogin = this.jwtService.getfirstLoggedIn();
-      // console.log(this.firstlogin);
       if (this.firstlogin === false || this.firstlogin === undefined) {
         if (params['success'] === 'true') {
           this.openSecondsuccess = true;
@@ -192,48 +197,152 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.name = this.jwtService.getName();
     this.userRole = localStorage.getItem('Role');
-    this.searchbarform = this.formBuilder.group({
+    this.completedForm = this.formBuilder.group({
       searchbar: ['', [Validators.required]],
+      startDate: [''],
+      endDate: [''],
+    });
+    this.pendingForm = this.formBuilder.group({
+      searchbar: ['', [Validators.required]],
+      startDate: [''],
+      endDate: [''],
     });
     this.firstlogin = this.jwtService.getfirstLoggedIn();
-    // console.log(this.firstlogin);
-    // TODO: Fetch real stats from a service
-    // this.fetchDashboardStats();
-
-    // Example: Assign sample data for completed and pending tests
-    this.completedTests = [
-      { id: 'T101', name: 'CC Cube Test', date: new Date(), operator: 'Ravi' },
-      { id: 'T102', name: 'Steel Test', date: new Date(), operator: 'Aarti' },
-      // ...add more items for pagination demo if needed...
-    ];
-    this.pendingTests = [
-      { id: 'T201', name: 'Bricks Test', date: new Date(), operator: 'Suresh' },
-      { id: 'T202', name: 'Cement Test', date: new Date(), operator: 'Mehta' },
-      // ...add more items for pagination demo if needed...
-    ];
+    this.fetchDashboardStats();
+    this.fetchCompletedTests();
+    this.fetchPendingTests();
   }
-  searchfun() {
-    if (this.searchbarform.valid) {
-      this.showreset = true;
-      this.searchText = this.searchbarform.get('searchbar')?.value;
-      // this.getTests();
+
+  fetchCompletedTests() {
+    this.employeeService
+      .getCompletedTests(
+        this.completedTableSize,
+        this.completedTestsPage,
+        this.completedSearchText,
+        this.completedStartDate,
+        this.completedEndDate
+      )
+      .subscribe({
+        next: (response: any) => {
+          if (response.status === 200) {
+            this.completedTests = response.records;
+            this.completedTotalRecords = response.total;
+          }
+        },
+        error: (error: any) => {
+          this.notificationService.show('Failed to fetch completed tests');
+          console.error('Error fetching completed tests:', error);
+        },
+      });
+  }
+
+  fetchPendingTests() {
+    this.employeeService
+      .getPendingTests(
+        this.pendingTableSize,
+        this.pendingTestsPage,
+        this.pendingSearchText,
+        this.pendingStartDate,
+        this.pendingEndDate
+      )
+      .subscribe({
+        next: (response: any) => {
+          if (response.status === 200) {
+            this.pendingTests = response.records;
+            this.pendingTotalRecords = response.total;
+          }
+        },
+        error: (error: any) => {
+          this.notificationService.show('Failed to fetch pending tests');
+          console.error('Error fetching pending tests:', error);
+        },
+      });
+  }
+
+  searchfun(type: 'completed' | 'pending') {
+    if (type === 'completed') {
+      if (this.completedForm.valid) {
+        this.completedShowReset = true;
+        this.completedSearchText = this.completedForm.get('searchbar')?.value;
+        this.completedTestsPage = 1;
+        this.fetchCompletedTests();
+      } else {
+        this.completedForm.markAllAsTouched();
+      }
     } else {
-      this.searchbarform.markAllAsTouched();
+      if (this.pendingForm.valid) {
+        this.pendingShowReset = true;
+        this.pendingSearchText = this.pendingForm.get('searchbar')?.value;
+        this.pendingTestsPage = 1;
+        this.fetchPendingTests();
+      } else {
+        this.pendingForm.markAllAsTouched();
+      }
     }
   }
 
-  resetsearchbar() {
-    window.location.reload();
+  resetsearchbar(type: 'completed' | 'pending') {
+    if (type === 'completed') {
+      this.completedForm.reset();
+      this.completedShowReset = false;
+      this.completedSearchText = '';
+      this.completedStartDate = '';
+      this.completedEndDate = '';
+      this.completedTestsPage = 1;
+      this.fetchCompletedTests();
+    } else {
+      this.pendingForm.reset();
+      this.pendingShowReset = false;
+      this.pendingSearchText = '';
+      this.pendingStartDate = '';
+      this.pendingEndDate = '';
+      this.pendingTestsPage = 1;
+      this.fetchPendingTests();
+    }
   }
 
-  onTableSizeChange(event: any): void {
-    this.tableSize = event.target.value;
-    this.page = 1;
-    // this.getTests();
+  onTableSizeChange(event: any, type: 'completed' | 'pending'): void {
+    if (type === 'completed') {
+      this.completedTableSize = event.target.value;
+      this.completedTestsPage = 1;
+      this.fetchCompletedTests();
+    } else {
+      this.pendingTableSize = event.target.value;
+      this.pendingTestsPage = 1;
+      this.fetchPendingTests();
+    }
   }
 
-  onTableDataChange(event: any) {
-    this.page = event;
-    // this.getTests();
+  onTableDataChange(event: any, type: 'completed' | 'pending') {
+    if (type === 'completed') {
+      this.completedTestsPage = event;
+      this.fetchCompletedTests();
+    } else {
+      this.pendingTestsPage = event;
+      this.fetchPendingTests();
+    }
+  }
+
+  filterCompletedTestsByDate() {
+    this.completedStartDate = this.completedForm.get('startDate')?.value;
+    this.completedEndDate = this.completedForm.get('endDate')?.value;
+    this.completedTestsPage = 1;
+    this.fetchCompletedTests();
+  }
+
+  filterPendingTestsByDate() {
+    this.pendingStartDate = this.pendingForm.get('startDate')?.value;
+    this.pendingEndDate = this.pendingForm.get('endDate')?.value;
+    this.pendingTestsPage = 1;
+    this.fetchPendingTests();
+  }
+
+  dashboardStats: any;
+  fetchDashboardStats() {
+    this.employeeService.GetDashboardData().subscribe((response: any) => {
+      if (response.status === 200) {
+        this.dashboardStats = response;
+      }
+    });
   }
 }
