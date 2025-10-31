@@ -1,4 +1,4 @@
-<div *ngIf="true" class="overflow-hidden">
+<div *ngIf="true" class="overflow-hidden pb-5">
   <div [@slideIn] class="container mb-4">
     <h1 class="text-primary table-heading-detail">Update Test</h1>
 
@@ -178,27 +178,131 @@
               materials.
             </p>
           </div>
-          <div class="overflow-x-auto">
-            <table class="table w-full">
-              <thead class="table-header">
-                <tr>
-                  <th><p>Sr. No.</p></th>
-                  <th><p>Material</p></th>
-                  <th><p>Test Name</p></th>
-                  <th><p>Sample ID</p></th>
-                  <th><p>Remark</p></th>
-                  <th><p>Action</p></th>
-                </tr>
-              </thead>
-              <tbody formArrayName="materialTests">
-                <tr
-                  *ngFor="let test of materialTests.controls; let i = index"
-                  [formGroupName]="i"
-                >
-                  <td>{{ i + 1 }}</td>
-                  <td>
+          <!-- Table View for lg+ -->
+          <div class="hidden lg:block">
+            <div class="overflow-x-auto">
+              <table class="table w-full">
+                <thead class="table-header">
+                  <tr>
+                    <th><p>Sr. No.</p></th>
+                    <th><p>Material</p></th>
+                    <th><p>Test Name</p></th>
+                    <th><p>Sample ID</p></th>
+                    <th><p>Remark</p></th>
+                    <th><p>Action</p></th>
+                  </tr>
+                </thead>
+                <tbody formArrayName="materialTests">
+                  <tr
+                    *ngFor="let test of materialTests.controls; let i = index"
+                    [formGroupName]="i"
+                  >
+                    <td>{{ i + 1 }}</td>
+                    <td>
+                      <select
+                        class="form-select form-control form-input-custom"
+                        formControlName="material"
+                        (change)="onTestMaterialChange(i)"
+                      >
+                        <option value="" disabled>Select Material</option>
+                        <option
+                          *ngFor="let material of materialTestsList"
+                          [value]="material.id"
+                        >
+                          {{ material.name }}
+                        </option>
+                      </select>
+                    </td>
+                    <td>
+                      <div class="custom-multiselect">
+                        <div
+                          class="form-control form-input-custom dropdown-toggle"
+                          (click)="toggleDropdown(i)"
+                        >
+                          {{
+                            getSelectedTestsLabel(i) ||
+                              "Select Test Description(s)"
+                          }}
+                        </div>
+                        <div
+                          class="dropdown-menu"
+                          [ngClass]="{ show: dropdownOpen[i] }"
+                        >
+                          <label
+                            *ngFor="let test of filteredTestDescriptions[i]"
+                            class="dropdown-item text-black"
+                          >
+                            <input
+                              type="checkbox"
+                              [value]="test.value"
+                              [checked]="isTestSelected(i, test.value)"
+                              (change)="toggleTestSelection(i, test.value)"
+                            />
+                            {{ test.test_name }}
+                          </label>
+                        </div>
+                      </div>
+                      <div
+                        class="text-danger error-message"
+                        *ngIf="
+                          materialTests.controls[i].get('test_description')
+                            ?.invalid &&
+                          (materialTests.controls[i].get('test_description')
+                            ?.touched ||
+                            materialTests.controls[i].get('test_description')
+                              ?.dirty)
+                        "
+                      >
+                        <p class="fw-light text-danger">
+                          At least one test must be selected
+                        </p>
+                      </div>
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        class="form-control form-input-custom"
+                        formControlName="sample_id"
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        class="form-control form-input-custom"
+                        formControlName="remark"
+                      />
+                    </td>
+                    <td>
+                      <button
+                        type="button"
+                        class="btn btn-danger btn-sm"
+                        (click)="removeTest(i, 'material')"
+                        [disabled]="materialTests.controls.length <= 1"
+                      >
+                        Remove
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!-- Card View for below lg -->
+          <div class="lg:hidden space-y-4" formArrayName="materialTests">
+            <div
+              *ngFor="let test of materialTests.controls; let i = index"
+              [formGroupName]="i"
+              class="bg-white border border-gray-200 rounded-lg p-4"
+            >
+              <div class="flex justify-between items-start mb-3 relative">
+                <div class="flex-1">
+                  <div class="mb-2"><strong>Sr. No.:</strong> {{ i + 1 }}</div>
+                  <div class="mb-2">
+                    <label class="d-block text-capitalize admin-form-lable mb-1"
+                      >Material</label
+                    >
                     <select
-                      class="form-select form-control form-input-custom"
+                      class="form-select form-control form-input-custom w-full"
                       formControlName="material"
                       (change)="onTestMaterialChange(i)"
                     >
@@ -210,11 +314,14 @@
                         {{ material.name }}
                       </option>
                     </select>
-                  </td>
-                  <td>
+                  </div>
+                  <div class="mb-2">
+                    <label class="d-block text-capitalize admin-form-lable mb-1"
+                      >Test Name</label
+                    >
                     <div class="custom-multiselect">
                       <div
-                        class="form-control form-input-custom dropdown-toggle"
+                        class="form-control form-input-custom dropdown-toggle w-full"
                         (click)="toggleDropdown(i)"
                       >
                         {{
@@ -223,12 +330,12 @@
                         }}
                       </div>
                       <div
-                        class="dropdown-menu"
+                        class="dropdown-menu w-full"
                         [ngClass]="{ show: dropdownOpen[i] }"
                       >
                         <label
                           *ngFor="let test of filteredTestDescriptions[i]"
-                          class="dropdown-item text-black"
+                          class="dropdown-item text-black d-block"
                         >
                           <input
                             type="checkbox"
@@ -255,34 +362,40 @@
                         At least one test must be selected
                       </p>
                     </div>
-                  </td>
-                  <td>
+                  </div>
+                  <div class="mb-2">
+                    <label class="d-block text-capitalize admin-form-lable mb-1"
+                      >Sample ID</label
+                    >
                     <input
                       type="text"
-                      class="form-control form-input-custom"
+                      class="form-control form-input-custom w-full"
                       formControlName="sample_id"
                     />
-                  </td>
-                  <td>
+                  </div>
+                  <div class="mb-2">
+                    <label class="d-block text-capitalize admin-form-lable mb-1"
+                      >Remark</label
+                    >
                     <input
                       type="text"
-                      class="form-control form-input-custom"
+                      class="form-control form-input-custom w-full"
                       formControlName="remark"
                     />
-                  </td>
-                  <td>
-                    <button
-                      type="button"
-                      class="btn btn-danger btn-sm"
-                      (click)="removeTest(i, 'material')"
-                      [disabled]="materialTests.controls.length <= 1"
-                    >
-                      Remove
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                  </div>
+                </div>
+                <div class="ml-3 absolute right-0">
+                  <button
+                    type="button"
+                    class="btn btn-danger btn-sm"
+                    (click)="removeTest(i, 'material')"
+                    [disabled]="materialTests.controls.length <= 1"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
           <button
             type="button"
@@ -298,26 +411,108 @@
           <p class="text-primary mt-4 text-lg font-semibold">
             Field Based Tests
           </p>
-          <div class="overflow-x-auto">
-            <table class="table table-bordered">
-              <thead class="table-header">
-                <tr>
-                  <th><p>Sr. No.</p></th>
-                  <th><p>Test Name</p></th>
-                  <th><p>Sample ID</p></th>
-                  <th><p>Remark</p></th>
-                  <th><p>Action</p></th>
-                </tr>
-              </thead>
-              <tbody formArrayName="fieldTests">
-                <tr
-                  *ngFor="let test of fieldTests.controls; let i = index"
-                  [formGroupName]="i"
-                >
-                  <td>{{ i + 1 }}</td>
-                  <td>
+          <!-- Table View for lg+ -->
+          <div class="hidden lg:block">
+            <div class="overflow-x-auto">
+              <table class="table table-bordered">
+                <thead class="table-header">
+                  <tr>
+                    <th><p>Sr. No.</p></th>
+                    <th><p>Test Name</p></th>
+                    <th><p>Sample ID</p></th>
+                    <th><p>Remark</p></th>
+                    <th><p>Action</p></th>
+                  </tr>
+                </thead>
+                <tbody formArrayName="fieldTests">
+                  <tr
+                    *ngFor="let test of fieldTests.controls; let i = index"
+                    [formGroupName]="i"
+                  >
+                    <td>{{ i + 1 }}</td>
+                    <td>
+                      <select
+                        class="form-select form-control form-input-custom"
+                        formControlName="test_description"
+                        [ngClass]="{
+                          'is-invalid':
+                            fieldTests.controls[i].get('test_description')
+                              ?.invalid &&
+                            (fieldTests.controls[i].get('test_description')
+                              ?.touched ||
+                              fieldTests.controls[i].get('test_description')
+                                ?.dirty)
+                        }"
+                      >
+                        <option value="">Select Test Description</option>
+                        <option
+                          *ngFor="let test of fieldTest"
+                          [value]="test.id"
+                        >
+                          {{ test.test_name }}
+                        </option>
+                      </select>
+                      <div
+                        class="text-danger error-message"
+                        *ngIf="
+                          fieldTests.controls[i].get('test_description')
+                            ?.invalid &&
+                          (fieldTests.controls[i].get('test_description')
+                            ?.touched ||
+                            fieldTests.controls[i].get('test_description')
+                              ?.dirty)
+                        "
+                      >
+                        <p class="fw-light text-danger">
+                          Test Description is required
+                        </p>
+                      </div>
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        class="form-control form-input-custom"
+                        formControlName="sample_id"
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        class="form-control form-input-custom"
+                        formControlName="remark"
+                      />
+                    </td>
+                    <td>
+                      <button
+                        type="button"
+                        class="btn btn-danger btn-sm"
+                        (click)="removeTest(i, 'field')"
+                        [disabled]="fieldTests.controls.length <= 1"
+                      >
+                        Remove
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!-- Card View for below lg -->
+          <div class="lg:hidden space-y-4" formArrayName="fieldTests">
+            <div
+              *ngFor="let test of fieldTests.controls; let i = index"
+              [formGroupName]="i"
+              class="bg-white border border-gray-200 rounded-lg p-4"
+            >
+              <div class="flex justify-between items-start mb-3 relative">
+                <div class="flex-1">
+                  <div class="mb-2"><strong>Sr. No.:</strong> {{ i + 1 }}</div>
+                  <div class="mb-2">
+                    <label class="d-block text-capitalize admin-form-lable mb-1"
+                      >Test Name</label
+                    >
                     <select
-                      class="form-select form-control form-input-custom"
+                      class="form-select form-control form-input-custom w-full"
                       formControlName="test_description"
                       [ngClass]="{
                         'is-invalid':
@@ -348,34 +543,40 @@
                         Test Description is required
                       </p>
                     </div>
-                  </td>
-                  <td>
+                  </div>
+                  <div class="mb-2">
+                    <label class="d-block text-capitalize admin-form-lable mb-1"
+                      >Sample ID</label
+                    >
                     <input
                       type="text"
-                      class="form-control form-input-custom"
+                      class="form-control form-input-custom w-full"
                       formControlName="sample_id"
                     />
-                  </td>
-                  <td>
+                  </div>
+                  <div class="mb-2">
+                    <label class="d-block text-capitalize admin-form-lable mb-1"
+                      >Remark</label
+                    >
                     <input
                       type="text"
-                      class="form-control form-input-custom"
+                      class="form-control form-input-custom w-full"
                       formControlName="remark"
                     />
-                  </td>
-                  <td>
-                    <button
-                      type="button"
-                      class="btn btn-danger btn-sm"
-                      (click)="removeTest(i, 'field')"
-                      [disabled]="fieldTests.controls.length <= 1"
-                    >
-                      Remove
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                  </div>
+                </div>
+                <div class="ml-3 absolute right-0">
+                  <button
+                    type="button"
+                    class="btn btn-danger btn-sm"
+                    (click)="removeTest(i, 'field')"
+                    [disabled]="fieldTests.controls.length <= 1"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
           <button
             type="button"

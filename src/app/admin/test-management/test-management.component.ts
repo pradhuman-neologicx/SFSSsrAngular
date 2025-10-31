@@ -1033,6 +1033,22 @@ export class TestManagementComponent implements OnInit {
       .map((t: any) => t.input_fields?.length || 1)
       .reduce((sum: number, len: number) => sum + len, 0);
   }
+  toggleSelectAllCards() {
+    const selectAll = !this.isAllSelected();
+    this.unassignedTests.forEach((test) => {
+      test.isSelected = selectAll;
+      if (selectAll) {
+        if (!this.selectedTests.some((s) => s.id === test.id)) {
+          this.selectedTests.push(test);
+        }
+      } else {
+        this.selectedTests = this.selectedTests.filter((s) => s.id !== test.id);
+      }
+    });
+  }
 
+  // isAllSelected(): boolean {
+  //   return this.unassignedTests.length > 0 && this.unassignedTests.every(test => test.isSelected);
+  // }
   // store fill form data
 }

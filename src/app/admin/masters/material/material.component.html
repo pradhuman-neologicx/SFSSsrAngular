@@ -83,92 +83,160 @@
       </div>
     </div>
     <div class="table-responsive-sm mt-2">
-      <table class="table table-bordered table-hover table-striped mb-0">
-        <thead class="table-header">
-          <tr *ngFor="let detail of table_heading">
-            <th>
-              <p class="table-heading">{{ detail.heading0 }}</p>
-            </th>
-            <th>
-              <p class="table-heading">{{ detail.heading1 }}</p>
-            </th>
-            <th>
-              <p class="table-heading">{{ detail.heading2 }}</p>
-            </th>
-            <th>
-              <p class="table-heading">{{ detail.heading3 }}</p>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            *ngFor="
-              let user of examCategory
-                | paginate
-                  : {
-                      itemsPerPage:
-                        tableSize != 'all' ? tableSize : totalRecords,
-                      currentPage: page,
-                      totalItems: totalRecords
-                    };
-              index as i
-            "
-          >
-            <!-- <tr *ngFor="let user of usertable"> -->
-            <td>
+      <!-- Table View for lg+ -->
+      <div class="hidden lg:block">
+        <table class="table table-bordered table-hover table-striped mb-0">
+          <thead class="table-header">
+            <tr *ngFor="let detail of table_heading">
+              <th>
+                <p class="table-heading">{{ detail.heading0 }}</p>
+              </th>
+              <th>
+                <p class="table-heading">{{ detail.heading1 }}</p>
+              </th>
+              <th>
+                <p class="table-heading">{{ detail.heading2 }}</p>
+              </th>
+              <th>
+                <p class="table-heading">{{ detail.heading3 }}</p>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="
+                let user of examCategory
+                  | paginate
+                    : {
+                        itemsPerPage:
+                          tableSize != 'all' ? tableSize : totalRecords,
+                        currentPage: page,
+                        totalItems: totalRecords
+                      };
+                index as i
+              "
+            >
+              <!-- <tr *ngFor="let user of usertable"> -->
+              <td>
+                {{
+                  tableSize * (page - 1) + i + 1 > 0
+                    ? tableSize * (page - 1) + i + 1
+                    : i + 1
+                }}
+              </td>
+
+              <td>
+                <p>{{ user.name }}</p>
+              </td>
+
+              <td>
+                <p
+                  [ngClass]="{
+                    'active-status': user.is_active == 1 ? 1 : 0,
+                    'deactive-status': user.is_active == 1 ? 0 : 1
+                  }"
+                >
+                  {{ user.is_active == 1 ? "active" : "deactive" }}
+                </p>
+              </td>
+
+              <td>
+                <p>
+                  <button mat-icon-button [matMenuTriggerFor]="menu">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #menu="matMenu">
+                    <button mat-menu-item (click)="OpenEditModal(user)">
+                      Edit
+                    </button>
+                    <button mat-menu-item (click)="openviewModal(user)">
+                      View Details
+                    </button>
+
+                    <button
+                      mat-menu-item
+                      *ngIf="user.is_active; else inactiveButton"
+                      (click)="Status(user.id, 0)"
+                    >
+                      Deactivate
+                    </button>
+                    <ng-template #inactiveButton>
+                      <button mat-menu-item (click)="Status(user.id, 1)">
+                        Activate
+                      </button>
+                    </ng-template>
+                  </mat-menu>
+                </p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Card View for below lg -->
+      <div class="lg:hidden space-y-4">
+        <div
+          *ngFor="
+            let user of examCategory
+              | paginate
+                : {
+                    itemsPerPage: tableSize != 'all' ? tableSize : totalRecords,
+                    currentPage: page,
+                    totalItems: totalRecords
+                  };
+            index as i
+          "
+          class="bg-gray-50 border border-gray-200 rounded-lg p-4"
+        >
+          <div class="flex justify-between items-center mb-2">
+            <div>
+              <strong>Sr No:</strong>
               {{
                 tableSize * (page - 1) + i + 1 > 0
                   ? tableSize * (page - 1) + i + 1
                   : i + 1
               }}
-            </td>
-
-            <td>
-              <p>{{ user.name }}</p>
-            </td>
-
-            <td>
-              <p
-                [ngClass]="{
-                  'active-status': user.is_active == 1 ? 1 : 0,
-                  'deactive-status': user.is_active == 1 ? 0 : 1
-                }"
-              >
-                {{ user.is_active == 1 ? "active" : "deactive" }}
-              </p>
-            </td>
-
-            <td>
-              <p>
-                <button mat-icon-button [matMenuTriggerFor]="menu">
-                  <mat-icon>more_vert</mat-icon>
+            </div>
+            <div>
+              <button mat-icon-button [matMenuTriggerFor]="menu">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="OpenEditModal(user)">
+                  Edit
                 </button>
-                <mat-menu #menu="matMenu">
-                  <button mat-menu-item (click)="OpenEditModal(user)">
-                    Edit
-                  </button>
-                  <button mat-menu-item (click)="openviewModal(user)">
-                    View Details
-                  </button>
+                <button mat-menu-item (click)="openviewModal(user)">
+                  View Details
+                </button>
 
-                  <button
-                    mat-menu-item
-                    *ngIf="user.is_active; else inactiveButton"
-                    (click)="Status(user.id, 0)"
-                  >
-                    Deactivate
+                <button
+                  mat-menu-item
+                  *ngIf="user.is_active; else inactiveButton"
+                  (click)="Status(user.id, 0)"
+                >
+                  Deactivate
+                </button>
+                <ng-template #inactiveButton>
+                  <button mat-menu-item (click)="Status(user.id, 1)">
+                    Activate
                   </button>
-                  <ng-template #inactiveButton>
-                    <button mat-menu-item (click)="Status(user.id, 1)">
-                      Activate
-                    </button>
-                  </ng-template>
-                </mat-menu>
-              </p>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+                </ng-template>
+              </mat-menu>
+            </div>
+          </div>
+          <div class="mb-2"><strong>Name:</strong> {{ user.name }}</div>
+          <div>
+            <strong>Status:</strong>
+            <span
+              [ngClass]="{
+                'active-status': user.is_active == 1 ? 1 : 0,
+                'deactive-status': user.is_active == 1 ? 0 : 1
+              }"
+            >
+              {{ user.is_active == 1 ? "active" : "deactive" }}
+            </span>
+          </div>
+        </div>
+      </div>
       <div
         class="d-md-flex justify-content-between bottom-0 end-0 py-2 align-items-center"
       >

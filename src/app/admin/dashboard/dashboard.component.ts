@@ -119,39 +119,6 @@ export class DashboardComponent implements OnInit {
   name: string | null = '';
   firstlogin: boolean | undefined;
 
-  storesAwaitingApproval = [
-    { name: 'HealthPlus Pharmacy', submissionDate: '2025-05-10' },
-    { name: 'CareMed Store', submissionDate: '2025-05-12' },
-    { name: 'Wellness Hub', submissionDate: '2025-05-14' },
-  ];
-
-  licenseExpiryAlerts = [
-    {
-      id: 'LIC-001',
-      pharmacyName: 'City Pharma',
-      expiryDate: '2025-04-30',
-      status: 'Expired',
-    },
-    {
-      id: 'LIC-002',
-      pharmacyName: 'Green Cross',
-      expiryDate: '2025-05-05',
-      status: 'Expired',
-    },
-    {
-      id: 'LIC-003',
-      pharmacyName: 'MediCare',
-      expiryDate: '2025-05-20',
-      status: 'Expiring Soon',
-    },
-    {
-      id: 'LIC-004',
-      pharmacyName: 'HealthPoint',
-      expiryDate: '2025-05-25',
-      status: 'Expiring Soon',
-    },
-  ];
-
   completedTests: any[] = [];
   pendingTests: any[] = [];
   completedTestsPage: number = 1;
@@ -169,6 +136,8 @@ export class DashboardComponent implements OnInit {
   pendingEndDate: string = '';
   completedShowReset: boolean = false;
   pendingShowReset: boolean = false;
+  completedShowDateReset: boolean = false;
+  pendingShowDateReset: boolean = false;
   completedForm!: FormGroup;
   pendingForm!: FormGroup;
 
@@ -288,6 +257,7 @@ export class DashboardComponent implements OnInit {
       this.completedSearchText = '';
       this.completedStartDate = '';
       this.completedEndDate = '';
+      this.completedShowDateReset = false;
       this.completedTestsPage = 1;
       this.fetchCompletedTests();
     } else {
@@ -296,6 +266,27 @@ export class DashboardComponent implements OnInit {
       this.pendingSearchText = '';
       this.pendingStartDate = '';
       this.pendingEndDate = '';
+      this.pendingShowDateReset = false;
+      this.pendingTestsPage = 1;
+      this.fetchPendingTests();
+    }
+  }
+
+  resetDateFilters(type: 'completed' | 'pending') {
+    if (type === 'completed') {
+      this.completedForm.get('startDate')?.reset();
+      this.completedForm.get('endDate')?.reset();
+      this.completedStartDate = '';
+      this.completedEndDate = '';
+      this.completedShowDateReset = false;
+      this.completedTestsPage = 1;
+      this.fetchCompletedTests();
+    } else {
+      this.pendingForm.get('startDate')?.reset();
+      this.pendingForm.get('endDate')?.reset();
+      this.pendingStartDate = '';
+      this.pendingEndDate = '';
+      this.pendingShowDateReset = false;
       this.pendingTestsPage = 1;
       this.fetchPendingTests();
     }
@@ -326,6 +317,9 @@ export class DashboardComponent implements OnInit {
   filterCompletedTestsByDate() {
     this.completedStartDate = this.completedForm.get('startDate')?.value;
     this.completedEndDate = this.completedForm.get('endDate')?.value;
+    this.completedShowDateReset = !!(
+      this.completedStartDate || this.completedEndDate
+    );
     this.completedTestsPage = 1;
     this.fetchCompletedTests();
   }
@@ -333,6 +327,9 @@ export class DashboardComponent implements OnInit {
   filterPendingTestsByDate() {
     this.pendingStartDate = this.pendingForm.get('startDate')?.value;
     this.pendingEndDate = this.pendingForm.get('endDate')?.value;
+    this.pendingShowDateReset = !!(
+      this.pendingStartDate || this.pendingEndDate
+    );
     this.pendingTestsPage = 1;
     this.fetchPendingTests();
   }

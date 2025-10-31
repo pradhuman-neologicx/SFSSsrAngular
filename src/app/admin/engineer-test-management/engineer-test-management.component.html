@@ -96,43 +96,103 @@
       </div>
     </div>
     <div class="table-responsive-sm">
-      <table class="table table-bordered table-hover table-striped mb-0">
-        <thead class="table-header">
-          <tr>
-            <th><p class="table-heading">Test Name</p></th>
-            <th><p class="table-heading">Client Name</p></th>
-            <th><p class="table-heading">Test In</p></th>
-            <th><p class="table-heading">Assigned To</p></th>
-            <th><p class="table-heading">Action</p></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            *ngFor="
-              let test of assignedTests
-                | paginate
-                  : {
-                      itemsPerPage:
-                        tableSize != 'all' ? tableSize : totalRecordsAssigned,
-                      currentPage: pageAssigned,
-                      totalItems: totalRecordsAssigned
-                    };
-              index as i
-            "
-          >
-            <td>
-              <p>{{ test.test_number }}</p>
-            </td>
-            <td>
-              <p>{{ test.customer.name }}</p>
-            </td>
-            <td>
-              <p>{{ test.created_at | date : "dd-MM-yyyy" }}</p>
-            </td>
-            <td>
-              <p>{{ test.assigned_user.name }}</p>
-            </td>
-            <td>
+      <!-- Table View for lg+ -->
+      <div class="hidden lg:block">
+        <table class="table table-bordered table-hover table-striped mb-0">
+          <thead class="table-header">
+            <tr>
+              <th><p class="table-heading">Test Name</p></th>
+              <th><p class="table-heading">Client Name</p></th>
+              <th><p class="table-heading">Test In</p></th>
+              <th><p class="table-heading">Assigned To</p></th>
+              <th><p class="table-heading">Action</p></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="
+                let test of assignedTests
+                  | paginate
+                    : {
+                        itemsPerPage:
+                          tableSize != 'all' ? tableSize : totalRecordsAssigned,
+                        currentPage: pageAssigned,
+                        totalItems: totalRecordsAssigned
+                      };
+                index as i
+              "
+            >
+              <td>
+                <p>{{ test.test_number }}</p>
+              </td>
+              <td>
+                <p>{{ test.customer.name }}</p>
+              </td>
+              <td>
+                <p>{{ test.created_at | date : "dd-MM-yyyy" }}</p>
+              </td>
+              <td>
+                <p>{{ test.assigned_user.name }}</p>
+              </td>
+              <td>
+                <p>
+                  <button mat-icon-button [matMenuTriggerFor]="menu">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #menu="matMenu">
+                    <button
+                      mat-menu-item
+                      (click)="openCompleteTestModal(test.id)"
+                    >
+                      Complete
+                    </button>
+
+                    <button mat-menu-item (click)="openFillDetailsModal(test)">
+                      Fill Test Details
+                    </button>
+                    <!-- <button mat-menu-item (click)="openViewModal(test)">
+                      View Details
+                    </button> -->
+                  </mat-menu>
+                </p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Card View for below lg -->
+      <div class="lg:hidden space-y-4">
+        <div
+          *ngFor="
+            let test of assignedTests
+              | paginate
+                : {
+                    itemsPerPage:
+                      tableSize != 'all' ? tableSize : totalRecordsAssigned,
+                    currentPage: pageAssigned,
+                    totalItems: totalRecordsAssigned
+                  };
+            index as i
+          "
+          class="bg-white border border-gray-200 rounded-lg p-4"
+        >
+          <div class="flex justify-between items-start mb-3 relative">
+            <div class="flex-1">
+              <div class="mb-2">
+                <strong>Test Name:</strong> {{ test.test_number }}
+              </div>
+              <div class="mb-2">
+                <strong>Client Name:</strong> {{ test.customer.name }}
+              </div>
+              <div class="mb-2">
+                <strong>Test In:</strong>
+                {{ test.created_at | date : "dd-MM-yyyy" }}
+              </div>
+              <div class="mb-2">
+                <strong>Assigned To:</strong> {{ test.assigned_user.name }}
+              </div>
+            </div>
+            <div class="ml-3 absolute right-0">
               <p>
                 <button mat-icon-button [matMenuTriggerFor]="menu">
                   <mat-icon>more_vert</mat-icon>
@@ -153,10 +213,10 @@
                   </button> -->
                 </mat-menu>
               </p>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            </div>
+          </div>
+        </div>
+      </div>
       <div
         class="d-md-flex justify-content-between bottom-0 end-0 py-2 align-items-center"
       >
@@ -261,61 +321,105 @@
       </div>
     </div>
     <div class="table-responsive-sm">
-      <table class="table table-bordered table-hover table-striped mb-0">
-        <thead class="table-header">
-          <tr>
-            <th><p class="table-heading">Test Name</p></th>
-            <th><p class="table-heading">Client Name</p></th>
-            <th><p class="table-heading">Test In</p></th>
-            <th><p class="table-heading">Assigned To</p></th>
-            <th><p class="table-heading">Delivery Date</p></th>
-            <!-- <th><p class="table-heading">Action</p></th> -->
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            *ngFor="
-              let test of completedTests
-                | paginate
-                  : {
-                      itemsPerPage:
-                        tableSize != 'all' ? tableSize : totalRecordsCompleted,
-                      currentPage: pageCompleted,
-                      totalItems: totalRecordsCompleted
-                    };
-              index as i
-            "
-          >
-            <td>
-              <p>{{ test.test_number }}</p>
-            </td>
-            <td>
-              <p>{{ test.customer.name }}</p>
-            </td>
-            <td>
-              <p>{{ test.created_at | date : "dd-MM-yyyy" }}</p>
-            </td>
-            <td>
-              <p>{{ test.assigned_user.name }}</p>
-            </td>
-            <td>
-              <p>{{ test.expected_delivery_date | date : "dd-MM-yyyy" }}</p>
-            </td>
-            <!-- <td>
-              <p>
-                <button mat-icon-button [matMenuTriggerFor]="menu">
-                  <mat-icon>more_vert</mat-icon>
-                </button>
-                <mat-menu #menu="matMenu">
-                  <button mat-menu-item (click)="openViewModal(test)">
-                    View Details
+      <!-- Table View for lg+ -->
+      <div class="hidden lg:block">
+        <table class="table table-bordered table-hover table-striped mb-0">
+          <thead class="table-header">
+            <tr>
+              <th><p class="table-heading">Test Name</p></th>
+              <th><p class="table-heading">Client Name</p></th>
+              <th><p class="table-heading">Test In</p></th>
+              <th><p class="table-heading">Assigned To</p></th>
+              <th><p class="table-heading">Delivery Date</p></th>
+              <!-- <th><p class="table-heading">Action</p></th> -->
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="
+                let test of completedTests
+                  | paginate
+                    : {
+                        itemsPerPage:
+                          tableSize != 'all'
+                            ? tableSize
+                            : totalRecordsCompleted,
+                        currentPage: pageCompleted,
+                        totalItems: totalRecordsCompleted
+                      };
+                index as i
+              "
+            >
+              <td>
+                <p>{{ test.test_number }}</p>
+              </td>
+              <td>
+                <p>{{ test.customer.name }}</p>
+              </td>
+              <td>
+                <p>{{ test.created_at | date : "dd-MM-yyyy" }}</p>
+              </td>
+              <td>
+                <p>{{ test.assigned_user.name }}</p>
+              </td>
+              <td>
+                <p>{{ test.expected_delivery_date | date : "dd-MM-yyyy" }}</p>
+              </td>
+              <!-- <td>
+                <p>
+                  <button mat-icon-button [matMenuTriggerFor]="menu">
+                    <mat-icon>more_vert</mat-icon>
                   </button>
-                </mat-menu>
-              </p>
-            </td> -->
-          </tr>
-        </tbody>
-      </table>
+                  <mat-menu #menu="matMenu">
+                    <button mat-menu-item (click)="openViewModal(test)">
+                      View Details
+                    </button>
+                  </mat-menu>
+                </p>
+              </td> -->
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Card View for below lg -->
+      <div class="lg:hidden space-y-4">
+        <div
+          *ngFor="
+            let test of completedTests
+              | paginate
+                : {
+                    itemsPerPage:
+                      tableSize != 'all' ? tableSize : totalRecordsCompleted,
+                    currentPage: pageCompleted,
+                    totalItems: totalRecordsCompleted
+                  };
+            index as i
+          "
+          class="bg-white border border-gray-200 rounded-lg p-4"
+        >
+          <div class="flex justify-between items-start mb-3 relative">
+            <div class="flex-1">
+              <div class="mb-2">
+                <strong>Test Name:</strong> {{ test.test_number }}
+              </div>
+              <div class="mb-2">
+                <strong>Client Name:</strong> {{ test.customer.name }}
+              </div>
+              <div class="mb-2">
+                <strong>Test In:</strong>
+                {{ test.created_at | date : "dd-MM-yyyy" }}
+              </div>
+              <div class="mb-2">
+                <strong>Assigned To:</strong> {{ test.assigned_user.name }}
+              </div>
+              <div class="mb-2">
+                <strong>Delivery Date:</strong>
+                {{ test.expected_delivery_date | date : "dd-MM-yyyy" }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <div
         class="d-md-flex justify-content-between bottom-0 end-0 py-2 align-items-center"
       >
@@ -530,163 +634,167 @@
               </div>
               <div class="col-12" *ngIf="materials.length > 0">
                 <h5 class="headingdeatils">Material-Based Tests</h5>
-                <table class="table table-bordered">
-                  <thead>
-                    <tr>
-                      <th>Material</th>
-                      <th>Sample ID</th>
-                      <th>Test Name</th>
-                      <th>Input Fields</th>
-                      <th>Result</th>
-                      <th>Units</th>
-                      <th>Remarks</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <ng-container *ngFor="let material of materials">
-                      <ng-container
-                        *ngFor="
-                          let testConfig of material.tests;
-                          let tIdx = index
-                        "
-                      >
+                <div class="overflow-x-auto">
+                  <table class="table table-bordered min-w-full">
+                    <thead>
+                      <tr>
+                        <th>Material</th>
+                        <th>Sample ID</th>
+                        <th>Test Name</th>
+                        <th>Input Fields</th>
+                        <th>Result</th>
+                        <th>Units</th>
+                        <th>Remarks</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <ng-container *ngFor="let material of materials">
                         <ng-container
                           *ngFor="
-                            let inputField of testConfig.input_fields;
-                            let iIdx = index
+                            let testConfig of material.tests;
+                            let tIdx = index
                           "
                         >
-                          <tr>
-                            <!-- Material column: rowspan for all input fields of all tests -->
-                            <td
-                              *ngIf="tIdx === 0 && iIdx === 0"
-                              [attr.rowspan]="getMaterialRowspan(material)"
-                            >
-                              {{ material.material_name }}
-                            </td>
-                            <!-- Sample ID column: rowspan for all input fields of all tests -->
-                            <td
-                              *ngIf="tIdx === 0 && iIdx === 0"
-                              [attr.rowspan]="getMaterialRowspan(material)"
-                            >
-                              {{ material.sample_id }}
-                            </td>
-                            <!-- Test Name column: rowspan for all input fields of this test -->
-                            <td
-                              *ngIf="iIdx === 0"
-                              [attr.rowspan]="
-                                testConfig.input_fields?.length || 1
-                              "
-                            >
-                              {{ testConfig.test_name }}
-                            </td>
-                            <!-- Input Field Name -->
-                            <td>{{ inputField.input_field_name }}</td>
-                            <!-- Result Input -->
-                            <td>
-                              <input
-                                type="text"
-                                [formControlName]="
-                                  'material_' +
-                                  material.material_id +
-                                  '_test_' +
-                                  testConfig.test_configuration_id +
-                                  '_input_' +
-                                  inputField.id
+                          <ng-container
+                            *ngFor="
+                              let inputField of testConfig.input_fields;
+                              let iIdx = index
+                            "
+                          >
+                            <tr>
+                              <!-- Material column: rowspan for all input fields of all tests -->
+                              <td
+                                *ngIf="tIdx === 0 && iIdx === 0"
+                                [attr.rowspan]="getMaterialRowspan(material)"
+                              >
+                                {{ material.material_name }}
+                              </td>
+                              <!-- Sample ID column: rowspan for all input fields of all tests -->
+                              <td
+                                *ngIf="tIdx === 0 && iIdx === 0"
+                                [attr.rowspan]="getMaterialRowspan(material)"
+                              >
+                                {{ material.sample_id }}
+                              </td>
+                              <!-- Test Name column: rowspan for all input fields of this test -->
+                              <td
+                                *ngIf="iIdx === 0"
+                                [attr.rowspan]="
+                                  testConfig.input_fields?.length || 1
                                 "
-                                class="form-control"
-                                placeholder="Enter value"
-                              />
-                            </td>
-                            <!-- Unit -->
-                            <td>{{ inputField.uom_name }}</td>
-                            <td>
-                              <input
-                                type="text"
-                                [formControlName]="
-                                  'material_' +
-                                  material.material_id +
-                                  '_test_' +
-                                  testConfig.test_configuration_id +
-                                  '_remarks_' +
-                                  inputField.id
-                                "
-                                class="form-control"
-                                placeholder="Enter remarks"
-                              />
-                            </td>
-                          </tr>
+                              >
+                                {{ testConfig.test_name }}
+                              </td>
+                              <!-- Input Field Name -->
+                              <td>{{ inputField.input_field_name }}</td>
+                              <!-- Result Input -->
+                              <td>
+                                <input
+                                  type="text"
+                                  [formControlName]="
+                                    'material_' +
+                                    material.material_id +
+                                    '_test_' +
+                                    testConfig.test_configuration_id +
+                                    '_input_' +
+                                    inputField.id
+                                  "
+                                  class="form-control"
+                                  placeholder="Enter value"
+                                />
+                              </td>
+                              <!-- Unit -->
+                              <td>{{ inputField.uom_name }}</td>
+                              <td>
+                                <input
+                                  type="text"
+                                  [formControlName]="
+                                    'material_' +
+                                    material.material_id +
+                                    '_test_' +
+                                    testConfig.test_configuration_id +
+                                    '_remarks_' +
+                                    inputField.id
+                                  "
+                                  class="form-control"
+                                  placeholder="Enter remarks"
+                                />
+                              </td>
+                            </tr>
+                          </ng-container>
                         </ng-container>
                       </ng-container>
-                    </ng-container>
-                  </tbody>
-                </table>
+                    </tbody>
+                  </table>
+                </div>
               </div>
               <div class="col-12" *ngIf="fields.length > 0">
                 <h5 class="headingdeatils">Field-Based Tests</h5>
-                <table class="table table-bordered">
-                  <thead>
-                    <tr>
-                      <th>Test Name</th>
-                      <th>Sample ID</th>
-                      <th>Input Fields</th>
-                      <th>Result</th>
-                      <th>Unit</th>
-                      <th>Remarks</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <ng-container *ngFor="let field of fields">
-                      <tr
-                        *ngFor="
-                          let inputField of field.input_fields;
-                          let i = index
-                        "
-                      >
-                        <td
-                          *ngIf="i === 0"
-                          [attr.rowspan]="field.input_fields.length"
-                        >
-                          {{ field.test_name }}
-                        </td>
-                        <td
-                          *ngIf="i === 0"
-                          [attr.rowspan]="field.input_fields.length"
-                        >
-                          {{ field.sample_id }}
-                        </td>
-                        <td>{{ inputField.input_field_name }}</td>
-                        <td>
-                          <input
-                            type="text"
-                            [formControlName]="
-                              getControlName(
-                                field.field_id,
-                                inputField.input_field_name
-                              )
-                            "
-                            class="form-control"
-                            placeholder="Enter values"
-                          />
-                        </td>
-                        <td>{{ inputField.uom_name }}</td>
-                        <td>
-                          <input
-                            type="text"
-                            [formControlName]="
-                              'field_' +
-                              field.field_id +
-                              '_remarks_' +
-                              inputField.id
-                            "
-                            class="form-control"
-                            placeholder="Enter remarks"
-                          />
-                        </td>
+                <div class="overflow-x-auto">
+                  <table class="table table-bordered min-w-full">
+                    <thead>
+                      <tr>
+                        <th>Test Name</th>
+                        <th>Sample ID</th>
+                        <th>Input Fields</th>
+                        <th>Result</th>
+                        <th>Unit</th>
+                        <th>Remarks</th>
                       </tr>
-                    </ng-container>
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      <ng-container *ngFor="let field of fields">
+                        <tr
+                          *ngFor="
+                            let inputField of field.input_fields;
+                            let i = index
+                          "
+                        >
+                          <td
+                            *ngIf="i === 0"
+                            [attr.rowspan]="field.input_fields.length"
+                          >
+                            {{ field.test_name }}
+                          </td>
+                          <td
+                            *ngIf="i === 0"
+                            [attr.rowspan]="field.input_fields.length"
+                          >
+                            {{ field.sample_id }}
+                          </td>
+                          <td>{{ inputField.input_field_name }}</td>
+                          <td>
+                            <input
+                              type="text"
+                              [formControlName]="
+                                getControlName(
+                                  field.field_id,
+                                  inputField.input_field_name
+                                )
+                              "
+                              class="form-control"
+                              placeholder="Enter values"
+                            />
+                          </td>
+                          <td>{{ inputField.uom_name }}</td>
+                          <td>
+                            <input
+                              type="text"
+                              [formControlName]="
+                                'field_' +
+                                field.field_id +
+                                '_remarks_' +
+                                inputField.id
+                              "
+                              class="form-control"
+                              placeholder="Enter remarks"
+                            />
+                          </td>
+                        </tr>
+                      </ng-container>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>

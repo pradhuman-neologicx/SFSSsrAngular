@@ -19,7 +19,7 @@
   </div>
 
   <!-- Accounts Table -->
-  <div class="bg-white rounded-lg overflow-x-auto">
+  <div class="bg-white rounded-lg overflow-x-auto pb-5 lg:pb-0">
     <div
       class="flex flex-col md:flex-row justify-between items-center my-4 space-y-3 md:space-y-0 px-4"
     >
@@ -89,95 +89,168 @@
       </div>
     </div>
     <div class="overflow-x-auto table-responsive-sm">
-      <table class="table table-bordered table-hover table-striped mb-0">
-        <thead class="table-header">
-          <tr>
-            <th>
-              <p class="table-heading">Test ID</p>
-            </th>
-            <th>
-              <p class="table-heading">Client Name</p>
-            </th>
-            <!-- <th>
-              <p class="table-heading">{{ detail.heading22 }}</p>
-            </th> -->
-            <th>
-              <p class="table-heading">Work Name</p>
-            </th>
+      <!-- Table View for lg+ -->
+      <div class="hidden lg:block">
+        <table class="table table-bordered table-hover table-striped mb-0">
+          <thead class="table-header">
+            <tr>
+              <th>
+                <p class="table-heading">Test ID</p>
+              </th>
+              <th>
+                <p class="table-heading">Client Name</p>
+              </th>
+              <!-- <th>
+                <p class="table-heading">{{ detail.heading22 }}</p>
+              </th> -->
+              <th>
+                <p class="table-heading">Work Name</p>
+              </th>
 
-            <th>
-              <p class="table-heading">Test In</p>
-            </th>
-            <th>
-              <p class="table-heading">Payment Status</p>
-            </th>
-            <!-- <th>
-              <p class="table-heading">Status</p>
-            </th> -->
-            <th>
-              <p class="table-heading">Actions</p>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            *ngFor="let account of filteredAccounts"
-            class="border-b border-gray-100 hover:bg-gray-50"
-          >
-            <td class="py-3 px-4 font-mono text-gray-900">
-              <p>{{ account.test_number }}</p>
-            </td>
-            <td class="py-3 px-4 text-gray-900">
-              <p>{{ account.customer.name }}</p>
-            </td>
+              <th>
+                <p class="table-heading">Test In</p>
+              </th>
+              <th>
+                <p class="table-heading">Payment Status</p>
+              </th>
+              <!-- <th>
+                <p class="table-heading">Status</p>
+              </th> -->
+              <th>
+                <p class="table-heading">Actions</p>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let account of filteredAccounts"
+              class="border-b border-gray-100 hover:bg-gray-50"
+            >
+              <td class="py-3 px-4 font-mono text-gray-900">
+                <p>{{ account.test_number }}</p>
+              </td>
+              <td class="py-3 px-4 text-gray-900">
+                <p>{{ account.customer.name }}</p>
+              </td>
 
-            <td class="py-3 px-4 text-gray-600">
-              <p>{{ account.work_name }}</p>
-            </td>
-            <td class="py-3 px-4 text-gray-600">
-              <p>{{ account.created_at | date : "mediumDate" }}</p>
-            </td>
+              <td class="py-3 px-4 text-gray-600">
+                <p>{{ account.work_name }}</p>
+              </td>
+              <td class="py-3 px-4 text-gray-600">
+                <p>{{ account.created_at | date : "mediumDate" }}</p>
+              </td>
 
-            <td class="py-3 px-4">
-              <span
-                class="inline-flex px-2 py-1 text-xs font-medium rounded-full"
-                [ngClass]="{
-                  'bg-green-100 text-green-800':
-                    account.payment.status === 'paid',
-                  'bg-red-100 text-red-800':
-                    account.payment.status === 'pending'
-                }"
-                >{{ account.payment.status }}</span
-              >
-            </td>
-            <td class="py-3 px-4">
-              <p>
-                <button mat-icon-button [matMenuTriggerFor]="menu">
-                  <mat-icon>more_vert</mat-icon>
+              <td class="py-3 px-4">
+                <span
+                  class="inline-flex px-2 py-1 text-xs font-medium rounded-full"
+                  [ngClass]="{
+                    'bg-green-100 text-green-800':
+                      account.payment.status === 'paid',
+                    'bg-red-100 text-red-800':
+                      account.payment.status === 'pending'
+                  }"
+                  >{{ account.payment.status }}</span
+                >
+              </td>
+              <td class="py-3 px-4">
+                <p>
+                  <button mat-icon-button [matMenuTriggerFor]="menu">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #menu="matMenu">
+                    <button
+                      mat-menu-item
+                      (click)="openInvoiceModal(account)"
+                      class="text-[#1075bc] hover:underline text-sm"
+                    >
+                      Report
+                    </button>
+
+                    <button
+                      *ngIf="account.payment.status === 'pending'"
+                      mat-menu-item
+                      (click)="openReportModal(account)"
+                      class="text-green-600 hover:underline text-sm"
+                    >
+                      Payment
+                    </button>
+                  </mat-menu>
+                </p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Card View for below lg -->
+      <div class="lg:hidden space-y-4 px-4 pb-4">
+        <div
+          *ngFor="let account of filteredAccounts"
+          class="bg-gray-50 border border-gray-200 rounded-lg p-2"
+        >
+          <div class="flex justify-between items-start mb-2 relative">
+            <div class="flex-1">
+              <div class="mb-2">
+                <span class="font-semibold text-gray-900">Test ID:</span>
+                <span class="ml-2 font-mono text-gray-800">{{
+                  account.test_number
+                }}</span>
+              </div>
+              <div class="mb-2">
+                <span class="font-semibold text-gray-900">Client Name:</span>
+                <span class="ml-2 text-gray-900">{{
+                  account.customer.name
+                }}</span>
+              </div>
+              <div class="mb-2">
+                <span class="font-semibold text-gray-900">Work Name:</span>
+                <span class="ml-2 text-gray-600">{{ account.work_name }}</span>
+              </div>
+              <div class="mb-2">
+                <span class="font-semibold text-gray-900">Test In:</span>
+                <span class="ml-2 text-gray-600">{{
+                  account.created_at | date : "mediumDate"
+                }}</span>
+              </div>
+              <div class="mb-2">
+                <span class="font-semibold text-gray-900">Payment Status:</span>
+                <span
+                  class="ml-2 inline-flex px-2 py-1 text-xs font-medium rounded-full"
+                  [ngClass]="{
+                    'bg-green-100 text-green-800':
+                      account.payment.status === 'paid',
+                    'bg-red-100 text-red-800':
+                      account.payment.status === 'pending'
+                  }"
+                  >{{ account.payment.status }}</span
+                >
+              </div>
+            </div>
+            <div class="ml-4 absolute right-0">
+              <button mat-icon-button [matMenuTriggerFor]="menu">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #menu="matMenu">
+                <button
+                  mat-menu-item
+                  (click)="openInvoiceModal(account)"
+                  class="text-[#1075bc] hover:underline text-sm"
+                >
+                  Report
                 </button>
-                <mat-menu #menu="matMenu">
-                  <button
-                    mat-menu-item
-                    (click)="openInvoiceModal(account)"
-                    class="text-[#1075bc] hover:underline text-sm"
-                  >
-                    Report
-                  </button>
 
-                  <button
-                    *ngIf="account.payment.status === 'pending'"
-                    mat-menu-item
-                    (click)="openReportModal(account)"
-                    class="text-green-600 hover:underline text-sm"
-                  >
-                    Payment
-                  </button>
-                </mat-menu>
-              </p>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+                <button
+                  *ngIf="account.payment.status === 'pending'"
+                  mat-menu-item
+                  (click)="openReportModal(account)"
+                  class="text-green-600 hover:underline text-sm"
+                >
+                  Payment
+                </button>
+              </mat-menu>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <div
       class="d-md-flex justify-content-between bottom-0 end-0 py-2 align-items-center px-4"
@@ -1435,7 +1508,9 @@
                         hardness
                       </td>
                       <td style="border: 1px solid #000; padding: 5px">120</td>
-                      <td style="border: 1px solid #000; padding: 5px">ppm</td>
+                      <td style="border: 1px solid #000; padding: 5px">
+                        ppm
+                      </td>
                       <td style="border: 1px solid #000; padding: 5px">
                         moderate
                       </td>

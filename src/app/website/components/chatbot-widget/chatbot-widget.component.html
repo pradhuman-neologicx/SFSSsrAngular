@@ -1,0 +1,90 @@
+<!-- chatbot-widget.component.html -->
+<div class="fixed bottom-4 right-5 z-40">
+  <!-- Floating Button -->
+  <button
+    (click)="toggleOpen()"
+    class="w-14 h-14 px-4 rounded-full bg-gradient-to-br from-gray-800 to-gray-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center hover:scale-110"
+    aria-label="Open chat"
+  >
+    <i
+      [class]="isOpen ? 'fas fa-times text-xl' : 'fas fa-comments  text-xl'"
+    ></i>
+  </button>
+
+  <!-- Chat Modal -->
+  <div
+    *ngIf="isOpen"
+    class="chatbotUi fixed bottom-20 right-6 w-[87%] md:w-96 h-[500px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300"
+  >
+    <!-- Header -->
+    <div class="bg-black text-white p-4 flex items-center justify-between">
+      <div>
+        <h3 class="font-semibold text-lg">School for Schools</h3>
+        <p class="text-sm text-gray-100">Always here to help</p>
+      </div>
+    </div>
+
+    <!-- Messages Container -->
+    <div class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+      <div
+        *ngFor="let message of messages"
+        class="flex"
+        [ngClass]="{
+          'justify-end': message.sender === 'user',
+          'justify-start': message.sender === 'bot'
+        }"
+      >
+        <div
+          class="max-w-xs px-4 py-2 rounded-lg"
+          [ngClass]="{
+            'bg-black text-white rounded-br-none': message.sender === 'user',
+            'bg-white text-gray-900 border border-gray-200 rounded-bl-none':
+              message.sender === 'bot'
+          }"
+        >
+          <p class="text-sm">{{ message.text }}</p>
+          <span class="text-xs opacity-70 mt-1 block">
+            {{ getTime(message.timestamp) }}
+          </span>
+        </div>
+      </div>
+      <div *ngIf="isLoading" class="flex justify-start">
+        <div
+          class="bg-white text-gray-900 border border-gray-200 px-4 py-2 rounded-lg rounded-bl-none"
+        >
+          <div class="flex gap-1">
+            <div class="w-2 h-2 bg-gray-700 rounded-full animate-bounce"></div>
+            <div
+              class="w-2 h-2 bg-gray-700 rounded-full animate-bounce [animation-delay:0.1s]"
+            ></div>
+            <div
+              class="w-2 h-2 bg-gray-700 rounded-full animate-bounce [animation-delay:0.2s]"
+            ></div>
+          </div>
+        </div>
+      </div>
+      <div #messagesEnd></div>
+    </div>
+
+    <!-- Input Area -->
+    <div class="border-t border-gray-200 p-4 bg-white">
+      <div class="flex gap-2">
+        <input
+          type="text"
+          [(ngModel)]="inputValue"
+          (keypress)="onKeyPress($event)"
+          placeholder="Type your message..."
+          class="flex-1 rounded-full border border-gray-300 focus:border-gray-500 focus:ring-gray-500"
+          [disabled]="isLoading"
+        />
+        <button
+          (click)="sendMessage()"
+          [disabled]="isLoading || !inputValue.trim()"
+          class="rounded-full bg-black text-white w-10 h-10 p-0 flex items-center justify-center"
+        >
+          <i class="fas fa-paper-plane w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

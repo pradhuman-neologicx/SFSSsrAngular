@@ -1,0 +1,120 @@
+<app-navbar></app-navbar>
+<!-- Hero Section -->
+<section class="relative h-[400px] flex items-center justify-center overflow-hidden">
+  <div
+    class="absolute inset-0 z-0 bg-cover bg-center"
+    style="background-image: url('assets/643.jpg')"
+  >
+    <div class="absolute inset-0 bg-black/60"></div>
+  </div>
+
+  <div class="container relative z-10 text-center text-white">
+    <h1 class="text-4xl md:text-5xl font-bold mb-6 uppercase tracking-wider">
+      Case Studies & Success Stories
+    </h1>
+    <p class="text-xl text-gray-200 max-w-3xl mx-auto">
+      Discover how schools across India have transformed their operations and enhanced student outcomes
+    </p>
+  </div>
+</section>
+
+<!-- Case Studies -->
+<section class="py-12 bg-background ">
+  <div class="max-w-7xl mx-auto px-4 text-center mb-12">
+    <h2 class="text-3xl md:text-4xl font-bold mb-4">Case Studies & Testimonials</h2>
+    <p class="text-lg text-gray-500 max-w-2xl mx-auto">
+      Real success stories from schools transforming education with our solutions
+    </p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="container grid sm:grid-cols-2 lg:grid-cols-4 gap-2 mb-8 text-center">
+    <button
+      class="py-2 border rounded transition"
+      [class.bg-gray-900]="selectedTab === 'all'"
+      [class.text-white]="selectedTab === 'all'"
+      (click)="setTab('all')"
+    >
+      All Solutions
+    </button>
+    <button
+      class="py-2 border rounded transition"
+      [class.bg-gray-900]="selectedTab === 'erp'"
+      [class.text-white]="selectedTab === 'erp'"
+      (click)="setTab('erp')"
+    >
+      ERP Implementation
+    </button>
+    <button
+      class="py-2 border rounded transition"
+      [class.bg-gray-900]="selectedTab === 'tinkertek'"
+      [class.text-white]="selectedTab === 'tinkertek'"
+      (click)="setTab('tinkertek')"
+    >
+      TinkerTek Labs
+    </button>
+    <button
+      class="py-2 border rounded transition"
+      [class.bg-gray-900]="selectedTab === 'full'"
+      [class.text-white]="selectedTab === 'full'"
+      (click)="setTab('full')"
+    >
+      Full Implementation
+    </button>
+  </div>
+
+  <!-- Cards Grid -->
+  <div class="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div
+      *ngFor="let study of filteredStudies"
+      class="bg-white rounded-lg overflow-hidden shadow hover:-translate-y-1 transition"
+    >
+      <img [src]="study.image" [alt]="study.title" class="w-full h-48 object-cover" />
+      <div class="p-6 text-left">
+        <h3 class="text-xl font-bold mb-3">{{ study.title }}</h3>
+        <p class="text-gray-600 mb-4">{{ study.description }}</p>
+        <div class="flex items-start gap-2 mb-3">
+          <span class="text-primary text-2xl leading-none">❝</span>
+          <p class="italic">"{{ study.quote }}"</p>
+        </div>
+        <p class="text-sm text-primary">{{ study.author }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Download Section -->
+<section class="py-16 bg-primary/5">
+  <div class="max-w-7xl mx-auto px-4 text-center mb-12">
+    <h2 class="text-3xl font-bold mb-4">Download Resources</h2>
+    <p class="text-lg text-gray-500">Get detailed PDFs and reports of our case studies</p>
+  </div>
+
+ <div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+  <div
+    *ngFor="let resource of resources; let i = index"
+    class="p-6 bg-white rounded-lg shadow flex justify-between items-center hover:shadow-[8px_8px_0_0_#000] transition-all hover:-translate-y-1 animate-fade-in-up"
+    [style.animationDelay]="i * 100 + 'ms'"
+  >
+    <div>
+      <h3 class="font-semibold">{{ resource.title }}</h3>
+      <p class="text-sm text-gray-500">{{ resource.size }}</p>
+    </div>
+    <a [href]="resource.file" download class="text-primary text-xl">
+      <i class="fa-solid fa-download hover:text-black"></i>
+    </a>
+  </div>
+</div>
+
+</section>
+
+<!-- CTA Section -->
+  <app-cta
+    [title]="'Ready to Transform Your School?'"
+    [subtitle]="'Discover how our tools can revolutionize your workflow.'"
+    [primaryButton]="{ text: 'Request a Demo', url: '/contact' }"
+    [secondaryButton]="{ text: ' Join / Partner With Us ', url: '/contact' }"
+    [showPrimaryIcon]="true"
+    [showSecondaryIcon]="true"
+  ></app-cta>
+<app-footer></app-footer>

@@ -1,0 +1,60 @@
+@keyframes scroll-left {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+@keyframes scroll-right {
+    from {
+        transform: translateX(-50%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes scroll-left-fast {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+:host {
+    display: block;
+}
+
+.marquee-track {
+    white-space: nowrap;
+    flex-wrap: nowrap;
+    width: max-content;
+    /* Track width is the combined width of duplicated items */
+}
+
+.marquee-items {
+    flex: 0 0 auto;
+}
+
+.marquee-items>div {
+    flex: 0 0 auto;
+}
+
+.scroll-left {
+    animation: scroll-left 20s linear infinite; // Faster for testing
+}
+
+.scroll-right {
+    animation: scroll-right 30s linear infinite; // Faster for testing
+}
+
+.scroll-left-fast {
+    animation: scroll-left-fast 10s linear infinite; // Fast variant
+}

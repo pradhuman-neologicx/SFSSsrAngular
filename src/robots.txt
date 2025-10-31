@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Block admin/debug paths
+Disallow: /admin/
+Disallow: /debug/
+
+# Allow sitemap
+Sitemap: https://myapp.com/sitemap.xml
+
+# Google-specific (optional for enhanced crawling)
+User-agent: Googlebot
+Allow: /

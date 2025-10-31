@@ -52,14 +52,14 @@ export class CreateTestComponent implements OnInit {
   errorMessage?: string;
   testId: any = null;
   today: any;
-  dropdownOpen: boolean[] = [];
+  dropdownOpen: boolean[] = []; // Only for material multi-select
   hasDuplicateMaterials: boolean = false;
 
   materials: any;
   existingCustomers: any;
   testDescriptions: any[] = [];
   fieldTest: any;
-  filteredTestDescriptions: any[][] = [];
+  filteredTestDescriptions: any[][] = []; // Only for material
 
   constructor(
     private formBuilder: FormBuilder,
@@ -87,7 +87,7 @@ export class CreateTestComponent implements OnInit {
           '',
           [Validators.required, this.minDateValidator()],
         ],
-        materialTests: this.formBuilder.array([]), // Remove duplicateMaterialValidator here
+        materialTests: this.formBuilder.array([]),
         fieldTests: this.formBuilder.array([]),
       },
       { validators: this.atLeastOneTestValidator() }
@@ -117,6 +117,7 @@ export class CreateTestComponent implements OnInit {
     this.GetCustomersFun();
     this.onCustomerTypeChange();
   }
+
   materialTestValidator() {
     return (control: AbstractControl): ValidationErrors | null => {
       const material = control.get('material')?.value;
@@ -129,33 +130,11 @@ export class CreateTestComponent implements OnInit {
       return null;
     };
   }
-  // atLeastOneTestValidator() {
-  //   return (formGroup: FormGroup): ValidationErrors | null => {
-  //     const materialTests = formGroup.get('materialTests') as FormArray;
-  //     const fieldTests = formGroup.get('fieldTests') as FormArray;
 
-  //     const hasValidMaterialTest = materialTests.controls.some(
-  //       (control) =>
-  //         control.get('material')?.valid &&
-  //         control.get('test_description')?.valid &&
-  //         control.get('sample_id')?.valid
-  //     );
-
-  //     const hasValidFieldTest = fieldTests.controls.some(
-  //       (control) =>
-  //         control.get('test_description')?.valid &&
-  //         control.get('sample_id')?.valid
-  //     );
-
-  //     return hasValidMaterialTest || hasValidFieldTest
-  //       ? null
-  //       : { noValidTests: true };
-  //   };
-  // }
   atLeastOneTestValidator() {
     return (formGroup: FormGroup): ValidationErrors | null => {
-      const materialTests = formGroup.get('materialTests') as FormArray;
-      const fieldTests = formGroup.get('fieldTests') as FormArray;
+      const materialTests = formGroup?.get('materialTests') as FormArray;
+      const fieldTests = formGroup?.get('fieldTests') as FormArray;
 
       // Check if there are valid material tests
       const hasValidMaterialTest = materialTests.controls.some(
@@ -199,10 +178,7 @@ export class CreateTestComponent implements OnInit {
         type === 'material' ? '' : null,
         type === 'material' ? Validators.required : [],
       ],
-      test_description: [
-        type === 'material' ? [] : '',
-        Validators.required,
-      ],
+      test_description: [type === 'material' ? [] : '', Validators.required],
       sample_id: ['', Validators.required],
       remark: [''],
     });
@@ -215,10 +191,7 @@ export class CreateTestComponent implements OnInit {
       this.onTestMaterialChange(this.materialTests.length - 1);
     } else {
       this.fieldTests.push(testGroup);
-      this.filteredTestDescriptions.push(
-        this.testDescriptions.filter((desc) => desc.material === null)
-      );
-      this.dropdownOpen.push(false);
+      // No filteredTestDescriptions or dropdownOpen needed for fields (uses direct <select>)
     }
     this.checkForDuplicateMaterials();
   }
@@ -228,8 +201,10 @@ export class CreateTestComponent implements OnInit {
       type === 'material' ? this.materialTests : this.fieldTests;
     if (formArray.length > 1) {
       formArray.removeAt(index);
-      this.filteredTestDescriptions.splice(index, 1);
-      this.dropdownOpen.splice(index, 1);
+      if (type === 'material') {
+        this.filteredTestDescriptions.splice(index, 1);
+        this.dropdownOpen.splice(index, 1);
+      }
     }
     this.checkForDuplicateMaterials();
   }
@@ -286,32 +261,27 @@ export class CreateTestComponent implements OnInit {
   }
 
   toggleDropdown(index: number): void {
-    this.dropdownOpen = this.dropdownOpen.map((_, i) =>
-      i === index ? !this.dropdownOpen[i] : false
-    );
+    // Only for material tests
+    if (index < this.materialTests.length) {
+      this.dropdownOpen = this.dropdownOpen.map((_, i) =>
+        i === index ? !this.dropdownOpen[i] : false
+      );
+    }
   }
 
   isTestSelected(index: number, testValue: string): boolean {
-    const formArray =
-      index < this.materialTests.length ? this.materialTests : this.fieldTests;
-    const formGroupIndex =
-      index < this.materialTests.length
-        ? index
-        : index - this.materialTests.length;
+    // Only for material tests (multi-select)
+    if (index >= this.materialTests.length) return false;
     const selectedTests =
-      formArray.controls[formGroupIndex].get('test_description')?.value || [];
+      this.materialTests.controls[index].get('test_description')?.value || [];
     return selectedTests.includes(testValue);
   }
 
   toggleTestSelection(index: number, testValue: string): void {
-    const formArray =
-      index < this.materialTests.length ? this.materialTests : this.fieldTests;
-    const formGroupIndex =
-      index < this.materialTests.length
-        ? index
-        : index - this.materialTests.length;
+    // Only for material tests (multi-select)
+    if (index >= this.materialTests.length) return;
     const testDescriptionControl =
-      formArray.controls[formGroupIndex].get('test_description');
+      this.materialTests.controls[index].get('test_description');
     let selectedTests = testDescriptionControl?.value || [];
 
     if (selectedTests.includes(testValue)) {
@@ -328,18 +298,14 @@ export class CreateTestComponent implements OnInit {
   }
 
   getSelectedTestsLabel(index: number): string {
-    const formArray =
-      index < this.materialTests.length ? this.materialTests : this.fieldTests;
-    const formGroupIndex =
-      index < this.materialTests.length
-        ? index
-        : index - this.materialTests.length;
+    // Only for material tests (multi-select)
+    if (index >= this.materialTests.length) return '';
     const selectedTests =
-      formArray.controls[formGroupIndex].get('test_description')?.value || [];
+      this.materialTests.controls[index].get('test_description')?.value || [];
     return selectedTests
       .map(
         (value: string) =>
-          this.filteredTestDescriptions[index].find(
+          this.filteredTestDescriptions[index]?.find(
             (desc: any) => desc.value === value
           )?.test_name
       )

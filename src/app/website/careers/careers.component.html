@@ -1,0 +1,87 @@
+<app-navbar></app-navbar>
+<!-- Hero Section -->
+<section class="relative h-[400px] flex items-center justify-center overflow-hidden">
+  <div
+    class="absolute inset-0 z-0 bg-cover bg-center"
+    style="background-image: url('assets/15861.jpg')"
+  >
+    <div class="absolute inset-0 bg-black/60"></div>
+  </div>
+
+  <div class="container relative z-10 text-center text-white">
+    <h1 class="text-4xl md:text-5xl font-bold mb-6 uppercase tracking-wider">
+      Join Our Team
+    </h1>
+    <p class="text-xl text-gray-200 max-w-3xl mx-auto">
+      Help us transform education and make a difference in the lives of students and educators
+    </p>
+  </div>
+</section>
+
+<!-- Job Categories -->
+<section class="py-16 md:py-24 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+      <div
+        *ngFor="let category of jobCategories; let i = index"
+        class="p-8 bg-white border border-gray-200 rounded-lg hover:shadow-[8px_8px_0_0_#000] transition-all hover:-translate-y-1 animate-fade-in-up"
+        [style.animationDelay]="i * 100 + 'ms'"
+      >
+        <div class="text-4xl mb-4">{{ category.icon }}</div>
+        <h3 class="text-2xl font-bold text-black mb-3">
+          {{ category.title }}
+        </h3>
+        <p class="text-gray-600 mb-6">{{ category.description }}</p>
+        <ul class="space-y-2">
+          <li
+            *ngFor="let role of category.roles"
+            class="flex items-center gap-2 text-black"
+          >
+            <div class="w-2 h-2 bg-black rounded-full"></div>
+            {{ role }}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Open Positions -->
+    <div>
+      <h2 class="text-3xl font-bold text-black mb-8">Open Positions</h2>
+      <div class="space-y-4">
+        <div
+          *ngFor="let job of openPositions; let i = index"
+          class="p-6 bg-white rounded-lg border border-gray-200 hover:shadow-lg flex justify-between items-center transition animate-fade-in-up"
+          [style.animationDelay]="i * 50 + 'ms'"
+        >
+          <div>
+            <h3 class="text-lg font-bold text-black">{{ job.title }}</h3>
+            <p class="text-gray-600">{{ job.location }} • {{ job.type }}</p>
+          </div>
+          <button
+            class="buttoncareer border border-black text-black px-4 py-2 rounded hover:bg-black hover:text-white transition"
+          >
+            Apply
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-16 md:py-24 bg-black text-white text-center">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 animate-fade-in-up">
+    <h2 class="text-3xl md:text-4xl font-bold mb-6">
+      Don't see a position that fits?
+    </h2>
+    <p class="text-lg opacity-90 mb-8">
+      Send us your resume and let us know how you'd like to contribute to transforming education.
+    </p>
+    <button
+      class="bg-white text-black px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition"
+    >
+      Send Your Resume
+    </button>
+  </div>
+</section>
+<app-footer></app-footer>

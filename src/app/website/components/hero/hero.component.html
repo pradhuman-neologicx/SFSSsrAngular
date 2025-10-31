@@ -1,0 +1,172 @@
+<section class="relative min-h-screen bg-white text-slate-900 overflow-hidden">
+  <!-- Subtle Background Pattern -->
+  <div class="absolute inset-0 opacity-40">
+    <div
+      class="absolute inset-0"
+      [style.background-image]="
+        'radial-gradient(circle at 25px 25px, rgba(59, 130, 246, 0.1) 2px, transparent 0), radial-gradient(circle at 75px 75px, rgba(147, 51, 234, 0.1) 2px, transparent 0)'
+      "
+      [style.background-size]="'100px 100px'"
+    ></div>
+  </div>
+
+  <!-- Animated Background Elements -->
+  <div class="absolute inset-0 overflow-hidden">
+    <div
+      class="absolute top-1/4 left-1/4 w-72 h-72 bg-gradient-to-r from-gray-100/60 to-purple-100/60 rounded-full blur-3xl animate-pulse"
+    ></div>
+    <div
+      class="absolute top-3/4 right-1/4 w-96 h-96 bg-gradient-to-r from-cyan-100/40 to-gray-100/40 rounded-full blur-3xl animate-pulse"
+      [style.animation-delay]="'1s'"
+    ></div>
+    <div
+      class="absolute top-1/2 right-1/3 w-64 h-64 bg-gradient-to-r from-purple-100/50 to-gray-100/50 rounded-full blur-3xl animate-pulse"
+      [style.animation-delay]="'2s'"
+    ></div>
+
+    <div
+      class="absolute w-96 h-96 bg-gradient-to-r from-cyan-100/20 to-purple-100/20 rounded-full blur-3xl pointer-events-none transition-all duration-1000 ease-out"
+      [style.left.px]="mousePosition.x - 192"
+      [style.top.px]="mousePosition.y - 192"
+    ></div>
+  </div>
+
+  <!-- Content -->
+  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      <!-- Left Side - Content with Fade Transitions -->
+      <div class="space-y-8 relative">
+        <div
+          *ngFor="
+            let slide of slides;
+            let index = index;
+            trackBy: trackBySlideId
+          "
+          [class.opacity-100]="index === currentSlide"
+          [class.translate-y-0]="index === currentSlide"
+          [class.opacity-0]="index !== currentSlide"
+          [class.translate-y-4]="index !== currentSlide"
+          [class.transition-all]="true"
+          [class.duration-700]="true"
+          [class.ease-out]="true"
+          [class.space-y-6]="true"
+          [class.absolute]="index !== currentSlide"
+          [class.inset-0]="index !== currentSlide"
+          [class.pointer-events-none]="index !== currentSlide"
+          [class.hidden]="index !== currentSlide"
+        >
+          <div class="relative inline-block">
+            <span
+              class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-gradient-to-r from-gray-50 to-purple-50 border border-gray-200 text-slate-700 shadow-sm"
+            >
+              <i class="fas fa-graduation-cap w-4 h-4 mr-2 text-black"></i>
+              {{ slide.badge }}
+            </span>
+            <div
+              class="absolute -inset-1 bg-gradient-to-r from-gray-200/30 to-purple-200/30 rounded-full blur opacity-60 animate-pulse"
+            ></div>
+          </div>
+
+          <h1
+            class="text-4xl md:text-6xl lg:text-7xl font-black leading-[0.9] tracking-tight"
+          >
+            <span
+              class="block bg-gradient-to-r from-slate-900 via-gray-700 to-slate-900 bg-clip-text text-transparent"
+            >
+              {{ slide.title[0] }}
+            </span>
+            <span
+              class="block bg-gradient-to-r from-gray-600 via-black to-gray-600 bg-clip-text text-transparent"
+            >
+              {{ slide.title[1] }}
+            </span>
+            <span
+              class="block bg-gradient-to-r from-slate-900 via-gray-700 to-slate-900 bg-clip-text text-transparent"
+            >
+              {{ slide.title[2] }}
+            </span>
+          </h1>
+
+          <p
+            class="text-xl md:text-2xl text-slate-600 max-w-xl font-light leading-relaxed"
+          >
+            {{ slide.description }}
+          </p>
+
+          <div class="flex flex-col sm:flex-row gap-4">
+            <button
+              (click)="onPrimaryCTA()"
+              class="inline-flex items-center justify-center font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 px-8 py-4 text-lg bg-gradient-to-r from-gray-600 to-gray-800 text-white hover:from-gray-700 hover:to-gray-700 shadow-lg rounded-2xl transform hover:scale-105 hover:shadow-xl focus:ring-gray-500 group"
+            >
+              {{ slide.primaryCTA }}
+              <i
+                class="fas fa-arrow-right ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform"
+              ></i>
+            </button>
+            <button
+              (click)="onSecondaryCTA()"
+              class="inline-flex items-center justify-center font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 px-8 py-4 text-lg border-2 border-slate-300 bg-transparent text-slate-700 hover:bg-slate-900 hover:border-slate-900 rounded-2xl focus:ring-slate-500 group"
+            >
+              <i class="fas fa-play mr-2 w-5 h-5"></i>
+              {{ slide.secondaryCTA }}
+            </button>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-6 text-sm text-slate-600">
+            <div
+              *ngFor="let stat of slide.stats; let statIndex = index"
+              class="flex items-center"
+            >
+              <i class="fas fa-check-circle h-5 w-5 text-green-500 mr-2"></i>
+              <span class="font-medium">{{ stat }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Side - Image with Enhanced Styling -->
+      <div class="relative flex justify-center lg:justify-end">
+        <div class="relative w-full aspect-[4/3] rounded-3xl overflow-hidden">
+          <img
+            *ngFor="
+              let slide of slides;
+              let index = index;
+              trackBy: trackBySlideId
+            "
+            [src]="slide.image"
+            [alt]="slide.title.join(' ') + ' - Hero Image'"
+            class="absolute inset-0 w-full h-full object-cover transition-all duration-1000"
+            [class.opacity-100]="index === currentSlide"
+            [class.scale-100]="index === currentSlide"
+            [class.opacity-0]="index !== currentSlide"
+            [class.scale-100]="index !== currentSlide"
+          />
+        </div>
+
+        <div
+          class="absolute -top-4 -right-4 w-8 h-8 bg-gradient-to-br from-gray-500 to-gray-700 rounded-full opacity-80 animate-bounce"
+          [style.animation-delay.s]="0.5"
+        ></div>
+      </div>
+    </div>
+    <!-- Dots Centered at Bottom -->
+    <div
+      class="absolute bottom-0 left-1/2 transform -translate-x-1/2 flex space-x-3"
+    >
+      <button
+        *ngFor="let slide of slides; let index = index; trackBy: trackBySlideId"
+        (click)="goToSlide(index)"
+        class="h-3 rounded-full transition-all duration-500 ease-out focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+        [class.bg-gradient-to-r]="index === currentSlide"
+        [class.from-gray-600]="index === currentSlide"
+        [class.to-gray-800]="index === currentSlide"
+        [class.w-10]="index === currentSlide"
+        [class.shadow-lg]="index === currentSlide"
+        [class.bg-slate-300]="index !== currentSlide"
+        [class.hover:bg-slate-400]="index !== currentSlide"
+        [class.w-3]="index !== currentSlide"
+        [attr.aria-label]="'Go to slide ' + (index + 1)"
+      ></button>
+    </div>
+  </div>
+</section>

@@ -1,116 +1,175 @@
-<nav
-  class="bg-gradient-to-r from-indigo-900 to-blue-600 shadow-lg sticky top-0 z-50"
+<header
+  class="sticky top-0  w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
 >
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex items-center justify-between h-16">
-      <!-- Logo -->
-      <div class="flex-shrink-0">
-        <a routerLink="/" class="flex items-center">
-          <img class="w-16" src="/assets/logo.png" alt="Logo" />
-        </a>
-      </div>
-
-      <!-- Desktop Menu -->
-      <div class="hidden md:block">
-        <div class="ml-10 flex items-baseline space-x-4">
-          <a
-            routerLink="/"
-            routerLinkActive="bg-white text-indigo-900"
-            class="text-white hover:bg-indigo-800 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-            [routerLinkActiveOptions]="{ exact: true }"
-            >Home</a
-          >
-          <a
-            routerLink="/about"
-            routerLinkActive="bg-white text-indigo-900"
-            class="text-white hover:bg-indigo-800 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-            >About</a
-          >
-          <a
-            routerLink="/services"
-            routerLinkActive="bg-white text-indigo-900"
-            class="text-white hover:bg-indigo-800 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-            >Services</a
-          >
-          <a
-            routerLink="/contact"
-            routerLinkActive="bg-white text-indigo-900"
-            class="text-white hover:bg-indigo-800 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-            >Contact</a
-          >
-        </div>
-      </div>
-
-      <!-- Mobile Menu Button -->
-      <div class="md:hidden">
-        <button
-          (click)="toggleMobileMenu()"
-          class="text-white hover:bg-indigo-800 p-2 rounded-md focus:outline-none"
-        >
-          <svg
-            class="h-6 w-6"
-            [ngClass]="{ hidden: isMobileMenuOpen, block: !isMobileMenuOpen }"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M4 6h16M4 12h16M4 18h16"
-            ></path>
-          </svg>
-          <svg
-            class="h-6 w-6"
-            [ngClass]="{ block: isMobileMenuOpen, hidden: !isMobileMenuOpen }"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 18L18 6M6 6l12 12"
-            ></path>
-          </svg>
-        </button>
-      </div>
+  <div class="container flex h-16 items-center justify-between mx-auto">
+    <!-- Logo -->
+    <div
+      class="flex items-center gap-2 cursor-pointer"
+      (click)="navigateTo('/home')"
+    >
+      <i class="fa-solid fa-graduation-cap"></i>
+      <span class="text-xl font-bold">School for Schools</span>
     </div>
 
-    <!-- Mobile Menu -->
-    <div
-      [ngClass]="{ block: isMobileMenuOpen, hidden: !isMobileMenuOpen }"
-      class="md:hidden"
-    >
-      <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-        <a
-          routerLink="/"
-          routerLinkActive="bg-white text-indigo-900"
-          class="text-white hover:bg-indigo-800 block px-3 py-2 rounded-md text-base font-medium transition-colors"
-          [routerLinkActiveOptions]="{ exact: true }"
-          >Home</a
+    <!-- Desktop Nav -->
+    <nav class="hidden md:flex items-center gap-6">
+      <a
+        routerLink="/home"
+        [ngClass]="{
+          'text-primary': isActive('/home'),
+          'text-muted-foreground': !isActive('/home')
+        }"
+        class="text-sm font-medium transition-colors hover:text-primary"
+        >Home</a
+      >
+      <a
+        routerLink="/about"
+        [ngClass]="{
+          'text-primary': isActive('/about'),
+          'text-muted-foreground': !isActive('/about')
+        }"
+        class="text-sm font-medium transition-colors hover:text-primary"
+        >About</a
+      >
+      <a
+        routerLink="/erp-app"
+        [ngClass]="{
+          'text-primary': isActive('/erp-app'),
+          'text-muted-foreground': !isActive('/erp-app')
+        }"
+        class="text-sm font-medium transition-colors hover:text-primary"
+        >ERP App</a
+      >
+      <a
+        routerLink="/tinkertek-labs"
+        [ngClass]="{
+          'text-primary': isActive('/tinkertek-labs'),
+          'text-muted-foreground': !isActive('/tinkertek-labs')
+        }"
+        class="text-sm font-medium transition-colors hover:text-primary"
+        >TinkerTek Labs</a
+      >
+      <a
+        routerLink="/resources"
+        [ngClass]="{
+          'text-primary': isActive('/resources'),
+          'text-muted-foreground': !isActive('/resources')
+        }"
+        class="text-sm font-medium transition-colors hover:text-primary"
+        >Resources</a
+      >
+      <a
+        routerLink="/contact"
+        [ngClass]="{
+          'text-primary': isActive('/contact'),
+          'text-muted-foreground': !isActive('/contact')
+        }"
+        class="text-sm font-medium transition-colors hover:text-primary"
+        >Contact</a
+      >
+    </nav>
+
+    <!-- Auth Buttons -->
+    <div class="flex items-center gap-4">
+      <ng-container *ngIf="isAuthenticated; else loginButton">
+        <div class="hidden md:flex items-center gap-4">
+          <!-- <div class="flex items-center gap-2 text-sm text-muted-foreground">
+            <i class="fa-solid fa-user text-primary"></i>
+            <span>Welcome, {{ user?.name }}</span>
+          </div> -->
+          <button
+            class="border border-border text-sm rounded-md px-3 py-1 hover:bg-muted transition"
+            (click)="logout()"
+          >
+            Logout
+          </button>
+        </div>
+      </ng-container>
+
+      <ng-template #loginButton>
+        <button
+          routerLink="/login"
+          class="hidden md:block bg-gray-900 text-white px-4 py-2 rounded-md text-sm hover:bg-primary/90 transition"
         >
-        <a
-          routerLink="/about"
-          routerLinkActive="bg-white text-indigo-900"
-          class="text-white hover:bg-indigo-800 block px-3 py-2 rounded-md text-base font-medium transition-colors"
-          >About</a
+          Request a Demo →
+        </button>
+      </ng-template>
+
+      <!-- Mobile Menu Toggle -->
+      <button
+        class="md:hidden p-2 rounded-md hover:bg-muted transition"
+        (click)="menuOpen = !menuOpen"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="2"
+          stroke="currentColor"
+          class="h-5 w-5"
         >
-        <a
-          routerLink="/services"
-          routerLinkActive="bg-white text-indigo-900"
-          class="text-white hover:bg-indigo-800 block px-3 py-2 rounded-md text-base font-medium transition-colors"
-          >Services</a
-        >
-        <a
-          routerLink="/contact"
-          routerLinkActive="bg-white text-indigo-900"
-          class="text-white hover:bg-indigo-800 block px-3 py-2 rounded-md text-base font-medium transition-colors"
-          >Contact</a
-        >
-      </div>
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M4 6h16M4 12h16M4 18h16"
+          />
+        </svg>
+      </button>
     </div>
   </div>
-</nav>
+
+  <!-- Mobile Menu -->
+  <div
+    *ngIf="menuOpen"
+    class="md:hidden bg-background border-t px-4 py-4 flex flex-col gap-3"
+  >
+    <a
+      routerLink="/home"
+      (click)="menuOpen = false"
+      class="text-sm hover:text-primary"
+      >Home</a
+    >
+    <a
+      routerLink="/about"
+      (click)="menuOpen = false"
+      class="text-sm hover:text-primary"
+      >About</a
+    >
+    <a
+      routerLink="/erp-app"
+      (click)="menuOpen = false"
+      class="text-sm hover:text-primary"
+      >ERP App</a
+    >
+    <a
+      routerLink="/tinkertek-labs"
+      (click)="menuOpen = false"
+      class="text-sm hover:text-primary"
+      >TinkerTek Labs</a
+    >
+    <a
+      routerLink="/contact"
+      (click)="menuOpen = false"
+      class="text-sm hover:text-primary"
+      >Contact</a
+    >
+
+    <ng-container *ngIf="isAuthenticated; else mobileLogin">
+      <button
+        class="border border-border text-sm rounded-md px-3 py-2 hover:bg-muted transition mt-2"
+        (click)="logout()"
+      >
+        Logout
+      </button>
+    </ng-container>
+
+    <ng-template #mobileLogin>
+      <button
+        routerLink="/login"
+        class="bg-black text-white px-4 py-2 rounded-md text-sm hover:bg-primary/90 transition mt-2"
+      >
+        Request a Demo →
+      </button>
+    </ng-template>
+  </div>
+</header>

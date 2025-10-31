@@ -1,84 +1,291 @@
-<div
-  class="website-home-container min-h-screen grid grid-rows-[auto_1fr_auto] bg-gradient-to-br from-indigo-50 to-white dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-gray-100 transition-colors duration-300 relative"
->
-  <app-navbar class="sticky top-0 z-50"></app-navbar>
-  <main
-    class="website-main flex flex-col items-center justify-center px-4 py-8 md:py-12"
+<!-- home.component.html -->
+<app-navbar></app-navbar>
+<div class="flex flex-col">
+  <!-- <section
+    class="relative h-[600px] flex items-center justify-center overflow-hidden"
   >
-    <section
-      class="hero grid grid-cols-1 lg:grid-cols-2 gap-8 items-center max-w-7xl mx-auto mb-12 md:mb-16"
+    <div
+      class="absolute inset-0 z-0"
+      [ngStyle]="{
+        'background-image': 'url(assets/2149507650.jpg)',
+        'background-size': 'cover',
+        'background-position': 'center'
+      }"
     >
-      <div class="hero-content text-center lg:text-left order-2 lg:order-1">
-        <h1
-          class="text-3xl md:text-5xl font-extrabold leading-tight mb-4 tracking-tight"
-        >
-          <span class="highlight text-indigo-500">Welcome to</span><br />
-          <span class="brand text-indigo-900 dark:text-indigo-300"
-            >Lab Testing Portal</span
-          >
-        </h1>
-        <p
-          class="subtitle text-gray-600 dark:text-gray-300 text-base md:text-lg mb-6 max-w-md mx-auto lg:mx-0"
-        >
-          Your innovative platform for efficient, secure, and user-friendly
-          laboratory management.
-        </p>
+      <div class="absolute inset-0 bg-black/50"></div>
+    </div>
+
+    <div class="container relative z-10 text-center text-white">
+      <h1 class="text-4xl md:text-6xl mb-6">Transforming Education Together</h1>
+      <p class="text-xl md:text-2xl mb-8 max-w-2xl mx-auto">
+        Empowering schools with cutting-edge tools and resources to create
+        exceptional learning experiences
+      </p>
+      <div class="flex flex-col md:flex-row gap-4 justify-center mt-4">
         <a
-          routerLink="/sign_in"
-          class="btn btn-custom-primary bg-indigo-600 text-white font-bold text-base md:text-lg px-3 py-2 rounded-full hover:bg-indigo-700 shadow-md hover:shadow-xl transition-all duration-300"
-          >Get Started</a
+          routerLink="/tinkertek-labs"
+          class="btn btn-lg btn-secondary bg-black text-white hover:bg-gray-800 border-gray-900 text-lg"
         >
+          Explore TinkerTek Labs →
+        </a>
+        <a
+          routerLink="/contact"
+          class="btn btn-lg btn-outline bg-white/10 hover:bg-white/20 text-white border-white text-lg"
+        >
+          Join / Partner With Us →
+        </a>
       </div>
-      <div class="hero-image order-1 lg:order-2">
-        <img
-          src="https://images.pexels.com/photos/3825581/pexels-photo-3825581.jpeg"
-          alt="Lab Research Illustration"
-          loading="lazy"
-          class="max-w-full h-auto rounded-2xl border-4 border-white shadow-xl"
-        />
+    </div>
+  </section> -->
+  
+  <app-hero></app-hero>
+  <app-logo-marquee></app-logo-marquee>
+  <!-- Why SFS Section -->
+  <section class="py-16 md:py-24 bg-background whySection">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12 animate-fade-in-up">
+        <h2 class="text-3xl md:text-4xl font-bold text-black mb-3">
+          Why School for Schools?
+        </h2>
+        <p class="text-lg text-foreground/90 max-w-2xl mx-auto">
+          We combine expertise in education with cutting-edge technology to
+          deliver solutions that truly make a difference.
+        </p>
       </div>
-    </section>
-    <section
-      class="features grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto mb-12 md:mb-16"
-    >
-      <div
-        *ngFor="let feature of features"
-        class="feature bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 text-center transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
-      >
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div
-          class="feature-icon bg-gradient-to-r from-indigo-900 to-blue-600 text-white text-2xl w-12 h-12 flex items-center justify-center rounded-full mx-auto mb-4 shadow-md"
+          *ngFor="
+            let item of whySfsItems;
+            let index = index;
+            trackBy: trackByFn
+          "
+          class="card p-6 hover:shadow-lg transition-all hover:border-primary animate-fade-in-up"
+          [style.animation-delay.ms]="index * 100"
         >
-          <i [class]="feature.icon"></i>
+          <img [src]="item.icon" [alt]="item.title" class="w-12 h-12 mb-4" />
+
+          <!-- Replace with actual icon component, e.g., <app-icon [name]="item.icon"></app-icon> -->
+          <h3 class="text-lg font-semibold text-foreground mb-2">
+            {{ item.title }}
+          </h3>
+          <p class="text-foreground/80 text-justify">{{ item.description }}</p>
         </div>
-        <p
-          class="text-lg md:text-xl font-bold text-indigo-900 dark:text-indigo-300 mb-2"
-        >
-          {{ feature.title }}
-        </p>
-        <p class="text-gray-600 dark:text-gray-300 text-sm md:text-base">
-          {{ feature.description }}
+      </div>
+    </div>
+  </section>
+
+  <section class="py-20 bg-muted/50">
+    <div class="container">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div>
+          <h2 class="text-3xl md:text-4xl font-bold mb-6">
+            Empowering Educators Worldwide
+          </h2>
+          <p class="text-lg text-black/90 mb-6 text-justify">
+            Our platform connects schools with the resources and community they
+            need to thrive. From curriculum development to administrative tools,
+            we've got you covered.
+          </p>
+          <ul class="space-y-4 mb-8">
+            <li class="flex items-start gap-3">
+              <div
+                class="w-6 h-6 rounded-full bg-black flex items-center justify-center flex-shrink-0 mt-1"
+              >
+                <svg
+                  class="w-4 h-4 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  ></path>
+                </svg>
+              </div>
+              <span class="text-black/80"
+                >Streamlined administrative processes</span
+              >
+            </li>
+            <li class="flex items-start gap-3">
+              <div
+                class="w-6 h-6 rounded-full bg-black flex items-center justify-center flex-shrink-0 mt-1"
+              >
+                <svg
+                  class="w-4 h-4 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  ></path>
+                </svg>
+              </div>
+              <span class="text-black/80"
+                >Enhanced student engagement tools</span
+              >
+            </li>
+            <li class="flex items-start gap-3">
+              <div
+                class="w-6 h-6 rounded-full bg-black flex items-center justify-center flex-shrink-0 mt-1"
+              >
+                <svg
+                  class="w-4 h-4 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  ></path>
+                </svg>
+              </div>
+              <span class="text-black/80"
+                >Data-driven insights and analytics</span
+              >
+            </li>
+          </ul>
+          <button
+            class="btn btn-lg btn-secondary bg-accent-foreground text-accent hover:bg-accent-foreground/90 w-full sm:w-auto"
+            (click)="navigateTo('/contact')"
+          >
+            Get in Touch
+            <i
+              class="fa-solid fa-arrow-right ml-2"
+              style="width: 20px; height: 20px"
+            ></i>
+          </button>
+        </div>
+        <div class="relative h-[400px] rounded-lg overflow-hidden shadow-2xl">
+          <img
+            src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&h=600&fit=crop"
+            alt="Students learning"
+            class="w-full h-full object-cover"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Our Offerings Section -->
+  <section class="py-16 md:py-24 bg-muted/30">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12 animate-fade-in-up">
+        <h2 class="text-3xl md:text-4xl font-bold text-black mb-4">
+          Our Offerings
+        </h2>
+        <p class="text-lg text-foreground/80 max-w-2xl mx-auto">
+          Comprehensive solutions designed for modern educational institutions
         </p>
       </div>
-    </section>
-    <section class="cta-section text-center mb-12 md:mb-16">
-      <h2
-        class="text-2xl md:text-3xl font-bold text-indigo-900 dark:text-indigo-300 mb-6"
-      >
-        Revolutionize Your Lab Management Today
-      </h2>
-      <a
-        routerLink="/sign_in"
-        class="btn btn-custom-primary bg-indigo-600 text-white font-bold text-base md:text-lg px-3 py-2 rounded-full hover:bg-indigo-700 shadow-md hover:shadow-xl transition-all duration-300"
-        >Start Now</a
-      >
-    </section>
-  </main>
-  <!-- <div
-    class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900"
-  ></div> -->
-  <footer
-    class="website-footer bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 text-center py-4 text-sm"
-  >
-    <p>© {{ currentYear }} Lab Testing Portal. All rights reserved.</p>
-  </footer>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div
+          *ngFor="
+            let offering of offerings;
+            let index = index;
+            trackBy: trackByFn
+          "
+          class="card overflow-hidden hover:shadow-xl transition-shadow animate-fade-in-up hover:border-primary"
+          [style.animation-delay.ms]="index * 100"
+        >
+          <img
+            [src]="offering.img"
+            [alt]="offering.alt"
+            class="w-full h-64 object-cover"
+          />
+          <div class="p-6">
+            <h3 class="text-2xl font-bold text-black mb-2">
+              {{ offering.title }}
+            </h3>
+            <p class="text-black mb-4">
+              {{ offering.description }}
+            </p>
+            <ul class="space-y-2 mb-6 text-sm text-black">
+              <li *ngFor="let feature of offering.features; trackBy: trackByFn">
+                ✓ {{ feature }}
+              </li>
+            </ul>
+            <a
+              routerLink="{{ offering.link }}"
+              class="btn w-full bg-black text-white hover:bg-primary/90 hover:text-white"
+            >
+              {{ offering.linkText }}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="py-12 sm:py-16 md:py-24 bg-white">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-8 sm:mb-12">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-black mb-4">
+          What Schools Say About Us
+        </h2>
+        <p class="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
+          Real experiences from educators and administrators using our ERP
+          system
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+        <div
+          *ngFor="
+            let testimonial of testimonials;
+            let index = index;
+            trackBy: trackByFn
+          "
+          class="card p-6 sm:p-8 flex flex-col border-2 border-gray-200 bg-white hover:border-black transition-all"
+        >
+          <div class="flex-grow">
+            <div class="flex gap-1 mb-4">
+              <svg
+                *ngFor="let star of [1, 2, 3, 4, 5]; trackBy: trackByFn"
+                class="w-5 h-5 text-black fill-current"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"
+                />
+              </svg>
+            </div>
+            <p class="text-sm sm:text-base text-gray-700 italic mb-6">
+              &quot;{{ testimonial.quote }}&quot;
+            </p>
+          </div>
+          <div class="border-t-2 border-gray-200 pt-4">
+            <p class="font-semibold text-black">{{ testimonial.name }}</p>
+            <p class="text-sm text-gray-600">{{ testimonial.role }}</p>
+            <p class="text-xs text-gray-500 mt-1">{{ testimonial.school }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <app-cta
+    [title]="'Ready to Transform Your School?'"
+    [subtitle]="'Discover how our tools can revolutionize your workflow.'"
+    [primaryButton]="{ text: 'Request a Demo', url: '/contact' }"
+    [secondaryButton]="{ text: ' Join / Partner With Us ', url: '/contact' }"
+    [showPrimaryIcon]="true"
+    [showSecondaryIcon]="true"
+  ></app-cta>
 </div>
+<app-footer></app-footer>
+
+<app-chatbot-widget></app-chatbot-widget>

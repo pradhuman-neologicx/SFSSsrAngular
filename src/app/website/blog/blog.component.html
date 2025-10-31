@@ -1,0 +1,55 @@
+<app-navbar></app-navbar>
+<section class="relative h-[400px] flex items-center justify-center overflow-hidden">
+  <div
+    class="absolute inset-0 z-0 bg-cover bg-center"
+    style="background-image: url('assets/school-management-dashboard.png')"
+  >
+    <div class="absolute inset-0 bg-black/60"></div>
+  </div>
+
+  <div class="container relative z-10 text-center text-white">
+    <h1 class="text-4xl md:text-5xl font-bold mb-6 uppercase tracking-wider">
+      Blog & Articles
+    </h1>
+    <p class="text-xl text-gray-200 max-w-3xl mx-auto">
+      Latest insights on education technology, school management, and innovation in STEM.
+    </p>
+  </div>
+</section>
+
+<section class="py-16 md:py-24 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-8">
+    <div
+      *ngFor="let post of posts"
+      class="border border-gray-300 rounded-lg overflow-hidden hover:shadow-[8px_8px_0_0_#000] transition-all hover:-translate-y-1 animate-fade-in-up"
+    >
+      <div class="relative overflow-hidden">
+        <img
+          [src]="post.image"
+          [alt]="post.title"
+          class="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
+        />
+        <span
+          class="absolute top-3 left-3 px-3 py-1 bg-black text-white text-xs font-semibold rounded-full"
+        >
+          {{ post.category }}
+        </span>
+      </div>
+      <div class="p-6">
+        <div class="text-xs text-gray-500 mb-3 flex gap-4">
+          <span>{{ post.date }}</span> • <span>{{ post.readTime }}</span>
+        </div>
+        <h3 class="text-xl font-bold mb-3">{{ post.title }}</h3>
+        <p class="text-gray-600 mb-4">{{ post.excerpt }}</p>
+        <div class="text-sm text-black font-medium mb-3">{{ post.author }}</div>
+        <a
+          [routerLink]="['/blog', post.slug]"
+          class="buttonNEw block text-center border-2 border-black text-black py-2 rounded hover:bg-black hover:text-white transition"
+        >
+          Read More
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>

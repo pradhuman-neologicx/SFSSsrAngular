@@ -1,0 +1,248 @@
+<app-navbar></app-navbar>
+
+<div class="flex flex-col min-h-screen">
+  <!-- Hero Section -->
+  <section
+    class="relative h-[400px] flex items-center justify-center overflow-hidden"
+  >
+    <div
+      class="absolute inset-0 z-0"
+      style="
+        background-image: url('https://images.unsplash.com/photo-1516979187457-637abb4f9353?w=1600&h=900&fit=crop');
+        background-size: cover;
+        background-position: center;
+      "
+    >
+      <div class="absolute inset-0 bg-black/60"></div>
+    </div>
+
+    <div class="relative z-10 text-center text-white px-4">
+      <h1 class="text-3xl md:text-5xl font-bold mb-4">Get in Touch
+</h1>
+      <p class="text-lg md:text-xl max-w-2xl mx-auto">
+        Have questions about our ERP system or TinkerTek Labs? We'd love to hear from you. Reach out to our team and let's discuss how we can help transform your school.
+      </p>
+    </div>
+  </section>
+
+  <!-- Contact Info & Form -->
+  <section class="py-20 bg-background">
+    <div class="container mx-auto px-4">
+      <!-- Contact Info Cards -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+        <!-- Email -->
+        <div class="border rounded-2xl shadow-sm p-6 bg-white">
+          <div class="mb-2">
+            <img
+              src="assets/svgs_collection/mail.svg"
+              alt="Email Icon"
+              class="w-8 h-8"
+            />
+          </div>
+          <h3 class="text-xl font-semibold mb-1">Email Us</h3>
+          <p class="text-sm text-muted-foreground mb-4">
+            Send us an email anytime
+          </p>
+          <p class="text-lg font-medium">info&#64;schoolforschools.com</p>
+          <p class="text-sm text-muted-foreground mt-1">
+            support&#64;schoolforschools.com
+          </p>
+        </div>
+
+        <!-- Phone -->
+        <div class="border rounded-2xl shadow-sm p-6 bg-white">
+          <div class="mb-2">
+            <img
+              src="assets/svgs_collection/phone.svg"
+              alt="phone Icon"
+              class="w-8 h-8"
+            />
+          </div>
+          <h3 class="text-xl font-semibold mb-1">Call Us</h3>
+          <p class="text-sm text-muted-foreground mb-4">
+            Mon–Fri from 8am to 5pm
+          </p>
+          <p class="text-lg font-medium">+1 (555) 123-4567</p>
+          <p class="text-sm text-muted-foreground mt-1">+1 (555) 987-6543</p>
+        </div>
+
+        <!-- Visit -->
+        <div class="border rounded-2xl shadow-sm p-6 bg-white">
+          <div class="mb-2">
+            <img
+              src="assets/svgs_collection/location.svg"
+              alt="location Icon"
+              class="w-8 h-8"
+            />
+          </div>
+          <h3 class="text-xl font-semibold mb-1">Visit Us</h3>
+          <p class="text-sm text-muted-foreground mb-4">
+            Come say hello at our office
+          </p>
+          <p class="text-lg font-medium">123 Education Street</p>
+          <p class="text-sm text-muted-foreground mt-1">
+            Learning City, LC 12345
+          </p>
+        </div>
+      </div>
+
+      <!-- Message Form + Map -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <!-- Form -->
+        <div>
+          <h2 class="text-3xl font-bold mb-8">Send Us a Message</h2>
+          <div class="border rounded-2xl shadow-sm bg-white p-6">
+            <form (ngSubmit)="handleSubmit($event)" class="space-y-6">
+              <div>
+                <label for="fullName" class="block text-sm font-medium mb-1"
+                  >Full Name <span class="text-red-500">*</span></label
+                >
+                <input
+                  id="fullName"
+                  name="fullName"
+                  type="text"
+                  class="w-full border border-gray-300 text-base md:text-sm rounded-md px-3 py-2 focus:ring-2 focus:ring-black/30 focus:border-transparent outline-none"
+                  placeholder="Full Name"
+                  [(ngModel)]="formData.fullName"
+                  required
+                />
+              </div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div>
+                <label for="email" class="block text-sm font-medium mb-1"
+                  >Email Address <span class="text-red-500">*</span></label
+                >
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  class="w-full border border-gray-300 text-base md:text-sm rounded-md px-3 py-2 focus:ring-2 focus:ring-black/30 focus:border-transparent outline-none"
+                  placeholder="your@email.com"
+                  [(ngModel)]="formData.email"
+                  required
+                />
+              </div>
+
+              <div>
+                <label for="phone" class="block text-sm font-medium mb-1"
+                  >Phone Number</label
+                >
+                <input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  class="w-full border border-gray-300 text-base md:text-sm rounded-md px-3 py-2 focus:ring-2 focus:ring-black/30 focus:border-transparent outline-none"
+                  placeholder="+1 (555) 123-4567"
+                  [(ngModel)]="formData.phone"
+                />
+              </div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div>
+                <label for="schoolName" class="block text-sm font-medium mb-1"
+                  >School Name</label
+                >
+                <input
+                  id="schoolName"
+                  name="schoolName"
+                  type="text"
+                  class="w-full border border-gray-300 text-base md:text-sm  rounded-md px-3 py-2 focus:ring-2 focus:ring-black/30 focus:border-transparent outline-none"
+                  placeholder="Your School Name"
+                  [(ngModel)]="formData.schoolName"
+                />
+              </div>
+
+              <div>
+                <label for="subject" class="block text-sm font-medium mb-1"
+                  >Subject <span class="text-red-500">*</span></label
+                >
+                <select
+                  id="subject"
+                  name="subject"
+                  class="w-full border border-gray-300 text-base md:text-sm rounded-md px-3 py-2 focus:ring-2 focus:ring-black/30 focus:border-transparent outline-none"
+                  [(ngModel)]="formData.subject"
+                  required
+                >
+                  <option value="">Select a subject</option>
+                  <option value="general">General Inquiry</option>
+                  <option value="demo">Request a Demo</option>
+                  <option value="support">Support</option>
+                  <option value="partnership">Partnership</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+</div>
+              <div>
+                <label for="message" class="block text-sm font-medium mb-1"
+                  >Message <span class="text-red-500">*</span></label
+                >
+                <textarea
+                  id="message"
+                  name="message"
+                  class="w-full border border-gray-300 text-base md:text-sm rounded-md px-3 py-2 focus:ring-2 focus:ring-black/30 focus:border-transparent outline-none resize-none"
+                  placeholder="Tell us more about your inquiry..."
+                  rows="6"
+                  [(ngModel)]="formData.message"
+                  required
+                ></textarea>
+              </div>
+
+              <button
+                type="submit"
+                class="w-full py-3 rounded-lg bg-black text-white font-semibold hover:bg-gray-800 transition-colors duration-200"
+              >
+                Send Message
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Map & Info -->
+        <div>
+          <h2 class="text-3xl font-bold mb-8">Find Us</h2>
+          <div class="relative h-[400px] rounded-xl overflow-hidden shadow-md">
+            <img
+              src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=800&h=800&fit=crop"
+              alt="Office location"
+              class="w-full h-full object-cover"
+            />
+          </div>
+          <div class="mt-6 p-6 bg-muted rounded-xl">
+            <h3 class="font-semibold mb-2">Office Hours</h3>
+            <ul class="space-y-1 text-sm text-muted-foreground">
+              <li>Monday - Friday: 8:00 AM - 5:00 PM</li>
+              <li>Saturday: 9:00 AM - 1:00 PM</li>
+              <li>Sunday: Closed</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-20 bg-muted/50">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-3xl md:text-4xl font-bold mb-6">
+        Frequently Asked Questions
+      </h2>
+      <p class="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto">
+        Have a question? Check out our FAQ section or reach out directly.
+      </p>
+
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto text-left"
+      >
+        <div
+          *ngFor="let faq of faqs; trackBy: trackByFn"
+          class="border rounded-xl bg-white shadow-sm p-6"
+        >
+          <h3 class="text-lg font-semibold mb-2">{{ faq.title }}</h3>
+          <p class="text-muted-foreground">{{ faq.description }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<app-footer></app-footer>

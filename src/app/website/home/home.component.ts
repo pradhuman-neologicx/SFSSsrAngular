@@ -1,47 +1,174 @@
+// home.component.ts
 import { Component, OnInit } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { NavbarComponent } from '../navbar/navbar.component';
+import { FooterComponent } from '../components/Footer/footer.component';
+import { Title, Meta } from '@angular/platform-browser';
+import { ChatbotWidgetComponent } from '../components/chatbot-widget/chatbot-widget.component';
+import { LogoMarqueeComponent } from '../components/logo-marquee/logo-marquee.component';
+import { CtaComponent } from '../components/cta/cta.component';
+import { HeroComponent } from '../components/hero/hero.component';
 
 @Component({
   selector: 'app-home',
+  standalone: true,
+  imports: [
+    CommonModule,
+    RouterLink,
+    NavbarComponent,
+    FooterComponent,
+    ChatbotWidgetComponent,
+    LogoMarqueeComponent,
+    CtaComponent,
+    HeroComponent
+  ],
   templateUrl: './home.component.html',
+  styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
-  currentYear: number;
-  features = [
+  constructor(
+    private router: Router,
+    private title: Title,
+    private meta: Meta
+  ) {}
+  ngOnInit(): void {
+    this.title.setTitle('School for Schools - Transforming Education Together');
+    this.meta.updateTag({
+      name: 'description',
+      content:
+        'Empowering schools with comprehensive ERP systems, AI-powered learning labs, and innovative educational technology solutions. Transform your school with School for Schools.',
+    });
+    this.meta.updateTag({
+      name: 'keywords',
+      content:
+        'school management system, ERP for schools, TinkerTek Labs, AI education, robotics labs, school administration software, student information system, educational technology, school ERP India',
+    });
+    this.meta.updateTag({
+      property: 'og:title',
+      content: 'School for Schools - Transforming Education Together',
+    });
+    this.meta.updateTag({
+      property: 'og:description',
+      content:
+        'Comprehensive school management ERP and innovative TinkerTek Labs combining AI, robotics, and hands-on learning. Empowering schools with cutting-edge technology.',
+    });
+    this.meta.updateTag({
+      property: 'og:image',
+      content: 'https://schoolforschools.com/assets/2149507650.jpg',
+    });
+    this.meta.updateTag({
+      property: 'og:url',
+      content: 'https://schoolforschools.com',
+    });
+    this.meta.updateTag({ property: 'og:type', content: 'website' });
+    this.meta.updateTag({
+      name: 'twitter:card',
+      content: 'summary_large_image',
+    });
+    this.meta.updateTag({
+      name: 'twitter:title',
+      content: 'School for Schools - Transforming Education Together',
+    });
+    this.meta.updateTag({
+      name: 'twitter:description',
+      content:
+        'Comprehensive school management ERP and innovative TinkerTek Labs for modern education.',
+    });
+  }
+  bannerImg = 'assets/2149507650.jpg';
+  erpImg = 'assets/school-management-dashboard.png';
+  tinkerImg = 'assets/robotics-lab-students-learning.jpg';
+
+  whySfsItems = [
     {
-      icon: 'fa-solid fa-chart-line',
-      title: 'Modern Admin Panel',
+      icon: 'assets/svgs_collection/barChart.svg',
+      title: 'Comprehensive ERP',
       description:
-        'Manage users, tests, and reports with a sleek, responsive dashboard.',
+        'Streamline all school operations from admissions to alumni management',
     },
     {
-      icon: 'fa-solid fa-shield-halved',
-      title: 'Secure & Reliable',
+      icon: 'assets/svgs_collection/lightbulb.svg',
+      title: 'AI & Innovation',
       description:
-        'Ensure data privacy and security for all your laboratory operations.',
+        'Empower students with AI, robotics, and innovation challenges',
     },
     {
-      icon: 'fa-solid fa-mobile-screen-button',
-      title: 'Easy Access',
-      description: 'Access your lab data anytime, anywhere, on any device.',
+      icon: 'assets/svgs_collection/users.svg',
+      title: 'Expert Support',
+      description:
+        'Dedicated team to ensure smooth implementation and ongoing success',
+    },
+    {
+      icon: 'assets/svgs_collection/zap.svg',
+      title: 'Future Ready',
+      description:
+        'Stay ahead with continuous updates and emerging technologies',
     },
   ];
 
-  constructor() {
-    this.currentYear = new Date().getFullYear();
+  offerings = [
+    {
+      img: this.erpImg,
+      alt: 'ERP Dashboard',
+      title: 'School ERP System',
+      description:
+        'Complete school management solution covering academics, finance, and more.',
+      features: [
+        'Student Information Management',
+        'Academic Planning & Scheduling',
+        'Financial Management',
+        'AI-Powered Chatbot Support',
+      ],
+      link: '/erp',
+      linkText: 'Explore ERP',
+    },
+    {
+      img: this.tinkerImg,
+      alt: 'TinkerTek Labs',
+      title: 'TinkerTek Labs',
+      description:
+        'Innovative learning programs combining AI, robotics, and hands-on experimentation.',
+      features: [
+        'AI & Machine Learning Programs',
+        'Robotics & Automation Labs',
+        'Innovation Challenges',
+        'E-Commerce Kits & Resources',
+      ],
+      link: '/tinkertek',
+      linkText: 'Explore TinkerTek',
+    },
+  ];
+
+  testimonials = [
+    {
+      quote:
+        'The ERP system has completely transformed how we manage our school. Administrative tasks that used to take hours now take minutes. Our teachers can focus more on teaching and less on paperwork.',
+      name: 'Dr. Priya Sharma',
+      role: 'Principal',
+      school: 'Delhi Public School, Bangalore',
+    },
+    {
+      quote:
+        "Parent communication has improved dramatically. They can now track their child's progress in real-time and feel more connected to the school. The mobile app is a game-changer.",
+      name: 'Rajesh Kumar',
+      role: 'Academic Director',
+      school: 'Ryan International School, Mumbai',
+    },
+    {
+      quote:
+        "The financial module has made fee collection and accounting so much easier. We've seen a 40% reduction in payment delays and our financial reporting is more accurate than ever.",
+      name: 'Meera Patel',
+      role: 'Finance Manager',
+      school: 'Kendriya Vidyalaya, Pune',
+    },
+  ];
+
+  trackByFn(index: number): number {
+    return index;
   }
 
-  ngOnInit(): void {}
-  currentScreen = 0;
-
-  nextScreen() {
-    if (this.currentScreen < 5) {
-      this.currentScreen++;
-    }
-  }
-
-  previousScreen() {
-    if (this.currentScreen > 0) {
-      this.currentScreen--;
-    }
+  navigateTo(route: string): void {
+    this.router.navigate([route]);
   }
 }

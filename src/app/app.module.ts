@@ -1,6 +1,9 @@
 import { NgModule } from '@angular/core';
 import { HomeComponent } from './website/home/home.component';
-import { BrowserModule } from '@angular/platform-browser';
+import {
+  BrowserModule,
+  provideClientHydration,
+} from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -36,11 +39,21 @@ import { ReportComponent } from './admin/report/report.component';
 import { TestResultsComponent } from './admin/test-results/test-results.component';
 import { EquipmentStatusComponent } from './admin/equipment-status/equipment-status.component';
 import { AccountManagementComponent } from './admin/account-management/account-management.component';
-import { NavbarComponent } from './website/navbar/navbar.component';
+
 import { MastersComponent } from './admin/masters/masters.component';
 import { MaterialComponent } from './admin/masters/material/material.component';
 import { EngineerTestManagementComponent } from './admin/engineer-test-management/engineer-test-management.component';
 import { UpdateTestComponent } from './admin/test-management/update-test/update-test.component';
+import { LogoMarqueeComponent } from './website/components/logo-marquee/logo-marquee.component';
+import { CtaComponent } from './website/components/cta/cta.component';
+import { CaseStudiesComponent } from './website/case-studies/case-studies.component';
+import { CareersComponent } from './website/careers/careers.component';
+import { BlogComponent } from './website/blog/blog.component';
+import { BlogDetailComponent } from './website/blog/blog-detail/blog-detail.component';
+import { PrivacyComponent } from './website/privacy/privacy.component';
+import { RefundComponent } from './website/refund/refund.component';
+import { TermsComponent } from './website/terms/terms.component';
+import { ResourcesComponent } from './website/resources/resources.component';
 
 @NgModule({
   declarations: [
@@ -63,8 +76,6 @@ import { UpdateTestComponent } from './admin/test-management/update-test/update-
     TestResultsComponent,
     EquipmentStatusComponent,
     AccountManagementComponent,
-    HomeComponent,
-    NavbarComponent,
     MastersComponent,
     MaterialComponent,
     EngineerTestManagementComponent,
@@ -89,6 +100,7 @@ import { UpdateTestComponent } from './admin/test-management/update-test/update-
     DatePipe,
     EmployeeService,
     { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
+    provideClientHydration(),
   ],
   bootstrap: [AppComponent],
 })

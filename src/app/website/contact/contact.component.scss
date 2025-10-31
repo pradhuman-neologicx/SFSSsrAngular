@@ -1,0 +1,56 @@
+/* contact.component.scss */
+:host {
+    display: block;
+}
+
+// Custom classes for UI components (assuming Tailwind is configured)
+.card {
+    @apply rounded-lg border bg-card text-card-foreground shadow-sm;
+}
+
+.card-header {
+    @apply p-6 pb-3;
+}
+
+.card-title {
+    @apply text-2xl font-bold text-foreground mb-2;
+}
+
+.card-description {
+    @apply text-sm text-muted-foreground;
+}
+
+.card-content {
+    @apply p-6 pt-0;
+}
+
+.input {
+    @apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+.textarea {
+    @apply flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none;
+}
+
+.label {
+    @apply text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70;
+}
+
+.btn {
+    @apply inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
+    padding: 0.5rem 1rem;
+    line-height: 1.25rem;
+}
+
+.btn-lg {
+    @apply h-11 px-8;
+}
+
+// Data for FAQs (add to TS component)
+
+// For icons, install lucide-angular and use proper components.
+// In a real app, use a toast service instead of alert().
+
+input, select, textarea, button{
+    border-radius: 7px;
+}

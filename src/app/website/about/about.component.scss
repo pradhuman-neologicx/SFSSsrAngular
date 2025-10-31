@@ -1,0 +1,31 @@
+/* about.component.scss */
+// Note: Tailwind classes are used in the template; ensure Tailwind is configured in your Angular project.
+// If using Tailwind, no additional SCSS needed unless custom styles.
+// For animations like animate-fade-in-up, add to Tailwind config or use CSS keyframes.
+// Ensure Font Awesome CDN is included in your index.html: <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+@keyframes fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fade-in-up 0.6s ease-out forwards;
+}
+
+// Add any custom styles here if needed beyond Tailwind.
+
+
+
+h1 {
+    font-weight: bold;
+    margin-bottom: 1rem;
+
+}
