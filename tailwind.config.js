@@ -18,22 +18,22 @@ module.exports = {
       },
       colors: {
         background: '#f5f5f5',
-        foreground: '#333333',
+        foreground: '#1B1212	',
         card: {
           DEFAULT: '#ffffff',
-          foreground: '#333333',
+          foreground: '#1B1212	',
         },
         popover: {
           DEFAULT: '#ffffff',
-          foreground: '#333333',
+          foreground: '#1B1212	',
         },
         primary: {
-          DEFAULT: '#333333',
+          DEFAULT: '#1B1212	',
           foreground: '#ffffff',
         },
         secondary: {
           DEFAULT: '#f5f5f5',
-          foreground: '#333333',
+          foreground: '#1B1212	',
         },
         muted: {
           DEFAULT: '#f0f0f0',
@@ -49,9 +49,9 @@ module.exports = {
         },
         border: '#e5e5e5',
         input: '#ffffff',
-        ring: '#333333',
+        ring: '#1B1212	',
         chart: {
-          1: '#333333',
+          1: '#1B1212	',
           2: '#666666',
           3: '#999999',
           4: '#cccccc',

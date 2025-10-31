@@ -19,7 +19,7 @@
 <div class="container mx-auto px-2 lg:px-4 pt-2 pb-8">
   <!-- Welcome Header -->
   <div
-    class="bg-[#1075bc] rounded-xl shadow-lg p-8 mb-8 text-center text-white"
+    class="bg-black rounded-xl shadow-lg p-8 mb-8 text-center text-white"
   >
     <h1 class="text-4xl font-bold mb-2">Welcome Back, {{ name }}!</h1>
     <p class="text-lg opacity-90">
@@ -39,7 +39,7 @@
       </div>
       <button
         *ngIf="userRole == 'Admin' || userRole == 'Front Desk Receptionist'"
-        class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow"
+        class="flex items-center gap-2 bg-black hover:bg-gray-700 text-white px-4 py-2 rounded-sm text-sm font-medium shadow"
         [routerLink]="['/admin/create-test']"
       >
         <svg
@@ -63,9 +63,9 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       <!-- Total Tests -->
       <div class="bg-white rounded-xl shadow p-4 flex items-center">
-        <div class="p-3 bg-blue-100 rounded-full">
+        <div class="p-3 bg-gray-100 rounded-full">
           <svg
-            class="w-6 h-6 text-blue-600"
+            class="w-6 h-6 text-gray-600"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -169,7 +169,7 @@
           <p class="text-lg font-semibold text-gray-900">Completed Tests</p>
           <button
             routerLink="/admin/test-management"
-            class="text-blue-600 hover:text-blue-700 text-sm font-medium"
+            class="text-gray-600 hover:text-gray-700 text-sm font-medium"
           >
             View All
           </button>
@@ -196,7 +196,7 @@
               />
             </div>
             <button
-              class="btn btn-primary"
+              class="btn btn-primary bg-black"
               (click)="filterCompletedTestsByDate()"
             >
               Filter
@@ -259,7 +259,7 @@
                 </div>
               </div>
               <button
-                class="btn btn-primary search-btn ms-2"
+                class="btn btn-primary search-btn ms-2 bg-black"
                 (click)="searchfun('completed')"
               >
                 <span
@@ -414,7 +414,7 @@
           <p class="text-lg font-semibold text-gray-900">Pending Tests</p>
           <button
             [routerLink]="['/admin/test-management']"
-            class="text-blue-600 hover:text-blue-700 text-sm font-medium"
+            class="text-gray-600 hover:text-gray-700 text-sm font-medium"
           >
             View All
           </button>
@@ -441,7 +441,7 @@
               />
             </div>
             <button
-              class="btn btn-primary"
+              class="btn btn-primary bg-black"
               (click)="filterPendingTestsByDate()"
             >
               Filter
@@ -502,7 +502,7 @@
                 </div>
               </div>
               <button
-                class="btn btn-primary search-btn ms-2"
+                class="btn btn-primary search-btn ms-2 bg-black"
                 (click)="searchfun('pending')"
               >
                 <span

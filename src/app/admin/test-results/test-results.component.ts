@@ -1,5 +1,6 @@
 // test-results.component.ts
-import { Component } from '@angular/core';
+import { Component, OnInit,  Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { JwtService } from 'src/app/core/services/jwt.service';
 
@@ -32,7 +33,8 @@ export class TestResultsComponent {
 
   constructor(
     private formBuilder: FormBuilder,
-    private jwtService: JwtService
+    private jwtService: JwtService,
+     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
   testResults: TestResult[] = [
     {
@@ -124,8 +126,10 @@ export class TestResultsComponent {
     }
   }
 
-  resetsearchbar() {
-    window.location.reload();
+ resetsearchbar(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      window.location.reload();
+    }
   }
 
   onTableSizeChange(event: any): void {

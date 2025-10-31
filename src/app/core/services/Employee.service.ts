@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { ApiService } from './api.service';
 import { JwtService } from './jwt.service';
 import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
@@ -18,7 +19,8 @@ export class EmployeeService {
     private http: HttpClient,
     private apiservice: ApiService,
     private jwtService: JwtService,
-    private router: Router
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   getOngoingProject(search: any): Observable<any> {
@@ -1106,7 +1108,12 @@ export class EmployeeService {
     user_id: any
   ) {
     const token = this.jwtService.getToken();
-    const role = localStorage.getItem('Role');
+    let role:any;
+    if (isPlatformBrowser(this.platformId)) {
+    role = localStorage.getItem('Role');
+    console.log('User Role:', role);
+    }
+    
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',

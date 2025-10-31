@@ -54,7 +54,6 @@ import { PrivacyComponent } from './website/privacy/privacy.component';
 import { RefundComponent } from './website/refund/refund.component';
 import { TermsComponent } from './website/terms/terms.component';
 import { ResourcesComponent } from './website/resources/resources.component';
-
 @NgModule({
   declarations: [
     AppComponent,

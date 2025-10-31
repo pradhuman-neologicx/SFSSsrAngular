@@ -5,7 +5,8 @@ import {
   transition,
   animate,
 } from '@angular/animations';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID  } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import {
   AbstractControl,
   FormBuilder,
@@ -107,7 +108,8 @@ export class StaffComponent implements OnInit {
     private formBuilder: FormBuilder,
     private employeeService: EmployeeService,
     private jwtService: JwtService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   user_id: any;
@@ -257,8 +259,10 @@ export class StaffComponent implements OnInit {
     }
   }
 
-  resetsearchbar() {
-    window.location.reload();
+ resetsearchbar() {
+    if (isPlatformBrowser(this.platformId)) {
+      window.location.reload();
+    }
   }
 
   onTableSizeChange(event: any): void {

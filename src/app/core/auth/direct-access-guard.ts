@@ -1,47 +1,55 @@
-import { Injectable } from "@angular/core";
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import {
   CanActivate,
   ActivatedRouteSnapshot,
   RouterStateSnapshot,
   Router,
-  PRIMARY_OUTLET,
-  UrlTree,
-} from "@angular/router";
-import { Observable } from "rxjs/internal/Observable";
-import { JwtService } from "../services/jwt.service";
+} from '@angular/router';
+import { Observable } from 'rxjs';
+import { JwtService } from '../services/jwt.service';
+import { isPlatformBrowser } from '@angular/common';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class DirectAccessGuard implements CanActivate {
-  constructor(private router: Router, private jwtService: JwtService) {}
+  constructor(
+    private router: Router,
+    private jwtService: JwtService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
 
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<boolean> | Promise<boolean> | boolean {
-    const pageAccessedByReload =
-      (window.performance.navigation &&
-        window.performance.navigation.type === 1) ||
-      window.performance
-        .getEntriesByType("navigation")
-        .map((nav: any) => nav.type)
-        .includes("reload");
-    console.log(pageAccessedByReload);
-    if (pageAccessedByReload == true) {
-      return true;
-    } else {
-      if (this.router.url === "/") {
-        console.log(this.router);
-        var loginAs=this.jwtService.getLoginAs();
-        if(loginAs!=undefined){
-          this.router.navigate(["/sign_in"]); //Navigate away to signIn page
-        }else{
-          this.router.navigate(["/dashboard"]); //Navigate away to signIn page
+    // ✅ Only run browser-specific logic when on the client
+    if (isPlatformBrowser(this.platformId)) {
+      const performance = window.performance;
+      const entries = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
+
+      const pageAccessedByReload =
+        (performance.navigation && performance.navigation.type === 1) || // legacy API
+        entries.some((nav) => nav.type === 'reload');
+
+      // ✅ Allow navigation when page is reloaded (F5 or Ctrl+R)
+      if (pageAccessedByReload) {
+        return true;
+      }
+
+      // ✅ Handle direct access logic
+      const loginAs = this.jwtService.getLoginAs();
+
+      // If user tries to access root directly
+      if (state.url === '/') {
+        if (loginAs) {
+          this.router.navigate(['/dashboard']);
+        } else {
+          this.router.navigate(['/sign_in']);
         }
-       
         return false;
       }
     }
 
+    // ✅ SSR or fallback
     return true;
   }
 }

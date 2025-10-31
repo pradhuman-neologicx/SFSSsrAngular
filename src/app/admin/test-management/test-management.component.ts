@@ -5,7 +5,8 @@ import {
   transition,
   animate,
 } from '@angular/animations';
-import { ChangeDetectorRef, Component, input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit,Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import {
   FormBuilder,
   FormControl,
@@ -114,14 +115,17 @@ export class TestManagementComponent implements OnInit {
     private jwtService: JwtService,
     private cdr: ChangeDetectorRef,
     private notificationService: NotificationService,
-    private router: Router // private fb: FormBuilder
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   user_id: any;
   userRole: any;
   ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
     this.userRole = localStorage.getItem('Role');
     console.log('User Role:', this.userRole);
+    }
     this.user_id = this.jwtService.getpanelUserId();
     this.searchbarform = this.formBuilder.group({
       searchbar: ['', [Validators.required]],

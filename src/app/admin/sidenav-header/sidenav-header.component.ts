@@ -90,7 +90,7 @@ export class SidenavHeaderComponent implements OnInit {
       this.errorMessage = response.message;
       if (response.status === 200) {
         this.jwtService.clearStorage();
-        this.router.navigate(['/sign_in']);
+        this.router.navigate(['/admin/sign_in']);
       } else {
         this.submitted = false;
       }

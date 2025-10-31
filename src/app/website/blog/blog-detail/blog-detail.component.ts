@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Title, Meta } from '@angular/platform-browser';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { NavbarComponent } from '../../navbar/navbar.component';
@@ -21,7 +21,7 @@ interface BlogPost {
 @Component({
   selector: 'app-blog-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule, NavbarComponent, FooterComponent, NgOptimizedImage],
+  imports: [CommonModule, RouterModule, NavbarComponent, FooterComponent],
   templateUrl: './blog-detail.component.html',
   styleUrls: ['./blog-detail.component.scss'],
   encapsulation: ViewEncapsulation.None,

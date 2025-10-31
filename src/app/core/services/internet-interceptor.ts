@@ -1,34 +1,39 @@
-import { Injectable } from "@angular/core";
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import {
   HttpRequest,
   HttpHandler,
   HttpEvent,
   HttpInterceptor,
   HttpErrorResponse,
-} from "@angular/common/http";
-import { Observable, throwError } from "rxjs";
-
+} from '@angular/common/http';
+import { isPlatformBrowser } from '@angular/common';
+import { Observable, throwError } from 'rxjs';
 
 @Injectable()
 export class InternetInterceptor implements HttpInterceptor {
-  constructor() {}
+  private isBrowser: boolean;
+
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
+    this.isBrowser = isPlatformBrowser(this.platformId);
+  }
 
   intercept(
     request: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    // check to see if there's internet
-    if (!window.navigator.onLine) {
-        window.alert("Internet is required.");
-      // if there is no internet, throw a HttpErrorResponse error
-      // since an error is thrown, the function will terminate here
+    // Only check for internet when running in browser
+    if (this.isBrowser && !navigator.onLine) {
+      if (typeof window !== 'undefined') {
+        window.alert('Internet is required.');
+      }
+
+      // Throw error to stop request
       return throwError(
-        new HttpErrorResponse({ error: "Internet is required." })
-      
+        () => new HttpErrorResponse({ error: 'Internet is required.' })
       );
-    } else {
-      // else return the normal request
-      return next.handle(request);
     }
+
+    // Otherwise continue the request
+    return next.handle(request);
   }
 }

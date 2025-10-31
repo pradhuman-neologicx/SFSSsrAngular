@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, map, retry } from 'rxjs/operators';
@@ -11,18 +12,19 @@ export class ApiService {
   constructor(
     private http: HttpClient,
     private jwtService: JwtService,
-    private router: Router
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   private formatErrors(error: any) {
     let errorMessage = '';
-    if (error.error instanceof ErrorEvent) {
-      // client-side error
-      errorMessage = `Error: ${error.error.message}`;
-    } else {
-      // server-side error
-      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
-    }
+    if (typeof ErrorEvent !== 'undefined' && error.error instanceof ErrorEvent) {
+  // client-side error
+  errorMessage = `Error: ${error.error.message}`;
+} else {
+  // server-side error
+  errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+}
     console.log(errorMessage);
     return throwError(error.error);
   }
@@ -165,30 +167,61 @@ export class ApiService {
         catchError(this.handleError)
       );
   }
-  handleError(error: any) {
-    let errorMessage = '';
-    if (error.error instanceof ErrorEvent) {
-      // client-side error
-      errorMessage = `Error: ${error.error.message}`;
-    } else {
-      // server-side error
-      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
-    }
-    if (error.status === 422) {
-      const errorMessage =
-        error.errors?.name?.[0] ||
-        error.errors?.email?.[0] ||
-        error.errors?.mobile?.[0] ||
-        error.errors?.input_fields?.[0] ||
-        error.errors?.material_id?.[0];
-      console.error('Validation Error:', errorMessage);
+  // handleError(error: any) {
+  //   let errorMessage = '';
+  //   if (error.error instanceof ErrorEvent) {
+  //     // client-side error
+  //     errorMessage = `Error: ${error.error.message}`;
+  //   } else {
+  //     // server-side error
+  //     errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+  //   }
+  //   if (error.status === 422) {
+  //     const errorMessage =
+  //       error.errors?.name?.[0] ||
+  //       error.errors?.email?.[0] ||
+  //       error.errors?.mobile?.[0] ||
+  //       error.errors?.input_fields?.[0] ||
+  //       error.errors?.material_id?.[0];
+  //     console.error('Validation Error:', errorMessage);
 
-      return throwError(() => new Error(errorMessage));
-    }
-    //console.log(errorMessage+"er");
-    window.alert(errorMessage);
-    return throwError(() => {
-      return errorMessage;
-    });
+  //     return throwError(() => new Error(errorMessage));
+  //   }
+  //   //console.log(errorMessage+"er");
+  //   window.alert(errorMessage);
+  //   return throwError(() => {
+  //     return errorMessage;
+  //   });
+  // }
+  handleError(error: any) {
+  let errorMessage = '';
+ if (typeof ErrorEvent !== 'undefined' && error.error instanceof ErrorEvent) {
+  // client-side error
+  errorMessage = `Error: ${error.error.message}`;
+} else {
+  // server-side error
+  errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+}
+
+
+  if (error.status === 422) {
+    const validationMsg =
+      error.errors?.name?.[0] ||
+      error.errors?.email?.[0] ||
+      error.errors?.mobile?.[0] ||
+      error.errors?.input_fields?.[0] ||
+      error.errors?.material_id?.[0];
+    console.error('Validation Error:', validationMsg);
+    return throwError(() => new Error(validationMsg));
   }
+
+  // ✅ Only show alert in the browser
+  if (isPlatformBrowser(this.platformId)) {
+    window.alert(errorMessage);
+  } else {
+    console.error('SSR error:', errorMessage);
+  }
+
+  return throwError(() => errorMessage);
+}
 }

@@ -21,7 +21,8 @@ import { HeroComponent } from '../components/hero/hero.component';
     ChatbotWidgetComponent,
     LogoMarqueeComponent,
     CtaComponent,
-    HeroComponent
+    HeroComponent,
+      
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
@@ -140,29 +141,65 @@ export class HomeComponent implements OnInit {
     },
   ];
 
-  testimonials = [
-    {
-      quote:
-        'The ERP system has completely transformed how we manage our school. Administrative tasks that used to take hours now take minutes. Our teachers can focus more on teaching and less on paperwork.',
-      name: 'Dr. Priya Sharma',
-      role: 'Principal',
-      school: 'Delhi Public School, Bangalore',
-    },
-    {
-      quote:
-        "Parent communication has improved dramatically. They can now track their child's progress in real-time and feel more connected to the school. The mobile app is a game-changer.",
-      name: 'Rajesh Kumar',
-      role: 'Academic Director',
-      school: 'Ryan International School, Mumbai',
-    },
-    {
-      quote:
-        "The financial module has made fee collection and accounting so much easier. We've seen a 40% reduction in payment delays and our financial reporting is more accurate than ever.",
-      name: 'Meera Patel',
-      role: 'Finance Manager',
-      school: 'Kendriya Vidyalaya, Pune',
-    },
-  ];
+ testimonials = [
+  {
+    quote:
+      'The ERP system has completely transformed how we manage our school. Administrative tasks that used to take hours now take minutes. Our teachers can focus more on teaching and less on paperwork.',
+    name: 'Dr. Priya Sharma',
+    role: 'Principal',
+    school: 'Delhi Public School, Bangalore',
+  },
+  {
+    quote:
+      "Parent communication has improved dramatically. They can now track their child's progress in real-time and feel more connected to the school. The mobile app is a game-changer.",
+    name: 'Rajesh Kumar',
+    role: 'Academic Director',
+    school: 'Ryan International School, Mumbai',
+  },
+  {
+    quote:
+      "The financial module has made fee collection and accounting so much easier. We've seen a 40% reduction in payment delays and our financial reporting is more accurate than ever.",
+    name: 'Meera Patel',
+    role: 'Finance Manager',
+    school: 'Kendriya Vidyalaya, Pune',
+  },
+  {
+    quote:
+      "The attendance tracking and report generation tools have saved us countless hours every week. Our staff now spends more time on student engagement rather than manual record keeping.",
+    name: 'Anil Verma',
+    role: 'Vice Principal',
+    school: 'Amity International School, Noida',
+  },
+  {
+    quote:
+      "The analytics dashboard gives us valuable insights into student performance and staff efficiency. Data-driven decisions are now a core part of our management strategy.",
+    name: 'Sneha Gupta',
+    role: 'Head of Academics',
+    school: 'The Heritage School, Gurgaon',
+  },
+  {
+    quote:
+      "From admissions to examinations, everything is streamlined. Parents, teachers, and administrators are finally on the same page — literally and figuratively.",
+    name: 'Arun Menon',
+    role: 'School Administrator',
+    school: 'St. Joseph’s Convent High School, Kochi',
+  },
+  {
+    quote:
+      "The ERP’s integration with our existing systems was seamless. The support team was incredibly responsive and ensured a smooth transition for all departments.",
+    name: 'Nisha Reddy',
+    role: 'IT Coordinator',
+    school: 'Oakridge International School, Hyderabad',
+  },
+  {
+    quote:
+      "Managing multiple campuses has never been this easy. The centralized dashboard lets us monitor everything from one place, saving us time and resources.",
+    name: 'Ravi Iyer',
+    role: 'Director of Operations',
+    school: 'Podar Education Network, Mumbai',
+  },
+];
+
 
   trackByFn(index: number): number {
     return index;

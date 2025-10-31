@@ -5,12 +5,13 @@ import {
   transition,
   animate,
 } from '@angular/animations';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { EmployeeService } from 'src/app/core/services/Employee.service';
 import { JwtService } from 'src/app/core/services/jwt.service';
 import { NotificationService } from 'src/app/core/services/notificationnew.service';
+import { isPlatformBrowser } from '@angular/common';
 
 interface TestStats {
   total: number;
@@ -115,10 +116,10 @@ export class DashboardComponent implements OnInit {
       operator: 'Emma Thompson',
     },
   ];
+
   openSecondsuccess = false;
   name: string | null = '';
   firstlogin: boolean | undefined;
-
   completedTests: any[] = [];
   pendingTests: any[] = [];
   completedTestsPage: number = 1;
@@ -141,41 +142,52 @@ export class DashboardComponent implements OnInit {
   completedForm!: FormGroup;
   pendingForm!: FormGroup;
 
+  userRole: any;
+  dashboardStats: any;
+
   constructor(
     private route: ActivatedRoute,
     private jwtService: JwtService,
     private formBuilder: FormBuilder,
     private employeeService: EmployeeService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {
-    this.route.queryParams.subscribe((params) => {
-      this.firstlogin = this.jwtService.getfirstLoggedIn();
-      if (this.firstlogin === false || this.firstlogin === undefined) {
-        if (params['success'] === 'true') {
-          this.openSecondsuccess = true;
-          this.jwtService.firstLoggedIn(true);
-          setTimeout(() => {
-            this.openSecondsuccess = false;
-          }, 1800);
+    if (isPlatformBrowser(this.platformId)) {
+      this.route.queryParams.subscribe((params) => {
+        this.firstlogin = this.jwtService.getfirstLoggedIn();
+        if (this.firstlogin === false || this.firstlogin === undefined) {
+          if (params['success'] === 'true') {
+            this.openSecondsuccess = true;
+            this.jwtService.firstLoggedIn(true);
+            setTimeout(() => {
+              this.openSecondsuccess = false;
+            }, 1800);
+          }
         }
-      }
-    });
+      });
+    }
   }
 
-  userRole: any;
   ngOnInit(): void {
     this.name = this.jwtService.getName();
-    this.userRole = localStorage.getItem('Role');
+
+    if (isPlatformBrowser(this.platformId)) {
+      this.userRole = localStorage.getItem('Role');
+    }
+
     this.completedForm = this.formBuilder.group({
       searchbar: ['', [Validators.required]],
       startDate: [''],
       endDate: [''],
     });
+
     this.pendingForm = this.formBuilder.group({
       searchbar: ['', [Validators.required]],
       startDate: [''],
       endDate: [''],
     });
+
     this.firstlogin = this.jwtService.getfirstLoggedIn();
     this.fetchDashboardStats();
     this.fetchCompletedTests();
@@ -334,7 +346,6 @@ export class DashboardComponent implements OnInit {
     this.fetchPendingTests();
   }
 
-  dashboardStats: any;
   fetchDashboardStats() {
     this.employeeService.GetDashboardData().subscribe((response: any) => {
       if (response.status === 200) {

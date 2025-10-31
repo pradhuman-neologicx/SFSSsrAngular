@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output,Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 // import { EmployeeService } from 'src/app/core/services/Employee.service';
 // import { DataService } from 'src/app/core/services/data.service';
@@ -52,7 +53,7 @@ export class SidenavComponent {
   //     this.expandedIndex = index;
   //   }
   // }
-  constructor(private jwtService: JwtService, private router: Router) {}
+  constructor(private jwtService: JwtService, private router: Router,  @Inject(PLATFORM_ID) private platformId: Object) {}
   ProfilePicSizeClass(): string {
     return this.collapsed ? 'profile-pic-small' : 'profile-pic-large';
   }
@@ -73,8 +74,11 @@ export class SidenavComponent {
   paneluserId!: String;
   roles: any;
   ngOnInit(): void {
+ 
+    if (isPlatformBrowser(this.platformId)) {
     this.roles = localStorage.getItem('Role');
-    console.log('Roles:', this.roles);
+    console.log('User Role:', this.roles);
+  }
     this.menuItems = [];
 
     if (this.roles == 'Admin') {

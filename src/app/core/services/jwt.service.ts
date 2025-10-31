@@ -1,240 +1,310 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({
   providedIn: 'root',
 })
 export class JwtService {
-  constructor(private http: HttpClient) {}
+  private isBrowser: boolean;
+  redirectUrl: string = '/admin/dashboard'; // Default redirect URL after login
 
-  // admin panel
+  constructor(
+    private http: HttpClient,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
+    this.isBrowser = isPlatformBrowser(this.platformId);
+  }
+
+  private getStorage(): Storage | null {
+    return this.isBrowser ? localStorage : null;
+  }
+
+  // --- Admin Panel ---
 
   getisLoggedIn(): boolean {
-    return window.localStorage['isloggedIn'];
+    const storage = this.getStorage();
+    return storage ? storage.getItem('isloggedIn') === 'true' : false;
   }
+
   isLoggedIn(isloggedIn: boolean) {
-    window.localStorage['isloggedIn'] =
-      isloggedIn != undefined ? isloggedIn : false;
+    const storage = this.getStorage();
+    if (storage) storage.setItem('isloggedIn', String(!!isloggedIn));
   }
 
   getLoginAs(): number {
-    return window.localStorage['LoginAs'];
+    const storage = this.getStorage();
+    return storage ? Number(storage.getItem('LoginAs')) : 0;
   }
 
   saveLoginAs(LoginAs: number) {
-    window.localStorage['LoginAs'] = LoginAs;
+    const storage = this.getStorage();
+    if (storage) storage.setItem('LoginAs', String(LoginAs));
   }
 
   saveRoles(roles: any) {
-    localStorage.setItem('roles', JSON.stringify(roles));
+    const storage = this.getStorage();
+    if (storage) storage.setItem('roles', JSON.stringify(roles));
   }
 
   getRoles() {
-    return JSON.parse(localStorage.getItem('roles') || '[]');
+    const storage = this.getStorage();
+    return storage ? JSON.parse(storage.getItem('roles') || '[]') : [];
   }
 
   getfirstLoggedIn(): boolean {
-    return window.localStorage['isfirstlogin'];
+    const storage = this.getStorage();
+    return storage ? storage.getItem('isfirstlogin') === 'true' : false;
   }
+
   firstLoggedIn(isfirstlogin: boolean) {
-    window.localStorage['isfirstlogin'] =
-      isfirstlogin != undefined ? isfirstlogin : false;
+    const storage = this.getStorage();
+    if (storage) storage.setItem('isfirstlogin', String(!!isfirstlogin));
   }
 
   getSession(): string {
-    return window.localStorage['Session'];
+    const storage = this.getStorage();
+    return storage ? storage.getItem('Session') || '' : '';
   }
 
   saveSession(Session: string) {
-    window.localStorage['Session'] = Session;
+    const storage = this.getStorage();
+    if (storage) storage.setItem('Session', Session);
   }
+
   getName(): string {
-    return window.localStorage['name'];
+    const storage = this.getStorage();
+    return storage ? storage.getItem('name') || '' : '';
   }
 
   saveName(name: string) {
-    window.localStorage['name'] = name;
+    const storage = this.getStorage();
+    if (storage) storage.setItem('name', name);
   }
 
   getSessionStartdate(): string {
-    return window.localStorage['Sessionstartdate'];
+    const storage = this.getStorage();
+    return storage ? storage.getItem('Sessionstartdate') || '' : '';
   }
 
   saveSessionStartdate(Session: string) {
-    window.localStorage['Sessionstartdate'] = Session;
+    const storage = this.getStorage();
+    if (storage) storage.setItem('Sessionstartdate', Session);
   }
 
   getSessionEnddate(): string {
-    return window.localStorage['SessionEnddate'];
+    const storage = this.getStorage();
+    return storage ? storage.getItem('SessionEnddate') || '' : '';
   }
 
   saveSessionEnddate(Session: string) {
-    window.localStorage['SessionEnddate'] = Session;
+    const storage = this.getStorage();
+    if (storage) storage.setItem('SessionEnddate', Session);
   }
 
-  getpanelUserId(): Number {
-    return window.localStorage['panel_user_id'];
+  getpanelUserId(): number {
+    const storage = this.getStorage();
+    return storage ? Number(storage.getItem('panel_user_id')) : 0;
   }
 
-  savepanelUserId(userid: Number) {
-    window.localStorage['panel_user_id'] = userid;
+  savepanelUserId(userid: number) {
+    const storage = this.getStorage();
+    if (storage) storage.setItem('panel_user_id', String(userid));
   }
-  getadminame(): String {
-    return window.localStorage['adminname'];
+
+  getadminame(): string {
+    const storage = this.getStorage();
+    return storage ? storage.getItem('adminname') || '' : '';
   }
 
   saveadminame(adminname: string) {
-    window.localStorage['adminname'] = adminname;
+    const storage = this.getStorage();
+    if (storage) storage.setItem('adminname', adminname);
   }
 
-  saveAdminToken(Token: String) {
-    window.localStorage['Token'] = Token;
-  }
-  saveAdminRole(Role: String) {
-    window.localStorage['Role'] = Role;
-  }
-  getadmiRole(): String {
-    return window.localStorage['Role'];
-  }
-  getpanelPartyId(): Number {
-    return window.localStorage['Party_id'];
+  saveAdminToken(Token: string) {
+    const storage = this.getStorage();
+    if (storage) storage.setItem('Token', Token);
   }
 
-  savePartyId(Party_id: Number) {
-    window.localStorage['Party_id'] = Party_id;
+  saveAdminRole(Role: string) {
+    const storage = this.getStorage();
+    if (storage) storage.setItem('Role', Role);
   }
 
-  getType(): String {
-    return window.localStorage['Type'];
+  getadmiRole(): string {
+    const storage = this.getStorage();
+    return storage ? storage.getItem('Role') || '' : '';
   }
 
-  saveType(Type: String) {
-    window.localStorage['Type'] = Type;
+  getpanelPartyId(): number {
+    const storage = this.getStorage();
+    return storage ? Number(storage.getItem('Party_id')) : 0;
   }
 
-  getToken(): String {
-    return window.localStorage['Token'];
+  savePartyId(Party_id: number) {
+    const storage = this.getStorage();
+    if (storage) storage.setItem('Party_id', String(Party_id));
   }
 
-  saveToken(Token: String) {
-    window.localStorage['Token'] = Token;
+  getType(): string {
+    const storage = this.getStorage();
+    return storage ? storage.getItem('Type') || '' : '';
   }
 
-  // Profile Image of
-  getImageUrl(): String {
-    return window.localStorage['ImageUrl'];
+  saveType(Type: string) {
+    const storage = this.getStorage();
+    if (storage) storage.setItem('Type', Type);
   }
 
-  saveImageUrl(ImageUrl: String) {
-    window.localStorage['ImageUrl'] = ImageUrl;
+  getToken(): string {
+    const storage = this.getStorage();
+    return storage ? storage.getItem('Token') || '' : '';
   }
 
-  getUserId(): String {
-    return window.localStorage['user_id'];
+  saveToken(Token: string) {
+    const storage = this.getStorage();
+    if (storage) storage.setItem('Token', Token);
   }
 
-  saveUserId(user_id: String) {
-    window.localStorage['user_id'] = user_id;
+  getImageUrl(): string {
+    const storage = this.getStorage();
+    return storage ? storage.getItem('ImageUrl') || '' : '';
   }
 
-  // student panel
+  saveImageUrl(ImageUrl: string) {
+    const storage = this.getStorage();
+    if (storage) storage.setItem('ImageUrl', ImageUrl);
+  }
+
+  getUserId(): string {
+    const storage = this.getStorage();
+    return storage ? storage.getItem('user_id') || '' : '';
+  }
+
+  saveUserId(user_id: string) {
+    const storage = this.getStorage();
+    if (storage) storage.setItem('user_id', user_id);
+  }
+
+  // --- Student Panel ---
+
   getstudentLoggedIn(): boolean {
-    return window.localStorage['isloggedStudent'];
+    const storage = this.getStorage();
+    return storage ? storage.getItem('isloggedStudent') === 'true' : false;
   }
+
   isstudentLoggedIn(isloggedStudent: boolean) {
-    window.localStorage['isloggedStudent'] =
-      isloggedStudent != undefined ? isloggedStudent : false;
+    const storage = this.getStorage();
+    if (storage) storage.setItem('isloggedStudent', String(!!isloggedStudent));
   }
 
   getSessionStartdateStudent(): string {
-    return window.localStorage['SessionstartdateStudent'];
+    const storage = this.getStorage();
+    return storage ? storage.getItem('SessionstartdateStudent') || '' : '';
   }
 
   saveSessionStartdateStudent(Session: string) {
-    window.localStorage['SessionstartdateStudent'] = Session;
+    const storage = this.getStorage();
+    if (storage) storage.setItem('SessionstartdateStudent', Session);
   }
 
   getSessionEnddateStudent(): string {
-    return window.localStorage['SessionEnddateStudent'];
+    const storage = this.getStorage();
+    return storage ? storage.getItem('SessionEnddateStudent') || '' : '';
   }
 
   saveSessionEnddateStudent(Session: string) {
-    window.localStorage['SessionEnddateStudent'] = Session;
+    const storage = this.getStorage();
+    if (storage) storage.setItem('SessionEnddateStudent', Session);
   }
 
   getSessionStudent(): string {
-    return window.localStorage['SessionStudent'];
+    const storage = this.getStorage();
+    return storage ? storage.getItem('SessionStudent') || '' : '';
   }
 
   saveSessionStudent(Session: string) {
-    window.localStorage['SessionStudent'] = Session;
+    const storage = this.getStorage();
+    if (storage) storage.setItem('SessionStudent', Session);
   }
 
-  getpanelUserIdStudent(): String {
-    return window.localStorage['panel_user_idStudent'];
+  getpanelUserIdStudent(): string {
+    const storage = this.getStorage();
+    return storage ? storage.getItem('panel_user_idStudent') || '' : '';
   }
 
-  savepanelUserIdStudent(userid: String) {
-    window.localStorage['panel_user_idStudent'] = userid;
+  savepanelUserIdStudent(userid: string) {
+    const storage = this.getStorage();
+    if (storage) storage.setItem('panel_user_idStudent', userid);
   }
 
-  getTokenStudent(): String {
-    return window.localStorage['TokenStudent'];
+  getTokenStudent(): string {
+    const storage = this.getStorage();
+    return storage ? storage.getItem('TokenStudent') || '' : '';
   }
 
-  saveTokenStudent(Token: String) {
-    window.localStorage['TokenStudent'] = Token;
+  saveTokenStudent(Token: string) {
+    const storage = this.getStorage();
+    if (storage) storage.setItem('TokenStudent', Token);
   }
 
-  // Profile Image of
-  getImageUrlStudent(): String {
-    return window.localStorage['ImageUrlStudent'];
+  getImageUrlStudent(): string {
+    const storage = this.getStorage();
+    return storage ? storage.getItem('ImageUrlStudent') || '' : '';
   }
 
-  saveImageUrlStudent(ImageUrl: String) {
-    window.localStorage['ImageUrlStudent'] = ImageUrl;
+  saveImageUrlStudent(ImageUrl: string) {
+    const storage = this.getStorage();
+    if (storage) storage.setItem('ImageUrlStudent', ImageUrl);
   }
 
-  getUserIdStudent(): String {
-    return window.localStorage['user_idStudent'];
+  getUserIdStudent(): string {
+    const storage = this.getStorage();
+    return storage ? storage.getItem('user_idStudent') || '' : '';
   }
 
-  saveUserIdStudent(user_id: String) {
-    window.localStorage['user_idStudent'] = user_id;
+  saveUserIdStudent(user_id: string) {
+    const storage = this.getStorage();
+    if (storage) storage.setItem('user_idStudent', user_id);
   }
 
   getLoginAsStudent(): number {
-    return window.localStorage['LoginAsStudent'];
+    const storage = this.getStorage();
+    return storage ? Number(storage.getItem('LoginAsStudent')) : 0;
   }
 
   saveLoginAsStudent(LoginAs: number) {
-    window.localStorage['LoginAsStudent'] = LoginAs;
+    const storage = this.getStorage();
+    if (storage) storage.setItem('LoginAsStudent', String(LoginAs));
   }
 
-  ///call on logout
+  // --- Clear Storage ---
+
   clearStorage() {
-    window.localStorage.removeItem('isloggedIn');
-    window.localStorage.removeItem('panel_user_id');
+    const storage = this.getStorage();
+    if (!storage) return;
 
-    window.localStorage.removeItem('Token');
-    window.localStorage.removeItem('Role');
-    window.localStorage.removeItem('adminname');
-    window.localStorage.removeItem('isfirstlogin');
-
-    // window.localStorage.removeItem("isloggedStudent");
+    storage.removeItem('isloggedIn');
+    storage.removeItem('panel_user_id');
+    storage.removeItem('Token');
+    storage.removeItem('Role');
+    storage.removeItem('adminname');
+    storage.removeItem('isfirstlogin');
   }
 
   clearStorageStudent() {
-    window.localStorage.removeItem('isloggedStudent');
-    window.localStorage.removeItem('user_idStudent');
-    window.localStorage.removeItem('panel_user_idStudent');
-    window.localStorage.removeItem('LoginAsStudent');
+    const storage = this.getStorage();
+    if (!storage) return;
 
-    window.localStorage.removeItem('TokenStudent');
-    window.localStorage.removeItem('SessionStudent');
-    window.localStorage.removeItem('ImageUrlStudent');
-    window.localStorage.removeItem('SessionstartdateStudent');
-    window.localStorage.removeItem('SessionEnddateStudent');
+    storage.removeItem('isloggedStudent');
+    storage.removeItem('user_idStudent');
+    storage.removeItem('panel_user_idStudent');
+    storage.removeItem('LoginAsStudent');
+    storage.removeItem('TokenStudent');
+    storage.removeItem('SessionStudent');
+    storage.removeItem('ImageUrlStudent');
+    storage.removeItem('SessionstartdateStudent');
+    storage.removeItem('SessionEnddateStudent');
   }
 }
